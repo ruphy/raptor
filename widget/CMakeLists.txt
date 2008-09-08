@@ -5,6 +5,7 @@ include(KDE4Defaults)
 
 set(widget-test_SRC
     main.cpp
+    widget.cpp
 )
 
 include_directories(${KDE4_INCLUDES})

@@ -8,10 +8,14 @@
   (at your option) any later version.
 */
 
+#include <QtGui>
+
 #include <KApplication>
 #include <KAboutData>
 #include <KLocale>
 #include <KCmdLineArgs>
+
+#include "widget.h"
 
 int main(int argc, char *argv[])
 {
@@ -29,6 +33,11 @@ int main(int argc, char *argv[])
     KCmdLineArgs::parsedArgs();
     KApplication app;
 
+    QGraphicsScene s;
+    QGraphicsView v(&s);
+    
+    v.show();
+    
     return app.exec();
 }
 
