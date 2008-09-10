@@ -1,0 +1,12 @@
+Just some notes to avoid loosing them. =)
+
+KRunner based search:
+	- Reuse application runner, extend it to lookup also keywords and long description
+	- <aseigo> and maybe only do the description search if the keyword/genericname search comes up empty
+	- Also:
+		<aseigo> ugh ugh ugh http://standards.freedesktop.org/desktop-entry-spec/desktop-entry-spec-1.0.html#recognized-keys
+		<aseigo> nothing useful
+		<aseigo> that should be extended at a minimum with Keywords
+
+
+
