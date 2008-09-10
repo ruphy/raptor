@@ -1,14 +1,24 @@
-Just some notes to avoid loosing them. =)
+Just some notes to avoid loosing ideas. =)
 
 KRunner based search:
 	- Reuse application runner, extend it to lookup also keywords and long description
 	- <aseigo> and maybe only do the description search if the keyword/genericname search comes up empty
-	- Also:
+ 	- Also:
 		<aseigo> ugh ugh ugh http://standards.freedesktop.org/desktop-entry-spec/desktop-entry-spec-1.0.html#recognized-keys
 		<aseigo> nothing useful
-		<aseigo> that should be extended at a minimum with Keywords
+		<aseigo> that should be extended at a minimum with Keywords (note by ruphy: extend also with "long description")
 
 TOM:
-	-Query KBuildsycoca for all Programs
-	-Query Nepomuk after for Database-/Ranking- and Task-Information
+	- Query KBuildsycoca for all Programs
+	- Query Nepomuk after for Database-/Ranking- and Task-Information
+	- Use standard categories for 4.2, try to rationalize the menu for later versions.
+		* Basic usability rule: 5 items perfect, 7 maximum. Try to make the current (silly) menu
+		  get into those bounds by extensively using subgroups.
+
+
+
+
+...and more to come!
+
+ -- Your fellow Raptor guys.
 
