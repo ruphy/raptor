@@ -1,0 +1,9 @@
+DEPENDENCIES:
+cmake
+libplasma-dev
+
+INSTALL:
+$mkdir build
+$cd build
+$cmake ../
+$make
