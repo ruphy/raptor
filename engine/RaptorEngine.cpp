@@ -15,6 +15,8 @@
 RaptorEngine::RaptorEngine(QObject* parent, const QVariantList& args)
   : Plasma::DataEngine(parent, args)
 {
+    qRegisterMetaType<QStandardItemModel*>();
+
     QStandardItemModel * model = new QStandardItemModel(this);
     for (int i = 0; i != 15; i++)
     {
