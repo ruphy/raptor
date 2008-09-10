@@ -13,14 +13,62 @@
 RaptorEngine::RaptorEngine(QObject* parent, const QVariantList& args)
   : Plasma::DataEngine(parent, args)
 {
+    setMinimumPollingInterval(2000);
+
     qRegisterMetaType<Kickoff::ApplicationModel*>();
-    QVariant variant;
-    variant.setValue(new Kickoff::ApplicationModel(this));
-    setData("model", variant);
+    
+    m_model = new Kickoff::ApplicationModel(this);
 }
 
 RaptorEngine::~RaptorEngine()
 {
+}
+
+QStringList RaptorEngine::sources() const
+{
+    QStringList sources;
+    sources << "Raptor";
+
+    return sources;
+}
+
+void RaptorEngine::setRefreshTime( uint time )
+{
+    setPollingInterval( time );
+}
+
+uint RaptorEngine::refreshTime() const
+{
+    return 1000;
+}
+
+bool RaptorEngine::sourceRequestEvent( const QString &name )
+{
+    return updateSourceEvent( name );
+}
+
+bool RaptorEngine::updateSourceEvent( const QString &name )
+{
+    if ( !name.compare( "Raptor", Qt::CaseInsensitive ) )
+        getRaptorData( name );
+
+    return true;
+}
+
+void RaptorEngine::getRaptorData( const QString &name )
+{
+    removeAllData( name );
+
+    QVariant v;
+
+    v.setValue(m_model);
+
+    setData( name, "model", v );
+}
+
+void RaptorEngine::updateRaptorData()
+{
+    getRaptorData( "Raptor" );
 }
 
 #include "RaptorEngine.moc"

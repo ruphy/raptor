@@ -125,7 +125,7 @@ LeaveModel::LeaveModel(QObject *parent)
 
 //FIXME: the proper fix is to implement the KWorkSpace methods for Windows
 #ifndef Q_WS_WIN
-    if (KWorkSpace::canShutDown(KWorkSpace::ShutdownConfirmDefault, KWorkSpace::ShutdownTypeHalt)) {
+/*    if (KWorkSpace::canShutDown(KWorkSpace::ShutdownConfirmDefault, KWorkSpace::ShutdownTypeHalt)) {
         // Shutdown
         QStandardItem *shutDownOption = createStandardItem("leave:/shutdown");
         systemOptions->appendRow(shutDownOption);
@@ -137,7 +137,7 @@ LeaveModel::LeaveModel(QObject *parent)
         QStandardItem *restartOption = createStandardItem("leave:/restart");
         systemOptions->appendRow(restartOption);
         addSystemSession = true;
-    }
+    }*/
 #endif
 
     appendRow(sessionOptions);
