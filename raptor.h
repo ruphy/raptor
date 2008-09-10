@@ -22,6 +22,7 @@ class Raptor : public Plasma::Applet
         void paintInterface(QPainter *painter,
                 const QStyleOptionGraphicsItem *option,
                 const QRect& contentsRect);
+
         void init();
  
     private:
