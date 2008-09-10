@@ -12,17 +12,35 @@
 #define RAPTORENGINE_H
 
 #include <plasma/dataengine.h>
-#include <QStandardItemModel>
+#include "kickoff/applicationmodel.h"
 
 class RaptorEngine : public Plasma::DataEngine
 {
     Q_OBJECT
+    Q_PROPERTY( uint refreshTime READ refreshTime WRITE setRefreshTime )
+
     public:
         RaptorEngine(QObject* parent, const QVariantList& args);
         ~RaptorEngine();
+
+        QStringList sources() const;
+
+        void setRefreshTime( uint time );
+        uint refreshTime() const;
+
+    protected:
+        bool sourceRequestEvent( const QString &name );
+        bool updateSourceEvent( const QString& source );
+
+    private slots:
+        void getRaptorData( const QString &name );
+        void updateRaptorData();
+
+    private:
+        Kickoff::ApplicationModel * m_model;
 };
 
-Q_DECLARE_METATYPE(QStandardItemModel*)
+Q_DECLARE_METATYPE(Kickoff::ApplicationModel*)
 K_EXPORT_PLASMA_DATAENGINE(raptor, RaptorEngine)
 
 #endif
