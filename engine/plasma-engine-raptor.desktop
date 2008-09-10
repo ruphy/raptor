@@ -1,0 +1,15 @@
+[Desktop Entry]
+Name=Raptor Data Engine
+Comment=This Engine is providing Data for the Raptor-Menu
+X-KDE-ServiceTypes=Plasma/DataEngine
+Type=Service
+Icon=
+X-KDE-Library=plasma_engine_raptor
+
+X-KDE-PluginInfo-Author=Lukas Appelhans
+X-KDE-PluginInfo-Email=l.appelhans@gmx.de
+X-KDE-PluginInfo-Name=raptor
+X-KDE-PluginInfo-Version=0.1
+X-KDE-PluginInfo-Website=http://raptor-menu.org
+X-KDE-PluginInfo-Category=
+X-KDE-PluginInfo-Depends=
