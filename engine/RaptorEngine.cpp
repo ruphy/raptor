@@ -1,6 +1,7 @@
 /* This file is part of the KDE project
 
    Copyright (C) 2008 Lukas Appelhans <l.appelhans@gmx.de>
+   Copyright (C) 2008 Dario Freddi <drf@kdemod.ath.cx>
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
@@ -15,6 +16,8 @@
 RaptorEngine::RaptorEngine(QObject* parent, const QVariantList& args)
   : Plasma::DataEngine(parent, args)
 {
+    qRegisterMetaType<QStandardItemModel*>();
+
     QStandardItemModel * model = new QStandardItemModel(this);
     for (int i = 0; i != 15; i++)
     {
