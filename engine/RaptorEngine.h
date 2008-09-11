@@ -12,7 +12,7 @@
 #define RAPTORENGINE_H
 
 #include <plasma/dataengine.h>
-#include <QStandardItemModel>
+#include "kickoff/applicationmodel.h"
 
 class RaptorEngine : public Plasma::DataEngine
 {
@@ -22,7 +22,7 @@ class RaptorEngine : public Plasma::DataEngine
         ~RaptorEngine();
 };
 
-Q_DECLARE_METATYPE(QStandardItemModel*)
+Q_DECLARE_METATYPE(Kickoff::ApplicationModel*)
 K_EXPORT_PLASMA_DATAENGINE(raptor, RaptorEngine)
 
 #endif
