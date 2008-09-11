@@ -1,6 +1,7 @@
 include_directories(${PLASMA_INCLUDE_DIR})
 
 set(raptor_engine_SRCS
+    RaptorEngine.cpp
 )
 
 kde4_add_plugin(plasma_engine_raptor ${raptor_engine_SRCS})

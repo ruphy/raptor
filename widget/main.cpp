@@ -8,14 +8,14 @@
   (at your option) any later version.
 */
 
-#include <QtGui>
+#include <QtGui>//TODO: Don't include whole module
 
 #include <KApplication>
 #include <KAboutData>
 #include <KLocale>
 #include <KCmdLineArgs>
 
-#include "widget.h"
+//#include "widget.h"
 
 int main(int argc, char *argv[])
 {

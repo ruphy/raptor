@@ -8,6 +8,7 @@ include(KDE4Defaults)
 find_package(Plasma REQUIRED)
 
 add_subdirectory(widget)
+add_subdirectory(engine)
 
 add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
 include_directories(
