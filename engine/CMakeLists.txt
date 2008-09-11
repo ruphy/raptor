@@ -1,4 +1,7 @@
-include_directories(${PLASMA_INCLUDE_DIR})
+include_directories(
+    ${QT_INCLUDES}
+    ${PLASMA_INCLUDE_DIR}
+)
 
 set(raptor_engine_SRCS
     RaptorEngine.cpp

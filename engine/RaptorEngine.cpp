@@ -9,9 +9,21 @@
 */
 #include "RaptorEngine.h"
 
+#include <QStandardItemModel>
+#include <QStandardItem>
+
 RaptorEngine::RaptorEngine(QObject* parent, const QVariantList& args)
   : Plasma::DataEngine(parent, args)
 {
+    QStandardItemModel * model = new QStandardItemModel(this);
+    for (int i = 0; i != 15; i++)
+    {
+        model->appendRow(new QStandardItem("blub" + QString::number(i)));
+    }
+
+    QVariant variant;
+    variant.setValue(model);
+    setData("model", variant);
 }
 
 RaptorEngine::~RaptorEngine()
