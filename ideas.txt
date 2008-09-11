@@ -8,5 +8,7 @@ KRunner based search:
 		<aseigo> nothing useful
 		<aseigo> that should be extended at a minimum with Keywords
 
-
+TOM:
+	-Query KBuildsycoca for all Programs
+	-Query Nepomuk after for Database-/Ranking- and Task-Information
 
