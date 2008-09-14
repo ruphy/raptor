@@ -60,6 +60,12 @@ class RaptorItemsView : public QListView
         /**
          * This signal is emitted when the user activates an item that is an application
          * @arg the .desktop url of the application.
+         *
+         * In order to launch the app you can do something like:
+         *
+         * KDesktopFile desktopFile(url.pathOrUrl());
+         * KService service(&desktopFile);
+         * KRun::run(service, KUrl::List(), yourwidget);
          */
         void applicationClicked(const KUrl &url);
 
