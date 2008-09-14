@@ -1,5 +1,0 @@
-include_directories(
-    ${QT_INCLUDES}
-    ${KDE4_INCLUDES}
-    ${PLASMA_INCLUDE_DIR}
-)
