@@ -16,6 +16,11 @@ TOM:
 		  get into those bounds by extensively using subgroups.
 
 
+Here come just a few ideas about the items view.
+
+- Linear list view capable of icons+text showing. (is QListView ok?)
+- Description mode will put the current element centered with smooth scrolling enlarging its size to show a big icon on the left with a good description on the right (see raptor.pdf).
+- The item delegate should be able to decide whether draw item in description mode or normal mode. (got to think about this)
 
 
 ...and more to come!

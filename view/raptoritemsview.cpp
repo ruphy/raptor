@@ -19,7 +19,7 @@ class RaptorItemsView::RaptorItemsViewPrivate
 {
 
 public:
-    RaptorItemsViewPrivate() :
+    RaptorItemsViewPrivate(RaptorItemsView *q) :
     q(q),
     timeLine(new QTimeLine(SMOOTH_SCROLL_DURATION, q))
     {}
@@ -31,7 +31,7 @@ public:
 
 
 RaptorItemsView::RaptorItemsView(QWidget *parent) : QListView(parent),
-                                                    d(new RaptorItemsViewPrivate())
+                                                    d(new RaptorItemsViewPrivate(this))
 {
     setWrapping(false);
     setMouseTracking(true);
@@ -46,7 +46,9 @@ RaptorItemsView::RaptorItemsView(QWidget *parent) : QListView(parent),
 }
 
 RaptorItemsView::~RaptorItemsView()
-{}
+{
+    delete d;
+}
 
 void RaptorItemsView::setOrientation(Qt::Orientation value)
 {

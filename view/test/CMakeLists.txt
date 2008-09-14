@@ -14,9 +14,14 @@ include_directories(
 
 set(itemsviewtest_SRCS
     main.cpp
+    ../raptoritemsview.cpp
+    model/applicationmodel.cpp
+    model/kickoffabstractmodel.cpp
+    model/leavemodel.cpp
+    model/models.cpp
 )
 
 kde4_add_executable(itemsviewtest ${itemsviewtest_SRCS})
-target_link_libraries(itemsviewtest ${KDE4_KDEUI_LIBS})
+target_link_libraries(itemsviewtest ${KDE4_KDEUI_LIBS} solidcontrol)
 
 install(TARGETS itemsviewtest DESTINATION ${BIN_INSTALL_DIR})
