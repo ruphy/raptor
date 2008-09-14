@@ -15,6 +15,7 @@
 
 //KDE
 #include <KDebug>
+#include <KUrl>
 
 //Qt
 #include <QTimeLine>
@@ -146,7 +147,7 @@ void RaptorItemsView::enterItem(const QModelIndex &index)
     if ( model()->hasChildren(index)) {
         setRootIndex(index);
     } else { // TODO: start the app if there is no child..
-        emit applicationClicked(model()->data(index, Kickoff::UrlRole).toString());
+        emit applicationClicked(KUrl(model()->data(index, Kickoff::UrlRole).toString()));
     }
 }
 
