@@ -12,7 +12,7 @@
 #include <KAboutData>
 #include <KLocale>
 #include <KCmdLineArgs>
-#include <KXmlGuiWindow>
+#include <KDialog>
 
 #include "view/raptoritemsview.h"
 #include "model/applicationmodel.h"
@@ -37,12 +37,12 @@ int main(int argc, char *argv[])
     KCmdLineArgs::parsedArgs();
     KApplication app;
 
-    KXmlGuiWindow *window = new KXmlGuiWindow();
+    KDialog *window = new KDialog();
     RaptorItemsView *itemsView = new RaptorItemsView(window);
     Kickoff::ApplicationModel *model = new Kickoff::ApplicationModel();
     itemsView->setModel(model);
 
-    window->setCentralWidget(itemsView);
+    window->setMainWidget(itemsView);
 
     window->show();
 
