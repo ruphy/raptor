@@ -21,7 +21,7 @@ include_directories(
 # We add our source code here
 set(raptor_SRCS 
     raptor.cpp
-    view/raptoritemsview.cpp
+#    view/raptoritemsview.cpp # When starting implementing raptoritemsview include also engine/kickoff/*
 )
  
 # Now make sure all files get to the right place

@@ -23,6 +23,6 @@ set(itemsviewtest_SRCS
 )
 
 kde4_add_executable(itemsviewtest ${itemsviewtest_SRCS})
-target_link_libraries(itemsviewtest ${KDE4_KDEUI_LIBS} solidcontrol)
+target_link_libraries(itemsviewtest ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS} solidcontrol)
 
 install(TARGETS itemsviewtest DESTINATION ${BIN_INSTALL_DIR})

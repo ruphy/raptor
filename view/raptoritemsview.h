@@ -13,6 +13,12 @@
 
 #include <QListView>
 
+class KUrl;
+
+namespace Kickoff{
+class ApplicationModel;
+}
+
 /**
  * A simple listview with smooth scrolling as base implementation for
  * the main items view of the menu.
@@ -26,6 +32,8 @@ class RaptorItemsView : public QListView
         ~RaptorItemsView();
 
         void setOrientation(Qt::Orientation);
+        void setModel(Kickoff::ApplicationModel *model);
+        Kickoff::ApplicationModel* model();
 
     protected:
         int getNewScrollValue(const QRect &rect);
@@ -44,9 +52,16 @@ class RaptorItemsView : public QListView
         void enterItem(const QModelIndex &index);
 
         /**
-         * Brows the menu back.
+         * Browse the menu back.
          */
         void browseBack();
+
+    signals:
+        /**
+         * This signal is emitted when the user activates an item that is an application
+         * @arg the .desktop url of the application.
+         */
+        void applicationClicked(const KUrl &url);
 
     private:
         class RaptorItemsViewPrivate;

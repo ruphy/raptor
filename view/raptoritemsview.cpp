@@ -7,14 +7,21 @@
    License as published by the Free Software Foundation; either
    version 2 of the License, or (at your option) any later version.
 */
+
 //Local
 #include "raptoritemsview.h"
+#include "engine/kickoff/applicationmodel.h"
+#include "engine/kickoff/models.h"
+
+//KDE
+#include <KDebug>
 
 //Qt
 #include <QTimeLine>
 #include <QScrollBar>
 #include <QFontMetrics>
 #include <QApplication>
+
 
 const int SMOOTH_SCROLL_DURATION = 250; // ms
 
@@ -138,10 +145,22 @@ void RaptorItemsView::enterItem(const QModelIndex &index)
 {
     if ( model()->hasChildren(index)) {
         setRootIndex(index);
-    } // TODO: start the app if there is no child..
+    } else { // TODO: start the app if there is no child..
+        emit applicationClicked(model()->data(index, Kickoff::UrlRole).toString());
+    }
 }
 
 void RaptorItemsView::browseBack()
 {
     setRootIndex( model()->parent(rootIndex()) );
+}
+
+void RaptorItemsView::setModel(Kickoff::ApplicationModel *model)
+{
+    QListView::setModel(model);
+}
+
+Kickoff::ApplicationModel* RaptorItemsView::model()
+{
+    return static_cast<Kickoff::ApplicationModel *>(QListView::model());
 }
