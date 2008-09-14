@@ -45,6 +45,7 @@ RaptorItemsView::RaptorItemsView(QWidget *parent) : QListView(parent),
     setAttribute(Qt::WA_NoSystemBackground);
 
     setOrientation(Qt::Horizontal);
+
     //TODO: use Plasma::Style to draw scrollbars and maybe use round corners to
     //      beautify the view...
 
@@ -66,10 +67,12 @@ void RaptorItemsView::setOrientation(Qt::Orientation value)
         setFlow(QListView::TopToBottom);
         disconnect(d->timeLine, SIGNAL(frameChanged(int)), horizontalScrollBar(), SLOT(setValue(int)));
         connect(d->timeLine, SIGNAL(frameChanged(int)), verticalScrollBar(), SLOT(setValue(int)));
+        setVerticalScrollMode(QAbstractItemView::ScrollPerPixel); // FIXME: this does not seem to work
     } else {
         setFlow(QListView::LeftToRight);
         disconnect(d->timeLine, SIGNAL(frameChanged(int)), verticalScrollBar(), SLOT(setValue(int)));
         connect(d->timeLine, SIGNAL(frameChanged(int)), horizontalScrollBar(), SLOT(setValue(int)));
+        setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel); // FIXME: this does not seem to work
     }
 }
 
@@ -133,7 +136,9 @@ void RaptorItemsView::resizeEvent(QResizeEvent *event)
 
 void RaptorItemsView::enterItem(const QModelIndex &index)
 {
-    setRootIndex(index);
+    if ( model()->hasChildren(index)) {
+        setRootIndex(index);
+    } // TODO: start the app if there is no child..
 }
 
 void RaptorItemsView::browseBack()
