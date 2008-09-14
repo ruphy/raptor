@@ -3,6 +3,7 @@
 project(itemsviewtest)
 
 find_package(KDE4 REQUIRED)
+find_package(Plasma REQUIRED)
 include(KDE4Defaults)
 
 add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})

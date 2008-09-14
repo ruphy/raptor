@@ -32,7 +32,21 @@ class RaptorItemsView : public QListView
         void resizeEvent(QResizeEvent *event);
 
     public slots:
+        /**
+         * Scrolls smoothly till the element gets centered.
+         */
         void smoothScrollTo(const QModelIndex &index);
+
+        /**
+         * Shows the entries of the clicked cathegory or
+         * executes the relative application.
+         */
+        void enterItem(const QModelIndex &index);
+
+        /**
+         * Brows the menu back.
+         */
+        void browseBack();
 
     private:
         class RaptorItemsViewPrivate;

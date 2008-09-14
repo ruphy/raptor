@@ -48,7 +48,8 @@ RaptorItemsView::RaptorItemsView(QWidget *parent) : QListView(parent),
     //TODO: use Plasma::Style to draw scrollbars and maybe use round corners to
     //      beautify the view...
 
-    connect(this, SIGNAL(clicked(const QModelIndex &)), this, SLOT(smoothScrollTo(const QModelIndex &)));
+    connect(this, SIGNAL(activated(const QModelIndex &)), this, SLOT(smoothScrollTo(const QModelIndex &)));
+    connect(this, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(enterItem(const QModelIndex &)));
     
 }
 
@@ -128,4 +129,14 @@ void RaptorItemsView::resizeEvent(QResizeEvent *event)
         setGridSize(QSize(size, size));
         setIconSize(QSize(size - fm.height(), size - fm.height()));
     }
+}
+
+void RaptorItemsView::enterItem(const QModelIndex &index)
+{
+    setRootIndex(index);
+}
+
+void RaptorItemsView::browseBack()
+{
+    setRootIndex( model()->parent(rootIndex()) );
 }

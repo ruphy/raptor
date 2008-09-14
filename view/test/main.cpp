@@ -17,6 +17,7 @@
 #include "view/raptoritemsview.h"
 #include "model/applicationmodel.h"
 
+
 /**
  * A simple test application for RaptorItemsView
  */
