@@ -9,6 +9,7 @@ find_package(Plasma REQUIRED)
 
 add_subdirectory(widget)
 add_subdirectory(engine)
+add_subdirectory(view/test)
 
 add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
 include_directories(
@@ -18,7 +19,10 @@ include_directories(
    )
  
 # We add our source code here
-set(raptor_SRCS raptor.cpp)
+set(raptor_SRCS 
+    raptor.cpp
+    view/raptoritemsview.cpp
+)
  
 # Now make sure all files get to the right place
 kde4_add_plugin(plasma_applet_raptor ${raptor_SRCS})
