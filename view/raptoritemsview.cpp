@@ -10,8 +10,11 @@
 //Local
 #include "raptoritemsview.h"
 
+//Qt
 #include <QTimeLine>
 #include <QScrollBar>
+#include <QFontMetrics>
+#include <QApplication>
 
 const int SMOOTH_SCROLL_DURATION = 250; // ms
 
@@ -35,13 +38,17 @@ RaptorItemsView::RaptorItemsView(QWidget *parent) : QListView(parent),
 {
     setWrapping(false);
     setMouseTracking(true);
-    setUniformItemSizes(true);
+    //setUniformItemSizes(true);
     setViewMode(QListView::IconMode);
 
     setFrameShape(QFrame::NoFrame);
+    setAttribute(Qt::WA_NoSystemBackground);
 
+    setOrientation(Qt::Horizontal);
     //TODO: use Plasma::Style to draw scrollbars and maybe use round corners to
     //      beautify the view...
+
+    connect(this, SIGNAL(clicked(const QModelIndex &)), this, SLOT(smoothScrollTo(const QModelIndex &)));
     
 }
 
@@ -103,4 +110,22 @@ void RaptorItemsView::smoothScrollTo(const QModelIndex &index)
 
    d->timeLine->setFrameRange(oldValue, newValue);
    d->timeLine->start();
+}
+
+void RaptorItemsView::resizeEvent(QResizeEvent *event)
+{
+    QListView::resizeEvent(event);
+
+    QFontMetrics fm(QApplication::font());
+
+    if (d->orientation == Qt::Vertical) {
+        int size = viewport()->width();
+        setGridSize(QSize(size, size));
+        setIconSize(QSize(size - fm.height(), size - fm.height()));
+
+    } else {
+        int size = viewport()->height();
+        setGridSize(QSize(size, size));
+        setIconSize(QSize(size - fm.height(), size - fm.height()));
+    }
 }

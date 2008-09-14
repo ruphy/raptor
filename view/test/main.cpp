@@ -15,7 +15,7 @@
 #include <KXmlGuiWindow>
 
 #include "view/raptoritemsview.h"
-#include "applicationmodel.h"
+#include "model/applicationmodel.h"
 
 /**
  * A simple test application for RaptorItemsView

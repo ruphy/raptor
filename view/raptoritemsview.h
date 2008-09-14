@@ -29,6 +29,7 @@ class RaptorItemsView : public QListView
 
     protected:
         int getNewScrollValue(const QRect &rect);
+        void resizeEvent(QResizeEvent *event);
 
     public slots:
         void smoothScrollTo(const QModelIndex &index);
