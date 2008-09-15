@@ -14,27 +14,32 @@
 #include <QPainter>
 #include <QTimeLine>
 #include <QSize>
+#include <QStyleOptionViewItemV4>
+#include <QAbstractItemView>
 
 //KDE
 #include <KDebug>
 // #include <KFileItemDelegate>
 //
 
-const int ANIMATION_DURATION = 1000; // ms
+const int ANIMATION_DURATION = 150; // ms
 
 class RaptorItemDelegate::Private
 {
     public:
         Private(RaptorItemDelegate *q):
-                q(q)
+                q(q),
+                timeLine(new QTimeLine(ANIMATION_DURATION, q))
                 //fileItemDelegate(new KFileItemDelegate(q))
                 {}
         ~Private()
                 {}
 
     RaptorItemDelegate *q;
-    QStyleOptionViewItem opt;
-    QPainter *painter;
+    QStyleOptionViewItemV4 optV4;
+    const QAbstractItemView *view;
+    QTimeLine *timeLine;
+    int animatedSize;
     QModelIndex index;
     //KFileItemDelegate *fileItemDelegate;
 };
@@ -42,6 +47,7 @@ class RaptorItemDelegate::Private
 RaptorItemDelegate::RaptorItemDelegate(QObject *parent) : QStyledItemDelegate(parent),
                                                           d(new Private(this))
 {
+    connect(d->timeLine, SIGNAL(frameChanged(int)), this, SLOT(animatePaint(int)));
 }
 
 RaptorItemDelegate::~RaptorItemDelegate()
@@ -51,29 +57,52 @@ RaptorItemDelegate::~RaptorItemDelegate()
 
 void RaptorItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const
 {
-    kDebug()<<"painting";
     if (!index.isValid()) {
         return;
     }
 
+    d->optV4 = option;
+    initStyleOption(&d->optV4 ,index);
+    d->view = qobject_cast<const QAbstractItemView*>(d->optV4.widget);
+
+
     painter->setRenderHint(QPainter::Antialiasing);
     painter->setPen(Qt::NoPen);
 
-    QStyleOptionViewItem opt = option;
-    opt.decorationSize /= 2;
+    d->optV4.decorationSize /= 2;
 
-    d->painter = painter;
-    d->index = index;
-    d->opt = opt;
+    if (d->optV4.state & QStyle::State_MouseOver && !(d->optV4.state & QStyle::State_Selected) ) {
 
-    if (option.state & QStyle::State_MouseOver || option.state & QStyle::State_Selected) {
+        // here comes what is should be animated
+        if (d->timeLine->state() == QTimeLine::NotRunning && d->index != index) {
+            const int oldValue = d->optV4.decorationSize.width();
+            const int newValue = d->optV4.decorationSize.width()*2;
 
-        opt.decorationSize *= 2;
+            d->index = index;
+
+            d->timeLine->setFrameRange(oldValue, newValue);
+            d->timeLine->start();
+        }
+        d->optV4.decorationSize = QSize(d->animatedSize, d->animatedSize);
 
     }
-        QStyledItemDelegate::paint(painter, opt, index);
+
+    if (d->optV4.state & QStyle::State_Selected){
+        d->optV4.decorationSize *= 2;
+    }
+
+    kDebug()<<d->optV4.decorationSize;
+    QStyledItemDelegate::paint(painter, d->optV4, index);
 
 //     d->fileItemDelegate->paint(painter, option, index);
 
+}
+
+void RaptorItemDelegate::animatePaint(int frame)
+{
+    //kDebug()<<"called with frame"<<frame;
+    //d->optV4.decorationSize = QSize(frame, frame);
+    d->animatedSize = frame;
+    d->view->viewport()->update(d->optV4.rect);
 }
 
