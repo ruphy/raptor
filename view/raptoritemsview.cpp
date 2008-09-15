@@ -50,6 +50,9 @@ RaptorItemsView::RaptorItemsView(QWidget *parent) : QListView(parent),
     setViewMode(QListView::IconMode);
 
     setFrameShape(QFrame::NoFrame);
+
+    //WARNING: maybe those following 2 lines should be called from the applet implementation.
+    viewport()->setAttribute(Qt::WA_NoSystemBackground);
     setAttribute(Qt::WA_NoSystemBackground);
 
     setOrientation(Qt::Horizontal);
@@ -168,4 +171,16 @@ void RaptorItemsView::setModel(Kickoff::ApplicationModel *model)
 Kickoff::ApplicationModel* RaptorItemsView::model()
 {
     return static_cast<Kickoff::ApplicationModel *>(QListView::model());
+}
+
+void RaptorItemsView::hideScrollBars()
+{
+    horizontalScrollBar()->hide();
+    verticalScrollBar()->hide();
+}
+
+void RaptorItemsView::showScrollBars()
+{
+    horizontalScrollBar()->show();
+    verticalScrollBar()->show();
 }
