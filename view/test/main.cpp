@@ -15,6 +15,7 @@
 #include <KDialog>
 
 #include "view/raptoritemsview.h"
+#include "view/raptoritemdelegate.h"
 #include "model/applicationmodel.h"
 
 
@@ -42,6 +43,8 @@ int main(int argc, char *argv[])
     RaptorItemsView *itemsView = new RaptorItemsView(window);
     Kickoff::ApplicationModel *model = new Kickoff::ApplicationModel();
     itemsView->setModel(model);
+    RaptorItemDelegate *delegate = new RaptorItemDelegate();
+    itemsView->setItemDelegate(delegate);
 
     window->setMainWidget(itemsView);
 

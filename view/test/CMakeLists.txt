@@ -20,6 +20,7 @@ set(itemsviewtest_SRCS
     model/kickoffabstractmodel.cpp
     model/leavemodel.cpp
     model/models.cpp
+    ../raptoritemdelegate.cpp
 )
 
 kde4_add_executable(itemsviewtest ${itemsviewtest_SRCS})
