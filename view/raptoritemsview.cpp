@@ -54,6 +54,8 @@ RaptorItemsView::RaptorItemsView(QWidget *parent) : QListView(parent),
 
     setOrientation(Qt::Horizontal);
 
+    setAutoScroll(true);
+
     //TODO: use Plasma::Style to draw scrollbars and maybe use round corners to
     //      beautify the view...
 
@@ -133,12 +135,14 @@ void RaptorItemsView::resizeEvent(QResizeEvent *event)
     if (d->orientation == Qt::Vertical) {
         int size = viewport()->width();
         setGridSize(QSize(size, size));
-        setIconSize(QSize(size - fm.height(), size - fm.height()));
+        int iconSize = (size - fm.height());
+        setIconSize(QSize(iconSize, iconSize));
 
     } else {
         int size = viewport()->height();
         setGridSize(QSize(size, size));
-        setIconSize(QSize(size - fm.height(), size - fm.height()));
+        int iconSize = (size - fm.height());
+        setIconSize(QSize(iconSize, iconSize));
     }
 }
 

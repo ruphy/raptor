@@ -19,8 +19,7 @@
 
 //KDE
 #include <KDebug>
-// #include <KFileItemDelegate>
-//
+
 
 const int ANIMATION_DURATION = 150; // ms
 
@@ -30,7 +29,7 @@ class RaptorItemDelegate::Private
         Private(RaptorItemDelegate *q):
                 q(q),
                 timeLine(new QTimeLine(ANIMATION_DURATION, q))
-                //fileItemDelegate(new KFileItemDelegate(q))
+
                 {}
         ~Private()
                 {}
@@ -41,7 +40,6 @@ class RaptorItemDelegate::Private
     QTimeLine *timeLine;
     int animatedSize;
     QModelIndex index;
-    //KFileItemDelegate *fileItemDelegate;
 };
 
 RaptorItemDelegate::RaptorItemDelegate(QObject *parent) : QStyledItemDelegate(parent),
@@ -91,17 +89,14 @@ void RaptorItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem & o
         d->optV4.decorationSize *= 2;
     }
 
-    kDebug()<<d->optV4.decorationSize;
+//     kDebug()<<d->optV4.decorationSize;
     QStyledItemDelegate::paint(painter, d->optV4, index);
 
-//     d->fileItemDelegate->paint(painter, option, index);
 
 }
 
 void RaptorItemDelegate::animatePaint(int frame)
 {
-    //kDebug()<<"called with frame"<<frame;
-    //d->optV4.decorationSize = QSize(frame, frame);
     d->animatedSize = frame;
     d->view->viewport()->update(d->optV4.rect);
 }

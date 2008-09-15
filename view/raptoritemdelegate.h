@@ -22,7 +22,8 @@ class RaptorItemDelegate : public QStyledItemDelegate
 
         void paint(QPainter *painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const;
 
-    public slots:
+
+    protected slots:
         void animatePaint(int);
 
     private:
