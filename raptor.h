@@ -13,13 +13,15 @@
 // We need the Plasma Applet headers
 #include <KIcon>
 
-#include <Plasma/Applet>
+#include <Plasma/PopupApplet>
 #include <Plasma/Svg>
+
+class RaptorItemsView;
 
 class QSizeF;
 
 // Define our plasma Applet
-class Raptor : public Plasma::Applet
+class Raptor : public Plasma::PopupApplet
 {
     Q_OBJECT
     public:
@@ -34,9 +36,15 @@ class Raptor : public Plasma::Applet
 
         void init();
 
+        QWidget *widget();
+
+    protected:
+        void setupView();
+
     private:
         Plasma::Svg m_svg;
         KIcon m_icon;
+        RaptorItemsView *m_view;
 };
 
 // This is the command that links your applet to the .desktop file

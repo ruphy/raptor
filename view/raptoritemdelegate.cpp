@@ -71,7 +71,7 @@ void RaptorItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem & o
 
     if (d->optV4.state & QStyle::State_MouseOver && !(d->optV4.state & QStyle::State_Selected) ) {
 
-        // here comes what is should be animated
+        // here comes what should be animated
         if (d->timeLine->state() == QTimeLine::NotRunning && d->index != index) {
             const int oldValue = d->optV4.decorationSize.width();
             const int newValue = d->optV4.decorationSize.width()*2;

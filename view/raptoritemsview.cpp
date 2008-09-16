@@ -52,8 +52,8 @@ RaptorItemsView::RaptorItemsView(QWidget *parent) : QListView(parent),
     setFrameShape(QFrame::NoFrame);
 
     //WARNING: maybe those following 2 lines should be called from the applet implementation.
-    viewport()->setAttribute(Qt::WA_NoSystemBackground);
-    setAttribute(Qt::WA_NoSystemBackground);
+//     viewport()->setAttribute(Qt::WA_NoSystemBackground);
+//     setAttribute(Qt::WA_NoSystemBackground);
 
     setOrientation(Qt::Horizontal);
 

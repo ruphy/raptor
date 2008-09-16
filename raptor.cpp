@@ -17,14 +17,16 @@
 #include <QSizeF>
 #include <QGraphicsLinearLayout>
 #include <QGraphicsProxyWidget>
+#include <QPalette>
  
 #include <plasma/svg.h>
 #include <plasma/theme.h>
  
 Raptor::Raptor(QObject *parent, const QVariantList &args)
-    : Plasma::Applet(parent, args),
+    : Plasma::PopupApplet(parent, args),
     m_svg(this),
-    m_icon("plasma")
+    m_icon("plasma"),
+    m_view(0)
 {
     // this will get us the standard applet background, for free!
     setBackgroundHints(Plasma::Applet::StandardBackground);
@@ -48,22 +50,38 @@ void Raptor::init()
         setFailedToLaunch(true, "No world to say hello");
     }
 
-    //WARNING: ruphy this is just for test, don't be scared :) (alediaferia)
-
-    QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(this);
-    QGraphicsProxyWidget *proxy = new QGraphicsProxyWidget(this);
-    RaptorItemsView *view = new RaptorItemsView();
-    RaptorItemDelegate *delegate = new RaptorItemDelegate();
-    Kickoff::ApplicationModel *model = new Kickoff::ApplicationModel();
-    view->setModel(model);
-    view->setItemDelegate(delegate);
-    view->hideScrollBars();
-    proxy->setWidget(view);
-    layout->addItem(proxy);
-    setLayout(layout);
+    setupView();
+    setIcon("plasma");
     
 } 
- 
+
+
+void Raptor::setupView()
+{
+    //WARNING: ruphy this is just for test, don't be scared :) (alediaferia)
+
+    m_view = new RaptorItemsView();
+    RaptorItemDelegate *delegate = new RaptorItemDelegate();
+    Kickoff::ApplicationModel *model = new Kickoff::ApplicationModel();
+
+    // let's make the view nicer in the applet
+    //m_view->viewport()->setAttribute(Qt::WA_NoSystemBackground);
+    m_view->setAttribute(Qt::WA_NoSystemBackground);
+    m_view->viewport()->setAutoFillBackground(true);
+    QPalette p = m_view->viewport()->palette();
+    p.setColor(QPalette::Base, Qt::transparent);
+    m_view->viewport()->setPalette(p);
+
+    m_view->setModel(model);
+    m_view->setItemDelegate(delegate);
+
+    m_view->hideScrollBars();
+}
+
+QWidget* Raptor::widget()
+{
+    return static_cast<QWidget*>(m_view);
+}
  
 void Raptor::paintInterface(QPainter *p,
         const QStyleOptionGraphicsItem *option, const QRect &contentsRect)
@@ -84,7 +102,7 @@ void Raptor::paintInterface(QPainter *p,
 //                 "Hello Plasmoid!");
 //     p->restore();
 
-    Applet::paintInterface(p, option, contentsRect);
+    PopupApplet::paintInterface(p, option, contentsRect);
 }
  
 #include "raptor.moc"
