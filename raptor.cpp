@@ -52,7 +52,7 @@ void Raptor::init()
 
     setupView();
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(updateColors()));
-    setIcon("plasma");
+    setPopupIcon("plasma");
     
 } 
 
