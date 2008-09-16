@@ -41,6 +41,9 @@ class Raptor : public Plasma::PopupApplet
     protected:
         void setupView();
 
+    protected slots:
+        void updateColors();
+
     private:
         Plasma::Svg m_svg;
         KIcon m_icon;

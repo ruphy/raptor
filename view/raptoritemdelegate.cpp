@@ -28,7 +28,8 @@ class RaptorItemDelegate::Private
     public:
         Private(RaptorItemDelegate *q):
                 q(q),
-                timeLine(new QTimeLine(ANIMATION_DURATION, q))
+                timeLine(new QTimeLine(ANIMATION_DURATION, q)),
+                textColor(QColor())
 
                 {}
         ~Private()
@@ -40,6 +41,7 @@ class RaptorItemDelegate::Private
     QTimeLine *timeLine;
     int animatedSize;
     QModelIndex index;
+    QColor textColor;
 };
 
 RaptorItemDelegate::RaptorItemDelegate(QObject *parent) : QStyledItemDelegate(parent),
@@ -85,8 +87,12 @@ void RaptorItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem & o
 
     }
 
-    if (d->optV4.state & QStyle::State_Selected){
+    if (d->optV4.state & QStyle::State_Selected) {
         d->optV4.decorationSize *= 2;
+    }
+
+    if (d->textColor != QColor()) {
+        d->optV4.palette.setColor(QPalette::Text, d->textColor);
     }
 
 //     kDebug()<<d->optV4.decorationSize;
@@ -101,3 +107,7 @@ void RaptorItemDelegate::animatePaint(int frame)
     d->view->viewport()->update(d->optV4.rect);
 }
 
+void RaptorItemDelegate::setTextColor(const QColor &color)
+{
+    d->textColor = color;
+}

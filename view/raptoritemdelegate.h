@@ -21,6 +21,7 @@ class RaptorItemDelegate : public QStyledItemDelegate
         ~RaptorItemDelegate();
 
         void paint(QPainter *painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const;
+        void setTextColor(const QColor &);
 
 
     protected slots:

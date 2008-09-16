@@ -51,6 +51,7 @@ void Raptor::init()
     }
 
     setupView();
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(updateColors()));
     setIcon("plasma");
     
 } 
@@ -62,6 +63,9 @@ void Raptor::setupView()
 
     m_view = new RaptorItemsView();
     RaptorItemDelegate *delegate = new RaptorItemDelegate();
+    //TODO: connect this to theme change
+    delegate->setTextColor(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
+
     Kickoff::ApplicationModel *model = new Kickoff::ApplicationModel();
 
     // let's make the view nicer in the applet
@@ -82,7 +86,12 @@ QWidget* Raptor::widget()
 {
     return static_cast<QWidget*>(m_view);
 }
- 
+
+void Raptor::updateColors()
+{
+    static_cast<RaptorItemDelegate*>(m_view->itemDelegate())->setTextColor(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
+}
+
 void Raptor::paintInterface(QPainter *p,
         const QStyleOptionGraphicsItem *option, const QRect &contentsRect)
 {
