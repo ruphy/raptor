@@ -32,7 +32,7 @@ set(raptor_SRCS
 # Now make sure all files get to the right place
 kde4_add_plugin(plasma_applet_raptor ${raptor_SRCS})
 target_link_libraries(plasma_applet_raptor 
-                      ${PLASMA_LIBS} ${KDE4_KDEUI_LIBS} ${KDE4_SOLID_LIBS} solidcontrol)
+                      ${PLASMA_LIBS} ${KDE4_KDEUI_LIBS} ${KDE4_SOLID_LIBS} ${KDE4_KIO_LIBS} solidcontrol)
  
 install(TARGETS plasma_applet_raptor
         DESTINATION ${PLUGIN_INSTALL_DIR})

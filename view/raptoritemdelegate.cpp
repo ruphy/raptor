@@ -72,6 +72,7 @@ void RaptorItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem & o
     d->optV4.decorationSize /= 2;
 
     if (d->optV4.state & QStyle::State_MouseOver && !(d->optV4.state & QStyle::State_Selected) ) {
+        d->optV4.state &= ~QStyle::State_MouseOver; //this removes the mouseOver state in order to draw a nicer selection rect
 
         // here comes what should be animated
         if (d->timeLine->state() == QTimeLine::NotRunning && d->index != index) {

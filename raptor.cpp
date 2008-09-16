@@ -18,6 +18,11 @@
 #include <QGraphicsLinearLayout>
 #include <QGraphicsProxyWidget>
 #include <QPalette>
+
+// KDE
+#include <KDesktopFile>
+#include <KService>
+#include <KRun>
  
 #include <plasma/svg.h>
 #include <plasma/theme.h>
@@ -80,6 +85,8 @@ void Raptor::setupView()
     m_view->setItemDelegate(delegate);
 
     m_view->hideScrollBars();
+
+    connect(m_view, SIGNAL(applicationClicked(const KUrl &)), this, SLOT(launchApplication(const KUrl &)));
 }
 
 QWidget* Raptor::widget()
@@ -112,6 +119,13 @@ void Raptor::paintInterface(QPainter *p,
 //     p->restore();
 
     PopupApplet::paintInterface(p, option, contentsRect);
+}
+
+void Raptor::launchApplication(const KUrl &url)
+{
+    KDesktopFile desktopFile(url.pathOrUrl());
+    KService service(&desktopFile);
+    KRun::run(service, KUrl::List(), m_view);
 }
  
 #include "raptor.moc"

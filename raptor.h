@@ -43,6 +43,7 @@ class Raptor : public Plasma::PopupApplet
 
     protected slots:
         void updateColors();
+        void launchApplication(const KUrl &);
 
     private:
         Plasma::Svg m_svg;
