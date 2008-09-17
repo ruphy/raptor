@@ -62,7 +62,7 @@ void RaptorItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem & o
     }
 
     d->optV4 = option;
-    initStyleOption(&d->optV4 ,index);
+    initStyleOption(&d->optV4, index);
     d->view = qobject_cast<const QAbstractItemView*>(d->optV4.widget);
 
 

@@ -1,0 +1,95 @@
+/* This file is part of the KDE project
+
+   Copyright (C) 2008 Alessandro Diaferia <alediaferia@gmail.com>
+
+   This program is free software; you can redistribute it and/or
+   modify it under the terms of the GNU General Public
+   License as published by the Free Software Foundation; either
+   version 2 of the License, or (at your option) any later version.
+*/
+
+#include "raptorgraphicswidget.h"
+
+// Local
+#include "view/raptoritemsview.h"
+#include "view/raptoritemdelegate.h"
+#include "engine/kickoff/applicationmodel.h"
+
+// Qt
+#include <QGraphicsLinearLayout>
+#include <QGraphicsProxyWidget>
+
+// KDE
+#include <KDesktopFile>
+#include <KRun>
+#include <KService>
+
+// Plasma
+#include <Plasma/Theme>
+
+class RaptorGraphicsWidget::Private
+{
+public:
+    Private(RaptorGraphicsWidget *q) : q(q),
+                                       view(0),
+                                       proxy(0)
+    {}
+    ~Private(){}
+
+     RaptorGraphicsWidget *q;
+     RaptorItemsView *view;
+     QGraphicsProxyWidget *proxy;
+};
+
+RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent) : QGraphicsWidget(parent),
+                                                                      d(new Private(this))
+{
+    d->view = new RaptorItemsView();
+    RaptorItemDelegate *delegate = new RaptorItemDelegate();
+
+    delegate->setTextColor(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
+
+    Kickoff::ApplicationModel *model = new Kickoff::ApplicationModel();
+
+    // let's make the view nicer in the applet
+    d->view->setAttribute(Qt::WA_NoSystemBackground);
+    d->view->viewport()->setAutoFillBackground(true);
+    QPalette p = d->view->viewport()->palette();
+    p.setColor(QPalette::Base, Qt::transparent);
+    d->view->viewport()->setPalette(p);
+
+    d->view->setModel(model);
+    d->view->setItemDelegate(delegate);
+
+    d->view->hideScrollBars();
+
+    QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(this);
+    layout->setOrientation(Qt::Horizontal);
+
+    d->proxy = new QGraphicsProxyWidget(this);
+    d->proxy->setWidget(d->view);
+
+    layout->addItem(d->proxy);
+
+    setLayout(layout);
+
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(updateColors()));
+    connect(d->view, SIGNAL(applicationClicked(const KUrl &)), this, SLOT(launchApplication(const KUrl &)));
+}
+
+RaptorGraphicsWidget::~RaptorGraphicsWidget()
+{
+    delete d;
+}
+
+void RaptorGraphicsWidget::launchApplication(const KUrl &url)
+{
+    KDesktopFile desktopFile(url.pathOrUrl());
+    KService service(&desktopFile);
+    KRun::run(service, KUrl::List(), d->view);
+}
+
+void RaptorGraphicsWidget::updateColors()
+{
+    static_cast<RaptorItemDelegate*>(d->view->itemDelegate())->setTextColor(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
+}

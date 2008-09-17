@@ -8,21 +8,11 @@
    version 2 of the License, or (at your option) any later version.
 */
 #include "raptor.h"
-#include "view/raptoritemsview.h"
-#include "view/raptoritemdelegate.h"
-#include "engine/kickoff/applicationmodel.h"
+#include "view/raptorgraphicswidget.h"
 
 #include <QPainter>
 #include <QFontMetrics>
 #include <QSizeF>
-#include <QGraphicsLinearLayout>
-#include <QGraphicsProxyWidget>
-#include <QPalette>
-
-// KDE
-#include <KDesktopFile>
-#include <KService>
-#include <KRun>
  
 #include <plasma/svg.h>
 #include <plasma/theme.h>
@@ -31,7 +21,7 @@ Raptor::Raptor(QObject *parent, const QVariantList &args)
     : Plasma::PopupApplet(parent, args),
     m_svg(this),
     m_icon("plasma"),
-    m_view(0)
+    m_gwidget(0)
 {
     // this will get us the standard applet background, for free!
     setBackgroundHints(Plasma::Applet::StandardBackground);
@@ -56,46 +46,19 @@ void Raptor::init()
     }
 
     setupView();
-    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(updateColors()));
+
     setPopupIcon("plasma");
 } 
 
 
 void Raptor::setupView()
 {
-    //WARNING: ruphy this is just for test, don't be scared :) (alediaferia)
-
-    m_view = new RaptorItemsView();
-    RaptorItemDelegate *delegate = new RaptorItemDelegate();
-    //TODO: connect this to theme change
-    delegate->setTextColor(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
-
-    Kickoff::ApplicationModel *model = new Kickoff::ApplicationModel();
-
-    // let's make the view nicer in the applet
-    //m_view->viewport()->setAttribute(Qt::WA_NoSystemBackground);
-    m_view->setAttribute(Qt::WA_NoSystemBackground);//FIXME: Probable just setStyleSheet("background: transparent;"); ?
-    m_view->viewport()->setAutoFillBackground(true);
-    QPalette p = m_view->viewport()->palette();
-    p.setColor(QPalette::Base, Qt::transparent);
-    m_view->viewport()->setPalette(p);
-
-    m_view->setModel(model);
-    m_view->setItemDelegate(delegate);
-
-    m_view->hideScrollBars();
-
-    connect(m_view, SIGNAL(applicationClicked(const KUrl &)), this, SLOT(launchApplication(const KUrl &)));
+    m_gwidget = new RaptorGraphicsWidget(this);
 }
 
-QWidget* Raptor::widget()
+QGraphicsWidget* Raptor::graphicsWidget()
 {
-    return static_cast<QWidget*>(m_view);
-}
-
-void Raptor::updateColors()
-{
-    static_cast<RaptorItemDelegate*>(m_view->itemDelegate())->setTextColor(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
+    return m_gwidget;
 }
 
 void Raptor::paintInterface(QPainter *p,
@@ -118,13 +81,6 @@ void Raptor::paintInterface(QPainter *p,
 //     p->restore();
 
     PopupApplet::paintInterface(p, option, contentsRect);
-}
-
-void Raptor::launchApplication(const KUrl &url)
-{
-    KDesktopFile desktopFile(url.pathOrUrl());
-    KService service(&desktopFile);
-    KRun::run(service, KUrl::List(), m_view);
 }
  
 #include "raptor.moc"

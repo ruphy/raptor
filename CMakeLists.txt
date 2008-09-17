@@ -23,6 +23,7 @@ set(raptor_SRCS
     raptor.cpp
     view/raptoritemsview.cpp # When starting implementing raptoritemsview include also engine/kickoff/*
     view/raptoritemdelegate.cpp
+    view/raptorgraphicswidget.cpp
     engine/kickoff/applicationmodel.cpp
     engine/kickoff/kickoffabstractmodel.cpp
     engine/kickoff/models.cpp

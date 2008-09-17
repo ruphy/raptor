@@ -16,7 +16,7 @@
 #include <Plasma/PopupApplet>
 #include <Plasma/Svg>
 
-class RaptorItemsView;
+class RaptorGraphicsWidget;
 
 class QSizeF;
 
@@ -36,19 +36,16 @@ class Raptor : public Plasma::PopupApplet
 
         void init();
 
-        QWidget *widget();
+        QGraphicsWidget *graphicsWidget();
 
     protected:
         void setupView();
 
-    protected slots:
-        void updateColors();
-        void launchApplication(const KUrl &);
 
     private:
         Plasma::Svg m_svg;
         KIcon m_icon;
-        RaptorItemsView *m_view;
+        RaptorGraphicsWidget *m_gwidget;
 };
 
 // This is the command that links your applet to the .desktop file
