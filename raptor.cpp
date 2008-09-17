@@ -58,7 +58,6 @@ void Raptor::init()
     setupView();
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(updateColors()));
     setPopupIcon("plasma");
-    
 } 
 
 
@@ -75,7 +74,7 @@ void Raptor::setupView()
 
     // let's make the view nicer in the applet
     //m_view->viewport()->setAttribute(Qt::WA_NoSystemBackground);
-    m_view->setAttribute(Qt::WA_NoSystemBackground);
+    m_view->setAttribute(Qt::WA_NoSystemBackground);//FIXME: Probable just setStyleSheet("background: transparent;"); ?
     m_view->viewport()->setAutoFillBackground(true);
     QPalette p = m_view->viewport()->palette();
     p.setColor(QPalette::Base, Qt::transparent);
