@@ -18,6 +18,7 @@
 // Qt
 #include <QGraphicsLinearLayout>
 #include <QGraphicsProxyWidget>
+#include <QGraphicsSceneResizeEvent>
 
 // KDE
 #include <KDesktopFile>
@@ -104,7 +105,6 @@ QSizeF RaptorGraphicsWidget::sizeHint(Qt::SizeHint which, const QSizeF & constra
     kDebug()<<"hint"<<d->view->sizeHint();
     kDebug()<<"maximum"<<d->view->maximumSize();
     kDebug()<<"current"<<this->size().toSize();
-    kDebug()<<"constraint"<<constraint;
 
     switch (which) {
     case Qt::MinimumSize :
@@ -120,4 +120,14 @@ QSizeF RaptorGraphicsWidget::sizeHint(Qt::SizeHint which, const QSizeF & constra
     }
 
     return size;
+}
+
+void RaptorGraphicsWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
+{
+    kDebug()<<"oldSize"<<event->oldSize();
+    kDebug()<<"newSize"<<event->newSize();
+    kDebug()<<"preferredSize"<<preferredSize();
+    kDebug()<<"maximumHeight"<<maximumHeight();
+
+    QGraphicsWidget::resizeEvent(event);
 }
