@@ -22,6 +22,9 @@ class RaptorGraphicsWidget : public QGraphicsWidget
         RaptorGraphicsWidget(QGraphicsItem *parent);
         ~RaptorGraphicsWidget();
 
+    protected:
+        QSizeF sizeHint(Qt::SizeHint which, const QSizeF &constraint = QSizeF() ) const;
+
     protected slots:
         void updateColors();
         void launchApplication(const KUrl &);

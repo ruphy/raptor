@@ -23,6 +23,7 @@
 #include <KDesktopFile>
 #include <KRun>
 #include <KService>
+#include <KDebug>
 
 // Plasma
 #include <Plasma/Theme>
@@ -75,6 +76,7 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent) : QGraphicsWid
 
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(updateColors()));
     connect(d->view, SIGNAL(applicationClicked(const KUrl &)), this, SLOT(launchApplication(const KUrl &)));
+
 }
 
 RaptorGraphicsWidget::~RaptorGraphicsWidget()
@@ -92,4 +94,30 @@ void RaptorGraphicsWidget::launchApplication(const KUrl &url)
 void RaptorGraphicsWidget::updateColors()
 {
     static_cast<RaptorItemDelegate*>(d->view->itemDelegate())->setTextColor(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
+}
+
+QSizeF RaptorGraphicsWidget::sizeHint(Qt::SizeHint which, const QSizeF & constraint ) const
+{
+    QSizeF size;
+
+    kDebug()<<"minimum"<<d->view->minimumSize();
+    kDebug()<<"hint"<<d->view->sizeHint();
+    kDebug()<<"maximum"<<d->view->maximumSize();
+    kDebug()<<"current"<<this->size().toSize();
+    kDebug()<<"constraint"<<constraint;
+
+    switch (which) {
+    case Qt::MinimumSize :
+        size = QSizeF(200,100);
+        break;
+    default :
+    case Qt::PreferredSize :
+        size = QSizeF(d->view->sizeHint());
+        break;
+    case Qt::MaximumSize :
+        size = QSizeF(d->view->maximumSize());
+        break;
+    }
+
+    return size;
 }
