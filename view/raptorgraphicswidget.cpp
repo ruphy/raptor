@@ -108,7 +108,7 @@ QSizeF RaptorGraphicsWidget::sizeHint(Qt::SizeHint which, const QSizeF & constra
 
     switch (which) {
     case Qt::MinimumSize :
-        size = QSizeF(200,100);
+        size = d->view->minimumSize(); // QSizeF(200,100);
         break;
     default :
     case Qt::PreferredSize :
