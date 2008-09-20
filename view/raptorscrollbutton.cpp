@@ -35,6 +35,7 @@ RaptorScrollButton::RaptorScrollButton(Side side, QWidget * parent)
 {
     d->svg = new Plasma::Svg(this);
     d->svg->setImagePath("widgets/raptorarrows");
+    setAttribute(Qt::WA_NoSystemBackground);
     repaint();
 }
 
