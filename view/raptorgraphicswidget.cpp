@@ -20,6 +20,7 @@
 #include <QGraphicsLinearLayout>
 #include <QGraphicsProxyWidget>
 #include <QGraphicsSceneResizeEvent>
+#include <QScrollBar>
 
 // KDE
 #include <KDesktopFile>
@@ -113,7 +114,7 @@ void RaptorGraphicsWidget::launchApplication(const KUrl &url)
 void RaptorGraphicsWidget::scrollLeft()
 {
     QModelIndex selected = d->view->currentIndex();
-    d->view->scrollTo(d->model->index(selected.row(), selected.column() - 1));
+    d->view->horizontalScrollBar()->setValue(d->view->horizontalScrollBar()->value() - 30);
 }
 
 void RaptorGraphicsWidget::scrollRight()
