@@ -21,7 +21,7 @@
 #include <KDebug>
 
 
-const int ANIMATION_DURATION = 150; // ms
+const int ANIMATION_DURATION = 500; // ms
 
 class RaptorItemDelegate::Private
 {
@@ -39,7 +39,7 @@ class RaptorItemDelegate::Private
     QStyleOptionViewItemV4 optV4;
     const QAbstractItemView *view;
     QTimeLine *timeLine;
-    int animatedSize;
+    int frame;
     QModelIndex index;
     QColor textColor;
 };
@@ -73,18 +73,27 @@ void RaptorItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem & o
 
     if (d->optV4.state & QStyle::State_MouseOver && !(d->optV4.state & QStyle::State_Selected) ) {
         d->optV4.state &= ~QStyle::State_MouseOver; //this removes the mouseOver state in order to draw a nicer selection rect
+        //d->optV4.state &= ~QStyle::State_Selected; //don't draw standard selection rect
 
         // here comes what should be animated
         if (d->timeLine->state() == QTimeLine::NotRunning && d->index != index) {
-            const int oldValue = d->optV4.decorationSize.width();
-            const int newValue = d->optV4.decorationSize.width()*2;
+            //const int oldValue = d->optV4.decorationSize.width();
+            //const int newValue = d->optV4.decorationSize.width()*2;
 
             d->index = index;
 
-            d->timeLine->setFrameRange(oldValue, newValue);
+            d->timeLine->setFrameRange(0, 20);
             d->timeLine->start();
         }
-        d->optV4.decorationSize = QSize(d->animatedSize, d->animatedSize);
+		QLinearGradient lg(0, d->optV4.rect.y(), 0, d->optV4.rect.height());
+		lg.setColorAt(0.0, Qt::red);
+		lg.setColorAt(1.0, Qt::green);
+        //d->optV4.decorationSize = QSize(d->animatedSize, d->animatedSize);
+		painter->save();
+		painter->setBrush(lg);
+		painter->setOpacity(qreal(d->frame)*5.0/100.0); //TODO: make me faster - QPixmap hack
+		painter->drawRect(d->optV4.rect);
+		painter->restore();
 
     }
 
@@ -104,7 +113,7 @@ void RaptorItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem & o
 
 void RaptorItemDelegate::animatePaint(int frame)
 {
-    d->animatedSize = frame;
+    d->frame = frame;
     d->view->viewport()->update(d->optV4.rect);
 }
 
