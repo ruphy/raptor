@@ -29,6 +29,8 @@ class RaptorGraphicsWidget : public QGraphicsWidget
     protected slots:
         void updateColors();
         void launchApplication(const KUrl &);
+        void scrollLeft();
+        void scrollRight();
 
     private:
         class Private;

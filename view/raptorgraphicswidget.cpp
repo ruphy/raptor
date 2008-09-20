@@ -39,13 +39,14 @@ public:
     {}
     ~Private(){}
 
-     RaptorGraphicsWidget *q;
-     RaptorItemsView *view;
-     QGraphicsProxyWidget *proxy;
-     RaptorScrollButton *rightScrollButton;
-     QGraphicsProxyWidget *rightScrollButtonProxy;
-     RaptorScrollButton *leftScrollButton;
-     QGraphicsProxyWidget *leftScrollButtonProxy;
+    RaptorGraphicsWidget *q;
+    RaptorItemsView *view;
+    QGraphicsProxyWidget *proxy;
+    Kickoff::ApplicationModel *model;
+    RaptorScrollButton *rightScrollButton;
+    QGraphicsProxyWidget *rightScrollButtonProxy;
+    RaptorScrollButton *leftScrollButton;
+    QGraphicsProxyWidget *leftScrollButtonProxy;
 };
 
 RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent) : QGraphicsWidget(parent),
@@ -57,6 +58,7 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent) : QGraphicsWid
     d->leftScrollButton = new RaptorScrollButton(RaptorScrollButton::Left, d->view);
     d->leftScrollButtonProxy = new QGraphicsProxyWidget(this);
     d->leftScrollButtonProxy->setWidget(d->leftScrollButton);
+    connect(d->leftScrollButton, SIGNAL(clicked()), SLOT(scrollLeft()));
     layout->addItem(d->leftScrollButtonProxy);
 
     d->view = new RaptorItemsView();
@@ -64,7 +66,7 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent) : QGraphicsWid
 
     delegate->setTextColor(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
 
-    Kickoff::ApplicationModel *model = new Kickoff::ApplicationModel();
+    d->model = new Kickoff::ApplicationModel();
 
     // let's make the view nicer in the applet
     d->view->setAttribute(Qt::WA_NoSystemBackground);
@@ -73,7 +75,7 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent) : QGraphicsWid
     p.setColor(QPalette::Base, Qt::transparent);
     d->view->viewport()->setPalette(p);
 
-    d->view->setModel(model);
+    d->view->setModel(d->model);
     d->view->setItemDelegate(delegate);
 
     d->view->hideScrollBars();
@@ -84,6 +86,7 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent) : QGraphicsWid
     layout->addItem(d->proxy);
 
     d->rightScrollButton = new RaptorScrollButton(RaptorScrollButton::Right, d->view);
+    connect(d->rightScrollButton, SIGNAL(clicked()), SLOT(scrollRight()));
     d->rightScrollButtonProxy = new QGraphicsProxyWidget(this);
     d->rightScrollButtonProxy->setWidget(d->rightScrollButton);
     layout->addItem(d->rightScrollButtonProxy);
@@ -105,6 +108,16 @@ void RaptorGraphicsWidget::launchApplication(const KUrl &url)
     KDesktopFile desktopFile(url.pathOrUrl());
     KService service(&desktopFile);
     KRun::run(service, KUrl::List(), d->view);
+}
+
+void RaptorGraphicsWidget::scrollLeft()
+{
+    QModelIndex selected = d->view->currentIndex();
+    d->view->scrollTo(d->model->index(selected.row(), selected.column() - 1));
+}
+
+void RaptorGraphicsWidget::scrollRight()
+{
 }
 
 void RaptorGraphicsWidget::updateColors()
