@@ -20,16 +20,18 @@
 class RaptorScrollButton::Private
 {
     public:
-        Private()
+        Private(Side s)
+          : side(s)
         {}
         ~Private()
         {}
 
+        Side side;
         Plasma::Svg * svg;
 };
-RaptorScrollButton::RaptorScrollButton(QWidget * parent)
+RaptorScrollButton::RaptorScrollButton(Side side, QWidget * parent)
   : QPushButton(parent),
-    d(new Private())
+    d(new Private(side))
 {
     d->svg = new Plasma::Svg(this);
     d->svg->setImagePath("/home/kde-devel/raptor/view/pics/raptorarrows.svg");
@@ -44,5 +46,10 @@ void RaptorScrollButton::paintEvent(QPaintEvent * event)
 {
     kDebug();
     QPainter p(this);
-    d->svg->paint(&p, QRectF(event->rect()), "rightarrow");
+    if (d->side == Right) {
+       d->svg->paint(&p, QRectF(event->rect()), "rightarrow");
+    }
+    else {
+       d->svg->paint(&p, QRectF(event->rect()), "leftarrow");
+    }
 }

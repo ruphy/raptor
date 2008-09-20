@@ -42,8 +42,8 @@ public:
      RaptorGraphicsWidget *q;
      RaptorItemsView *view;
      QGraphicsProxyWidget *proxy;
-     RaptorScrollButton * leftScrollButton;
-     QGraphicsProxyWidget * scrollProxy;
+     RaptorScrollButton *rightScrollButton;
+     QGraphicsProxyWidget *scrollProxy;
 };
 
 RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent) : QGraphicsWidget(parent),
@@ -76,9 +76,9 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent) : QGraphicsWid
 
     layout->addItem(d->proxy);
 
-    d->leftScrollButton = new RaptorScrollButton(d->view);
+    d->rightScrollButton = new RaptorScrollButton(RaptorScrollButton::Right, d->view);
     d->scrollProxy = new QGraphicsProxyWidget(this);
-    d->scrollProxy->setWidget(d->leftScrollButton);
+    d->scrollProxy->setWidget(d->rightScrollButton);
 
     layout->addItem(d->scrollProxy);
 

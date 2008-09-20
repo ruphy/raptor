@@ -18,7 +18,12 @@ class RaptorScrollButton : public QPushButton
 {
     Q_OBJECT
     public:
-        RaptorScrollButton(QWidget * parent = 0);
+        enum Side
+        {
+           Left,
+           Right
+        };
+        RaptorScrollButton(Side side, QWidget * parent = 0);
         ~RaptorScrollButton();
 
         void paintEvent(QPaintEvent * event);
