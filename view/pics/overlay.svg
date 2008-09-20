@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg2"
+   sodipodi:version="0.32"
+   inkscape:version="0.46"
+   width="210mm"
+   height="297mm"
+   sodipodi:docbase="/home/pinheiro/Documents/pics/estilo/plasma"
+   sodipodi:docname="overlay.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   inkscape:export-filename="/home/pinheiro/Documents/pics/estilo/plasma/Desenho-1.png"
+   inkscape:export-xdpi="119.98476"
+   inkscape:export-ydpi="119.98476">
+  <sodipodi:namedview
+     inkscape:window-height="944"
+     inkscape:window-width="1086"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     guidetolerance="10.0"
+     gridtolerance="10.0"
+     objecttolerance="10.0"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     id="base"
+     inkscape:zoom="0.70603069"
+     inkscape:cx="25.907635"
+     inkscape:cy="129.59777"
+     inkscape:window-x="175"
+     inkscape:window-y="38"
+     inkscape:current-layer="svg2"
+     showgrid="false"
+     showguides="true"
+     inkscape:guide-bbox="true">
+    <sodipodi:guide
+       id="guide2464"
+       position="1678.5,249.5"
+       orientation="0,1" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs5">
+    <inkscape:perspective
+       id="perspective87"
+       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
+       inkscape:vp_z="744.09448 : 526.18109 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 526.18109 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <linearGradient
+       id="linearGradient2945"
+       inkscape:collect="always">
+      <stop
+         id="stop2947"
+         offset="0"
+         style="stop-color:#ffffff;stop-opacity:1;" />
+      <stop
+         id="stop2949"
+         offset="1"
+         style="stop-color:#ffffff;stop-opacity:0;" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient3359"
+       inkscape:collect="always">
+      <stop
+         id="stop3361"
+         offset="0"
+         style="stop-color:#ffffff;stop-opacity:1;" />
+      <stop
+         id="stop3363"
+         offset="1"
+         style="stop-color:#ffffff;stop-opacity:0;" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient3336"
+       inkscape:collect="always">
+      <stop
+         id="stop3338"
+         offset="0"
+         style="stop-color:#ffffff;stop-opacity:1;" />
+      <stop
+         id="stop3340"
+         offset="1"
+         style="stop-color:#ffffff;stop-opacity:0;" />
+    </linearGradient>
+    <linearGradient
+       y2="409.60211"
+       x2="633.21411"
+       y1="488.62131"
+       x1="633.21411"
+       gradientTransform="translate(113,516.62742)"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient3214"
+       xlink:href="#linearGradient3359"
+       inkscape:collect="always" />
+    <linearGradient
+       y2="342.09052"
+       x2="620.83978"
+       y1="467.21613"
+       x1="620.83978"
+       gradientTransform="matrix(1.0903377,0,0,1.0903377,55.835367,480.11815)"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient3216"
+       xlink:href="#linearGradient3336"
+       inkscape:collect="always" />
+    <filter
+       id="filter3326"
+       height="1.3496505"
+       y="-0.17482526"
+       width="1.185848"
+       x="-0.092923984"
+       inkscape:collect="always">
+      <feGaussianBlur
+         id="feGaussianBlur3328"
+         stdDeviation="3.2251157"
+         inkscape:collect="always" />
+    </filter>
+    <filter
+       id="filter3746"
+       height="1.6605191"
+       y="-0.33025957"
+       width="1.2398074"
+       x="-0.11990369"
+       inkscape:collect="always">
+      <feGaussianBlur
+         id="feGaussianBlur3748"
+         stdDeviation="2.6884656"
+         inkscape:collect="always" />
+    </filter>
+    <filter
+       id="filter3750"
+       height="1.4944379"
+       y="-0.24721893"
+       width="1.1298503"
+       x="-0.064925152"
+       inkscape:collect="always">
+      <feGaussianBlur
+         id="feGaussianBlur3752"
+         stdDeviation="2.6884656"
+         inkscape:collect="always" />
+    </filter>
+    <linearGradient
+       gradientTransform="translate(1227.5373,434.16356)"
+       y2="409.60211"
+       x2="633.21411"
+       y1="488.62131"
+       x1="633.21411"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient2341"
+       xlink:href="#linearGradient3359"
+       inkscape:collect="always" />
+    <linearGradient
+       gradientTransform="translate(0,-15.556349)"
+       gradientUnits="userSpaceOnUse"
+       y2="744.78027"
+       x2="1804.3762"
+       y1="682.02222"
+       x1="1804.3762"
+       id="linearGradient2951"
+       xlink:href="#linearGradient2945"
+       inkscape:collect="always" />
+    <filter
+       id="filter3117"
+       height="1.1972328"
+       y="-0.0986164"
+       width="1.2599633"
+       x="-0.12998164"
+       inkscape:collect="always">
+      <feGaussianBlur
+         id="feGaussianBlur3119"
+         stdDeviation="11.418381"
+         inkscape:collect="always" />
+    </filter>
+  </defs>
+  <image
+     inkscape:export-ydpi="90"
+     inkscape:export-xdpi="90"
+     inkscape:export-filename="/home/pinheiro/Documents/pics/estilo/plasma/raptor/image2960.png"
+     xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAABgCAYAAACdSWXJAAAABmJLR0QA/wD/AP+gvaeTAAAACXBI WXMAAA3vAAAN7wG9nqJDAAAAB3RJTUUH1wcREREHSTMVKQAABA5JREFUeNrtnVFz4jAMhOVUcPf/ /+3d0agPR4riSLLsmL5kPeOBYQoPH9vVSklIERFSq1TPi/P61ZcYz71HIiJiA2AJNkAfYdZ7e71o 2OzAXdTj4gC/Omi91+cW9bhTNjuQP9ReDOBXVXat5FXtz+cu6rXv99WK3uCy2jXwq6taK/lT7Yfa 29rUXdhQ8k3tuwKulX11Ra8K9Ab3HxH9VTwf2qu5gsxPwL+e+66g16q+sqK1XWyQ/1Rcdl7NlW1o 0L8V8FrVAP0CXStZ28p3cbQUfVegN9g35dXw6BfAh6pjVPn2QxXH4lnHTQHfQDOK4QE0K/HVVvKh //u5yss1bL25so2rx7tVBYNN3TcjqRUvddTxTse8q/szVZ0fKWWzB7kGXQx1L053iPWfiRiczE56 MYZImHHkl2bjjS2IjOYDcMeneB6vXTH0/kiCD8VQqWMx2fNTcXp7rCMTyTDixIQKoNugU4ru+caw 2oqWCLQY3gPQ/aDdesaJDgigY9CRUE3Q0fEvgO4rhgd1c+eHYbWtQ3pSB4rhnGIokXXAo8finffc TB2UfSNA5xNH3Rm2mhWAHiuGKY9G6pjcsFjfAhTdhh0JUbxi2FIzQOcLYldnCEWfa8PNhgWzjjHI a1bV3JE4ws4Hio5VDet4bxuOYvjTWZoDS4Ci86CJkvPojD8DdN+8A/Huh+JdavAP6xgD7UXk5qEs zDrmxDsM/t/g0eliiNRx3jqaHg1F94OmVuLwGpbWvwfWQBTmZKMC0HnrMBWOIyzvaVjCeXTkOQB9 sqnjIG3Ao8+ljl3d84ohPPqcog/u4MU75OgcaGpEvLAYQtHnU0fz4KwERRGg+2Jw85QwtOBvTB0Z bwboXNec6gwF7ffQrGP4qix0hednHc1TwuDP/aCpp2FJX/iCNacFx5xjvBimT3LEiHROw+Lm6EyW xuorhkTJU8Kg6Dc1LOgKz6UOitIHN/4QoMcUHZ5u0LrOEGvcZqXnmCFWPgKnr2GBdZzL0QfBInW8 L0dTJkc3zyXD6j+BhjLSx+quZTKSo7HyjFIn0MA25sa71Dwa0W5yC46rscZBR14dejTa73OgU4N/ tN9zQJs+zWd8B6DzF3X2xjtA72/Dw3jnPcfvSQ86QHQNC6xjfN6R/jk2ePRcRQvT/t57KIbzFB12 hlD0vOQhrXiHhmVujjYbFmuvtL/hFpav6JUSJzlabyJ63VsE8c5W9NqCvIEWBbSGTE/IGjrWUZxr K+ax8w0thqoB2vdoreqVgsvf6hy9VirH3YZyhTDl0ZaycZvqiS24OIlCHMgA3ndJ9+G3SYszQPLS Rrk4YM9GzM6wiIgFz1Mw1OyrmjzIXmcYNSZoWHJc0j89T5V1YI1biwvaehMsYwCuXl/d91s5kdQZ lgAAAABJRU5ErkJggg== "
+     width="90"
+     height="96"
+     id="overlay"
+     x="230.4724"
+     y="671.53912" />
+</svg>
