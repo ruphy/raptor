@@ -22,7 +22,8 @@
 
 #include "blur.cpp" //TODO: make this a function in Plasma::PaintUtils
 
-const int ANIMATION_DURATION = 500; // ms FIXME make me shorter
+// FIXME: use Animator, for a shared timer.
+const int ANIMATION_DURATION = 200;
 
 class RaptorItemDelegate::Private
 {
