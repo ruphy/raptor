@@ -114,11 +114,17 @@ void RaptorGraphicsWidget::launchApplication(const KUrl &url)
 void RaptorGraphicsWidget::scrollLeft()
 {
     QModelIndex selected = d->view->currentIndex();
-    d->view->horizontalScrollBar()->setValue(d->view->horizontalScrollBar()->value() - 30);
+    QModelIndex leftOne = d->model->index(selected.row() - 1, 0);
+    d->view->smoothScrollTo(leftOne);
+    d->view->setCurrentIndex(leftOne);
 }
 
 void RaptorGraphicsWidget::scrollRight()
 {
+    QModelIndex selected = d->view->currentIndex();
+    QModelIndex rightOne = d->model->index(selected.row() + 1, 0);
+    d->view->smoothScrollTo(rightOne);
+    d->view->setCurrentIndex(rightOne);
 }
 
 void RaptorGraphicsWidget::updateColors()
