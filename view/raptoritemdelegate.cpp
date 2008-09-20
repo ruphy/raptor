@@ -20,8 +20,9 @@
 //KDE
 #include <KDebug>
 
+#include "blur.cpp" //TODO: make this a function in Plasma::PaintUtils
 
-const int ANIMATION_DURATION = 500; // ms
+const int ANIMATION_DURATION = 500; // ms FIXME make me shorter
 
 class RaptorItemDelegate::Private
 {
@@ -29,11 +30,11 @@ class RaptorItemDelegate::Private
         Private(RaptorItemDelegate *q):
                 q(q),
                 timeLine(new QTimeLine(ANIMATION_DURATION, q)),
-                textColor(QColor())
-
+                textColor(QColor()),
+				i(0)
                 {}
         ~Private()
-                {}
+                { delete i; }
 
     RaptorItemDelegate *q;
     QStyleOptionViewItemV4 optV4;
@@ -42,6 +43,7 @@ class RaptorItemDelegate::Private
     int frame;
     QModelIndex index;
     QColor textColor;
+	QImage *i;
 };
 
 RaptorItemDelegate::RaptorItemDelegate(QObject *parent) : QStyledItemDelegate(parent),
@@ -65,6 +67,7 @@ void RaptorItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem & o
     initStyleOption(&d->optV4, index);
     d->view = qobject_cast<const QAbstractItemView*>(d->optV4.widget);
 
+    generateBgPixmap(); // TODO Bg --> Background
 
     painter->setRenderHint(QPainter::Antialiasing);
     painter->setPen(Qt::NoPen);
@@ -85,30 +88,45 @@ void RaptorItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem & o
             d->timeLine->setFrameRange(0, 20);
             d->timeLine->start();
         }
-		QLinearGradient lg(0, d->optV4.rect.y(), 0, d->optV4.rect.height());
-		lg.setColorAt(0.0, Qt::red);
-		lg.setColorAt(1.0, Qt::green);
-        //d->optV4.decorationSize = QSize(d->animatedSize, d->animatedSize);
-		painter->save();
-		painter->setBrush(lg);
-		painter->setOpacity(qreal(d->frame)*5.0/100.0); //TODO: make me faster - QPixmap hack
-		painter->drawRect(d->optV4.rect);
-		painter->restore();
+
+        painter->save();
+        painter->setOpacity(qreal(d->frame)*5.0/100.0); //TODO: make me faster - QPixmap hack
+        painter->drawImage(d->optV4.rect, *d->i);
+        painter->restore();
 
     }
 
     if (d->optV4.state & QStyle::State_Selected) {
-        d->optV4.decorationSize *= 2;
+        painter->drawImage(d->optV4.rect, *d->i);
     }
 
     if (d->textColor != QColor()) {
         d->optV4.palette.setColor(QPalette::Text, d->textColor);
     }
 
-//     kDebug()<<d->optV4.decorationSize;
     QStyledItemDelegate::paint(painter, d->optV4, index);
 
 
+}
+
+void RaptorItemDelegate::generateBgPixmap() const // TODO find a way to make this themable, preferrably via SVG.
+{
+    if (!d->i) { // it's an expensive operation, so let's keep a cached pixmap. TODO: profile and eventually share it across items. TODO cache QPixmap instead.
+//         d->pixmap = new QPixmap;
+        d->i = new QImage(d->optV4.decorationSize, QImage::Format_ARGB32_Premultiplied);
+        d->i->fill(0);
+        QPainter p(d->i);
+        p.setOpacity(0.41);
+        QLinearGradient lg(0, 0, 0,  d->optV4.decorationSize.height());
+        lg.setColorAt(0.0, QColor(255, 255, 255, 255));
+        lg.setColorAt(1.0, QColor(255, 255, 255, 39));
+        p.setBrush(lg);
+        p.drawRect(0, 0, d->optV4.decorationSize.width(),  d->optV4.decorationSize.height());
+
+        expblur<16, 7>(*d->i, 7);
+
+//         d->pixmap->fromImage(i); FIXME use the right conversion
+    }
 }
 
 void RaptorItemDelegate::animatePaint(int frame)
