@@ -46,10 +46,12 @@ void RaptorScrollButton::paintEvent(QPaintEvent * event)
 {
     kDebug();
     QPainter p(this);
+    QRectF r(event->rect());
+    r.setSize(size());
     if (d->side == Right) {
-       d->svg->paint(&p, QRectF(event->rect()), "rightarrow");
+       d->svg->paint(&p, r, "rightarrow");
     }
     else {
-       d->svg->paint(&p, QRectF(event->rect()), "leftarrow");
+       d->svg->paint(&p, r, "leftarrow");
     }
 }
