@@ -52,7 +52,7 @@ RaptorScrollButton::~RaptorScrollButton()
 
 void RaptorScrollButton::paintEvent(QPaintEvent * event)
 {
-    kDebug();
+//     kDebug();
     QPainter p(this);
     QRectF r(event->rect());
     r.setSize(QSizeF(size().width() * 0.7 + d->frame, size().height() * 0.6 + d->frame));
