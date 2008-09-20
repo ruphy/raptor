@@ -42,7 +42,7 @@ RaptorScrollButton::RaptorScrollButton(Side side, QWidget * parent)
     setAttribute(Qt::WA_NoSystemBackground);
     repaint();
     installEventFilter(this);
-    d->timeLine = new QTimeLine(250, this);//TODO: Move to private class
+    d->timeLine = new QTimeLine(100, this);//TODO: Move to private class
     connect(d->timeLine, SIGNAL(frameChanged(int)), this, SLOT(animatePaint(int)));
 }
 
