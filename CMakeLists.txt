@@ -41,3 +41,5 @@ install(TARGETS plasma_applet_raptor
  
 install(FILES plasma-applet-raptor.desktop
         DESTINATION ${SERVICES_INSTALL_DIR})
+
+install(FILES view/pics/raptorarrows.svg DESTINATION ${DATA_INSTALL_DIR}/desktoptheme/default/widgets/)

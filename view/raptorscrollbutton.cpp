@@ -34,7 +34,7 @@ RaptorScrollButton::RaptorScrollButton(Side side, QWidget * parent)
     d(new Private(side))
 {
     d->svg = new Plasma::Svg(this);
-    d->svg->setImagePath("/home/kde-devel/raptor/view/pics/raptorarrows.svg");
+    d->svg->setImagePath("widgets/raptorarrows");
     repaint();
 }
 

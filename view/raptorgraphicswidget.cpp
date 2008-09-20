@@ -43,12 +43,22 @@ public:
      RaptorItemsView *view;
      QGraphicsProxyWidget *proxy;
      RaptorScrollButton *rightScrollButton;
-     QGraphicsProxyWidget *scrollProxy;
+     QGraphicsProxyWidget *rightScrollButtonProxy;
+     RaptorScrollButton *leftScrollButton;
+     QGraphicsProxyWidget *leftScrollButtonProxy;
 };
 
 RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent) : QGraphicsWidget(parent),
                                                                       d(new Private(this))
 {
+    QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(this);
+    layout->setOrientation(Qt::Horizontal);
+
+    d->leftScrollButton = new RaptorScrollButton(RaptorScrollButton::Left, d->view);
+    d->leftScrollButtonProxy = new QGraphicsProxyWidget(this);
+    d->leftScrollButtonProxy->setWidget(d->leftScrollButton);
+    layout->addItem(d->leftScrollButtonProxy);
+
     d->view = new RaptorItemsView();
     RaptorItemDelegate *delegate = new RaptorItemDelegate();
 
@@ -68,19 +78,15 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent) : QGraphicsWid
 
     d->view->hideScrollBars();
 
-    QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(this);
-    layout->setOrientation(Qt::Horizontal);
-
     d->proxy = new QGraphicsProxyWidget(this);
     d->proxy->setWidget(d->view);
 
     layout->addItem(d->proxy);
 
     d->rightScrollButton = new RaptorScrollButton(RaptorScrollButton::Right, d->view);
-    d->scrollProxy = new QGraphicsProxyWidget(this);
-    d->scrollProxy->setWidget(d->rightScrollButton);
-
-    layout->addItem(d->scrollProxy);
+    d->rightScrollButtonProxy = new QGraphicsProxyWidget(this);
+    d->rightScrollButtonProxy->setWidget(d->rightScrollButton);
+    layout->addItem(d->rightScrollButtonProxy);
 
     setLayout(layout);
 
