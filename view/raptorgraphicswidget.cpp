@@ -13,6 +13,7 @@
 // Local
 #include "view/raptoritemsview.h"
 #include "view/raptoritemdelegate.h"
+#include "view/raptorscrollbutton.h"
 #include "engine/kickoff/applicationmodel.h"
 
 // Qt
@@ -41,6 +42,8 @@ public:
      RaptorGraphicsWidget *q;
      RaptorItemsView *view;
      QGraphicsProxyWidget *proxy;
+     RaptorScrollButton * leftScrollButton;
+     QGraphicsProxyWidget * scrollProxy;
 };
 
 RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent) : QGraphicsWidget(parent),
@@ -72,6 +75,12 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent) : QGraphicsWid
     d->proxy->setWidget(d->view);
 
     layout->addItem(d->proxy);
+
+    d->leftScrollButton = new RaptorScrollButton(d->view);
+    d->scrollProxy = new QGraphicsProxyWidget(this);
+    d->scrollProxy->setWidget(d->leftScrollButton);
+
+    layout->addItem(d->scrollProxy);
 
     setLayout(layout);
 
