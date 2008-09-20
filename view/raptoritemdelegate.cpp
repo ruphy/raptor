@@ -31,10 +31,10 @@ class RaptorItemDelegate::Private
                 q(q),
                 timeLine(new QTimeLine(ANIMATION_DURATION, q)),
                 textColor(QColor()),
-				i(0)
+                p(0)
                 {}
         ~Private()
-                { delete i; }
+                { delete p; }
 
     RaptorItemDelegate *q;
     QStyleOptionViewItemV4 optV4;
@@ -43,7 +43,7 @@ class RaptorItemDelegate::Private
     int frame;
     QModelIndex index;
     QColor textColor;
-	QImage *i;
+    QPixmap *p;
 };
 
 RaptorItemDelegate::RaptorItemDelegate(QObject *parent) : QStyledItemDelegate(parent),
@@ -89,15 +89,23 @@ void RaptorItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem & o
             d->timeLine->start();
         }
 
+//         QPixmap temp = *(d->p);
+//         QPainter p(&temp);
+//         p.setCompositionMode(QPainter::CompositionMode_Source);
+//         p.drawPixmap(0, 0, *d->p);
+//         p.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+//         p.fillRect(temp.rect(), QColor(0, 0, 0, qreal(d->frame)*5.0/100.0));
+//         p.end();
+//         painter->drawPixmap(d->optV4.rect, temp);
         painter->save();
-        painter->setOpacity(qreal(d->frame)*5.0/100.0); //TODO: make me faster - QPixmap hack
-        painter->drawImage(d->optV4.rect, *d->i);
+        painter->setOpacity(qreal(d->frame)*5.0/100.0);
+        painter->drawPixmap(d->optV4.rect, *d->p);
         painter->restore();
 
     }
 
     if (d->optV4.state & QStyle::State_Selected) {
-        painter->drawImage(d->optV4.rect, *d->i);
+        painter->drawPixmap(d->optV4.rect, *d->p);
     }
 
     if (d->textColor != QColor()) {
@@ -105,27 +113,44 @@ void RaptorItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem & o
     }
 
     QStyledItemDelegate::paint(painter, d->optV4, index);
-
+    
 
 }
 
 void RaptorItemDelegate::generateBgPixmap() const // TODO find a way to make this themable, preferrably via SVG.
 {
-    if (!d->i) { // it's an expensive operation, so let's keep a cached pixmap. TODO: profile and eventually share it across items. TODO cache QPixmap instead.
-//         d->pixmap = new QPixmap;
-        d->i = new QImage(d->optV4.decorationSize, QImage::Format_ARGB32_Premultiplied);
-        d->i->fill(0);
-        QPainter p(d->i);
-        p.setOpacity(0.41);
-        QLinearGradient lg(0, 0, 0,  d->optV4.decorationSize.height());
+    if (!d->p) { // it's an expensive operation, so let's keep a cached pixmap. TODO: profile and eventually share it across items. TODO cache QPixmap instead.
+        QSize s(d->optV4.decorationSize.width()-14, d->optV4.decorationSize.height()-14); //FIXME: un-hardcode that 10 value (modify also below)
+        QImage *i = new QImage(d->optV4.decorationSize, QImage::Format_ARGB32_Premultiplied);
+        i->fill(0);
+        QPainter p(i);
+        QLinearGradient lg(0, 7, 0,  s.height());
         lg.setColorAt(0.0, QColor(255, 255, 255, 255));
         lg.setColorAt(1.0, QColor(255, 255, 255, 39));
         p.setBrush(lg);
-        p.drawRect(0, 0, d->optV4.decorationSize.width(),  d->optV4.decorationSize.height());
+        p.drawRect(7, 7, s.width(), s.height());
 
-        expblur<16, 7>(*d->i, 7);
+        expblur<16, 7>(*i, 8);
 
-//         d->pixmap->fromImage(i); FIXME use the right conversion
+        p.end();
+
+        d->p = new QPixmap(QPixmap::fromImage(*i));
+
+        QPixmap temp(d->p->size());
+        temp.fill(Qt::transparent);
+        
+        QPainter pp(&temp);
+        pp.setCompositionMode(QPainter::CompositionMode_Source);
+        pp.drawPixmap(0, 0, *d->p);
+        pp.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+        pp.fillRect(temp.rect(), QColor(0, 0, 0, 125));
+        pp.end();
+
+        delete d->p;
+
+        d->p = new QPixmap(temp);
+
+        delete i;
     }
 }
 
