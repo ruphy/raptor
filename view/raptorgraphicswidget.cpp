@@ -112,30 +112,30 @@ void RaptorGraphicsWidget::updateColors()
     static_cast<RaptorItemDelegate*>(d->view->itemDelegate())->setTextColor(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
 }
 
-QSizeF RaptorGraphicsWidget::sizeHint(Qt::SizeHint which, const QSizeF & constraint ) const
-{
-    QSizeF size;
-
-    kDebug()<<"minimum"<<d->view->minimumSize();
-    kDebug()<<"hint"<<d->view->sizeHint();
-    kDebug()<<"maximum"<<d->view->maximumSize();
-    kDebug()<<"current"<<this->size().toSize();
-
-    switch (which) {
-    case Qt::MinimumSize :
-        size = d->view->minimumSize(); // QSizeF(200,100);
-        break;
-    default :
-    case Qt::PreferredSize :
-        size = QSizeF(d->view->sizeHint());
-        break;
-    case Qt::MaximumSize :
-        size = QSizeF(d->view->maximumSize());
-        break;
-    }
-
-    return size;
-}
+// QSizeF RaptorGraphicsWidget::sizeHint(Qt::SizeHint which, const QSizeF & constraint ) const
+// {
+//     QSizeF size;
+// 
+//     kDebug()<<"minimum"<<d->view->minimumSize();
+//     kDebug()<<"hint"<<d->view->sizeHint();
+//     kDebug()<<"maximum"<<d->view->maximumSize();
+//     kDebug()<<"current"<<this->size().toSize();
+// 
+//     switch (which) {
+//     case Qt::MinimumSize :
+//         size = QSizeF(200,100);
+//         break;
+// //     default :
+//     case Qt::PreferredSize :
+//         size = QSizeF(d->view->sizeHint());
+//         break;
+//     case Qt::MaximumSize :
+//         size = QSizeF(d->view->maximumSize());
+//         break;
+//     }
+// 
+//     return size;
+// }
 
 void RaptorGraphicsWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
 {

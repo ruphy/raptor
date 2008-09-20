@@ -23,7 +23,7 @@ class RaptorGraphicsWidget : public QGraphicsWidget
         ~RaptorGraphicsWidget();
 
     protected:
-        QSizeF sizeHint(Qt::SizeHint which, const QSizeF &constraint = QSizeF() ) const;
+//         QSizeF sizeHint(Qt::SizeHint which, const QSizeF &constraint = QSizeF() ) const;
         void resizeEvent(QGraphicsSceneResizeEvent *event);
 
     protected slots:
