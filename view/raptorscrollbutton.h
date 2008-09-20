@@ -27,6 +27,10 @@ class RaptorScrollButton : public QPushButton
         ~RaptorScrollButton();
 
         void paintEvent(QPaintEvent * event);
+        bool eventFilter(QObject * watched, QEvent * event);
+
+    private slots:
+        void animatePaint(int frame);
 
     private:
         class Private;
