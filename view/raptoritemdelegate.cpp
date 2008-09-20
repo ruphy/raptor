@@ -134,21 +134,15 @@ void RaptorItemDelegate::generateBgPixmap() const // TODO find a way to make thi
 
         p.end();
 
-        d->p = new QPixmap(QPixmap::fromImage(*i));
-
-        QPixmap temp(d->p->size());
-        temp.fill(Qt::transparent);
+        d->p = new QPixmap(d->optV4.decorationSize);
+        d->p->fill(Qt::transparent);
         
-        QPainter pp(&temp);
+        QPainter pp(d->p);
         pp.setCompositionMode(QPainter::CompositionMode_Source);
-        pp.drawPixmap(0, 0, *d->p);
+        pp.drawPixmap(0, 0, QPixmap::fromImage(*i));
         pp.setCompositionMode(QPainter::CompositionMode_DestinationIn);
-        pp.fillRect(temp.rect(), QColor(0, 0, 0, 125));
+        pp.fillRect(d->p->rect(), QColor(0, 0, 0, 125));
         pp.end();
-
-        delete d->p;
-
-        d->p = new QPixmap(temp);
 
         delete i;
     }
