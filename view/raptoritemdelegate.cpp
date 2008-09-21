@@ -100,6 +100,10 @@ void RaptorItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem & o
         painter->drawPixmap(d->optV4.rect, *d->p);
         painter->restore();
 
+    } else {
+        if (d->timeLine->state() == QTimeLine::NotRunning) {
+            d->index = QModelIndex();
+            }
     }
 
     if (d->optV4.state & QStyle::State_Selected) {
