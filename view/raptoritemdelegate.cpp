@@ -120,8 +120,8 @@ void RaptorItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem & o
 
 void RaptorItemDelegate::generateBgPixmap() const // TODO find a way to make this themable, preferrably via SVG.
 {
-    if (!d->p) { // it's an expensive operation, so let's keep a cached pixmap. TODO: profile and eventually share it across items. TODO cache QPixmap instead.
-        QSize s(d->optV4.decorationSize.width()-14, d->optV4.decorationSize.height()-14); //FIXME: un-hardcode that 10 value (modify also below)
+    if (!d->p) { // it's an expensive operation, so let's keep a cached pixmap.
+        QSize s(d->optV4.decorationSize.width()-14, d->optV4.decorationSize.height()-14); //FIXME: un-hardcode that 14 value (modify also below)
         QImage *i = new QImage(d->optV4.decorationSize, QImage::Format_ARGB32_Premultiplied);
         i->fill(0);
         QPainter p(i);
@@ -129,6 +129,7 @@ void RaptorItemDelegate::generateBgPixmap() const // TODO find a way to make thi
         lg.setColorAt(0.0, QColor(255, 255, 255, 255));
         lg.setColorAt(1.0, QColor(255, 255, 255, 39));
         p.setBrush(lg);
+	p.translate(0.5, 0.5);
         p.drawRect(7, 7, s.width(), s.height());
 
         expblur<16, 7>(*i, 8);
