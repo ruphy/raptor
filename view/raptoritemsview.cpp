@@ -158,6 +158,7 @@ void RaptorItemsView::enterItem(const QModelIndex &index)
     } else {
         emit applicationClicked(KUrl(model()->data(index, Kickoff::UrlRole).toString()));
     }
+    focusCentralItem();
 }
 
 void RaptorItemsView::browseBack()
@@ -189,15 +190,16 @@ void RaptorItemsView::showScrollBars()
 
 void RaptorItemsView::focusCentralItem()
 {
-    const int rows = model()->rowCount();
-    const int middle = rows / 2;
-    QModelIndex _centralItem = model()->index(middle, 0);
-    setCurrentIndex(_centralItem);
-}
+    if (model()->canFetchMore(rootIndex())) {
+        model()->fetchMore(rootIndex());
+    }
 
-QModelIndex RaptorItemsView::centralItem()
-{
-    return d->centralItem;
+    const int rows = model()->rowCount(rootIndex());
+    kDebug()<<rootIndex().isValid()<<rows;
+    const int middle = rows / 2;
+
+    QModelIndex _centralItem = model()->index(middle, 0, rootIndex());
+    setCurrentIndex(_centralItem);
 }
 
 void RaptorItemsView::setCurrentIndex(const QModelIndex &index)

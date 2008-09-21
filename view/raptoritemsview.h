@@ -36,7 +36,6 @@ class RaptorItemsView : public QListView
         Kickoff::ApplicationModel* model();
         void hideScrollBars();
         void showScrollBars();
-        QModelIndex centralItem();
         void focusCentralItem();
 
     protected:
