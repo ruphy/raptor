@@ -147,6 +147,8 @@ void RaptorItemsView::resizeEvent(QResizeEvent *event)
         int iconSize = (size - fm.height());
         setIconSize(QSize(iconSize, iconSize));
     }
+
+    smoothScrollTo(currentIndex());
 }
 
 void RaptorItemsView::enterItem(const QModelIndex &index)
@@ -183,4 +185,23 @@ void RaptorItemsView::showScrollBars()
 {
     horizontalScrollBar()->show();
     verticalScrollBar()->show();
+}
+
+void RaptorItemsView::focusCentralItem()
+{
+    const int rows = model()->rowCount();
+    const int middle = rows / 2;
+    QModelIndex _centralItem = model()->index(middle, 0);
+    setCurrentIndex(_centralItem);
+}
+
+QModelIndex RaptorItemsView::centralItem()
+{
+    return d->centralItem;
+}
+
+void RaptorItemsView::setCurrentIndex(const QModelIndex &index)
+{
+    QListView::setCurrentIndex(index);
+    emit activated(index);
 }

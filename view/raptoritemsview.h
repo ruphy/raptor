@@ -36,6 +36,8 @@ class RaptorItemsView : public QListView
         Kickoff::ApplicationModel* model();
         void hideScrollBars();
         void showScrollBars();
+        QModelIndex centralItem();
+        void focusCentralItem();
 
     protected:
         int getNewScrollValue(const QRect &rect);
@@ -57,6 +59,11 @@ class RaptorItemsView : public QListView
          * Browse the menu back.
          */
         void browseBack();
+
+        /**
+         * Reimplemented from QAbstractItemView to smoothScroll to the item
+         */
+        void setCurrentIndex(const QModelIndex &index);
 
     signals:
         /**

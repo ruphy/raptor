@@ -35,7 +35,7 @@ class RaptorItemDelegate::Private
                 p(0)
                 {}
         ~Private()
-                { delete p; }
+                {}
 
     RaptorItemDelegate *q;
     QStyleOptionViewItemV4 optV4;
