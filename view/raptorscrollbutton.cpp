@@ -59,9 +59,11 @@ void RaptorScrollButton::paintEvent(QPaintEvent * event)
     QPainter p(this);
     QRectF r(event->rect());
 
+	p.setRenderHint(QPainter::SmoothPixmapTransform);
     p.setRenderHint(QPainter::Antialiasing);
 
     r.setSize(QSizeF(size().width() * 0.7 + d->frame, size().height() * 0.6 + d->frame));
+	d->svg->resize(r.size());
     r.moveCenter(QPointF(size().width() / 2, size().height() / 2));
     if (d->side == Right) {
        d->svg->paint(&p, r, "rightarrow");
