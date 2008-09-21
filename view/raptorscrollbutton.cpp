@@ -21,13 +21,19 @@
 class RaptorScrollButton::Private
 {
     public:
-        Private(Side s)
-          : side(s),
+        Private(Side s, RaptorScrollButton * button)
+          : q(button),
+            side(s),
             frame(0)
-        {}
+        {
+            svg = new Plasma::Svg(q);
+            svg->setImagePath("widgets/raptorarrows");
+            timeLine = new QTimeLine(250, button);
+        }
         ~Private()
         {}
 
+        RaptorScrollButton * q;
         Side side;
         Plasma::Svg * svg;
         QTimeLine * timeLine;
@@ -35,14 +41,11 @@ class RaptorScrollButton::Private
 };
 RaptorScrollButton::RaptorScrollButton(Side side, QWidget * parent)
   : QPushButton(parent),
-    d(new Private(side))
+    d(new Private(side, this))
 {
-    d->svg = new Plasma::Svg(this);
-    d->svg->setImagePath("widgets/raptorarrows");
     setAttribute(Qt::WA_NoSystemBackground);
     repaint();
     installEventFilter(this);
-    d->timeLine = new QTimeLine(100, this);//TODO: Move to private class
     connect(d->timeLine, SIGNAL(frameChanged(int)), this, SLOT(animatePaint(int)));
 }
 
@@ -67,6 +70,7 @@ void RaptorScrollButton::paintEvent(QPaintEvent * event)
 
 bool RaptorScrollButton::eventFilter(QObject * watched, QEvent * event)
 {
+    Q_UNUSED(watched)
     switch(event->type())
     {
         case QEvent::HoverEnter:

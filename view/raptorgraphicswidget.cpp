@@ -38,7 +38,9 @@ public:
                                        view(0),
                                        proxy(0)
     {}
-    ~Private(){}
+    ~Private()
+    {
+    }
 
     RaptorGraphicsWidget *q;
     RaptorItemsView *view;
@@ -56,7 +58,7 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent) : QGraphicsWid
     QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(this);
     layout->setOrientation(Qt::Horizontal);
 
-    d->leftScrollButton = new RaptorScrollButton(RaptorScrollButton::Left, d->view);
+    d->leftScrollButton = new RaptorScrollButton(RaptorScrollButton::Left);
     d->leftScrollButtonProxy = new QGraphicsProxyWidget(this);
     d->leftScrollButtonProxy->setWidget(d->leftScrollButton);
     connect(d->leftScrollButton, SIGNAL(clicked()), SLOT(scrollLeft()));
@@ -86,7 +88,7 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent) : QGraphicsWid
 
     layout->addItem(d->proxy);
 
-    d->rightScrollButton = new RaptorScrollButton(RaptorScrollButton::Right, d->view);
+    d->rightScrollButton = new RaptorScrollButton(RaptorScrollButton::Right);
     connect(d->rightScrollButton, SIGNAL(clicked()), SLOT(scrollRight()));
     d->rightScrollButtonProxy = new QGraphicsProxyWidget(this);
     d->rightScrollButtonProxy->setWidget(d->rightScrollButton);
@@ -96,6 +98,8 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent) : QGraphicsWid
 
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(updateColors()));
     connect(d->view, SIGNAL(applicationClicked(const KUrl &)), this, SLOT(launchApplication(const KUrl &)));
+
+    d->view->focusCentralItem();
 
 }
 
@@ -115,7 +119,6 @@ void RaptorGraphicsWidget::scrollLeft()
 {
     QModelIndex selected = d->view->currentIndex();
     QModelIndex leftOne = d->model->index(selected.row() - 1, 0);
-    d->view->smoothScrollTo(leftOne);
     d->view->setCurrentIndex(leftOne);
     d->view->update();
 }
@@ -124,7 +127,6 @@ void RaptorGraphicsWidget::scrollRight()
 {
     QModelIndex selected = d->view->currentIndex();
     QModelIndex rightOne = d->model->index(selected.row() + 1, 0);
-    d->view->smoothScrollTo(rightOne);
     d->view->setCurrentIndex(rightOne);
     d->view->update();
 }

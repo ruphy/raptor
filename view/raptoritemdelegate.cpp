@@ -35,7 +35,7 @@ class RaptorItemDelegate::Private
                 p(0)
                 {}
         ~Private()
-                { delete p; }
+                {}
 
     RaptorItemDelegate *q;
     QStyleOptionViewItemV4 optV4;
@@ -73,7 +73,7 @@ void RaptorItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem & o
     painter->setRenderHint(QPainter::Antialiasing);
     painter->setPen(Qt::NoPen);
 
-    d->optV4.decorationSize = QSize(64, 64);
+    //d->optV4.decorationSize = QSize(64, 64);
 
     if (d->optV4.state & QStyle::State_MouseOver && !(d->optV4.state & QStyle::State_Selected) ) {
         d->optV4.state &= ~QStyle::State_MouseOver; //this removes the mouseOver state in order to draw a nicer selection rect
@@ -100,6 +100,10 @@ void RaptorItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem & o
         painter->drawPixmap(d->optV4.rect, *d->p);
         painter->restore();
 
+    } else {
+        if (d->timeLine->state() == QTimeLine::NotRunning) {
+            d->index = QModelIndex();
+            }
     }
 
     if (d->optV4.state & QStyle::State_Selected) {
