@@ -56,7 +56,7 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent) : QGraphicsWid
     QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(this);
     layout->setOrientation(Qt::Horizontal);
 
-    d->leftScrollButton = new RaptorScrollButton(RaptorScrollButton::Left, d->view);
+    d->leftScrollButton = new RaptorScrollButton(RaptorScrollButton::Left);
     d->leftScrollButtonProxy = new QGraphicsProxyWidget(this);
     d->leftScrollButtonProxy->setWidget(d->leftScrollButton);
     connect(d->leftScrollButton, SIGNAL(clicked()), SLOT(scrollLeft()));
@@ -86,7 +86,7 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent) : QGraphicsWid
 
     layout->addItem(d->proxy);
 
-    d->rightScrollButton = new RaptorScrollButton(RaptorScrollButton::Right, d->view);
+    d->rightScrollButton = new RaptorScrollButton(RaptorScrollButton::Right);
     connect(d->rightScrollButton, SIGNAL(clicked()), SLOT(scrollRight()));
     d->rightScrollButtonProxy = new QGraphicsProxyWidget(this);
     d->rightScrollButtonProxy->setWidget(d->rightScrollButton);
