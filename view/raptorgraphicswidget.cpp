@@ -30,6 +30,7 @@
 
 // Plasma
 #include <Plasma/Theme>
+#include <Plasma/LineEdit>
 
 class RaptorGraphicsWidget::Private
 {
@@ -50,13 +51,21 @@ public:
     QGraphicsProxyWidget *rightScrollButtonProxy;
     RaptorScrollButton *leftScrollButton;
     QGraphicsProxyWidget *leftScrollButtonProxy;
+    Plasma::LineEdit *searchLine;
 };
 
 RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent) : QGraphicsWidget(parent),
                                                                       d(new Private(this))
 {
-    QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(this);
+    QGraphicsLinearLayout *verticalLayout = new QGraphicsLinearLayout(Qt::Vertical, this);
+    QGraphicsLinearLayout *horizontalLayout = new QGraphicsLinearLayout(verticalLayout);
+    verticalLayout->addItem(horizontalLayout);
+    QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(verticalLayout);
     layout->setOrientation(Qt::Horizontal);
+    verticalLayout->addItem(layout);
+
+    d->searchLine = new Plasma::LineEdit(this);
+    horizontalLayout->addItem(d->searchLine);
 
     d->leftScrollButton = new RaptorScrollButton(RaptorScrollButton::Left);
     d->leftScrollButtonProxy = new QGraphicsProxyWidget(this);
@@ -94,7 +103,7 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent) : QGraphicsWid
     d->rightScrollButtonProxy->setWidget(d->rightScrollButton);
     layout->addItem(d->rightScrollButtonProxy);
 
-    setLayout(layout);
+    setLayout(verticalLayout);
 
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(updateColors()));
     connect(d->view, SIGNAL(applicationClicked(const KUrl &)), this, SLOT(launchApplication(const KUrl &)));

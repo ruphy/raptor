@@ -37,6 +37,7 @@ class RaptorScrollButton::Private
         {
             svg = new Plasma::Svg(q);
             svg->setImagePath(BUTTON_ARROWS);
+            //svg->setContainsMultipleImages(true);
             timeLine = new QTimeLine(250, button);
         }
         ~Private()
