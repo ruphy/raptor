@@ -63,7 +63,7 @@ RaptorItemsView::RaptorItemsView(QWidget *parent) : QListView(parent),
     //      beautify the view...
 
     connect(this, SIGNAL(activated(const QModelIndex &)), this, SLOT(smoothScrollTo(const QModelIndex &)));
-    connect(this, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(enterItem(const QModelIndex &)));
+    connect(this, SIGNAL(clicked(const QModelIndex &)), this, SLOT(enterItem(const QModelIndex &)));
     setMinimumSize(sizeHint());
 }
 

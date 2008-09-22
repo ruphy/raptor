@@ -16,6 +16,8 @@
 #include <QSize>
 #include <QStyleOptionViewItemV4>
 #include <QAbstractItemView>
+#include <QFontMetrics>
+#include <QApplication>
 
 //KDE
 #include <KDebug>
@@ -114,7 +116,36 @@ void RaptorItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem & o
         d->optV4.palette.setColor(QPalette::Text, d->textColor);
     }
 
-    QStyledItemDelegate::paint(painter, d->optV4, index);
+//     QStyledItemDelegate::paint(painter, d->optV4, index);
+
+    //here follows the implementation of the painting process
+    //instead of using the one from QStyledItemDelegate.
+    //this will ease some deep changes in the paint process
+    //when needed.
+
+    painter->save();
+    painter->setClipRect(d->optV4.rect);
+
+    QFontMetrics fm(QApplication::font());
+
+    QPixmap pixmapDecoration = d->optV4.icon.pixmap(d->optV4.decorationSize);
+
+    QRect decorationRect = d->optV4.rect;
+    decorationRect.translate( (decorationRect.width() - pixmapDecoration.width() - fm.height()) / 2,
+                              (decorationRect.height() - pixmapDecoration.height() - fm.height()) / 2);
+
+    decorationRect.setSize(QSize(pixmapDecoration.width(), pixmapDecoration.height()));
+    painter->drawPixmap(decorationRect, pixmapDecoration);
+
+    painter->setPen(d->optV4.palette.color(QPalette::Text));
+
+    // FIXME store the QString instead of calling index.data() many times
+    QRect textRect = d->optV4.rect;
+    textRect.translate( (textRect.width() - fm.width(index.data().toString())) / 2, textRect.height() - fm.height());
+    textRect.setSize(QSize(fm.width(index.data().toString()), fm.height()));
+    painter->drawText(textRect, index.data().toString());
+
+    painter->restore();
 
 }
 
