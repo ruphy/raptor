@@ -37,7 +37,7 @@ class RaptorScrollButton::Private
         {
             svg = new Plasma::Svg(q);
             svg->setImagePath(BUTTON_ARROWS);
-            //svg->setContainsMultipleImages(true);
+            svg->setContainsMultipleImages(true);
             timeLine = new QTimeLine(250, button);
         }
         ~Private()
@@ -76,7 +76,7 @@ void RaptorScrollButton::paintEvent(QPaintEvent * event)
     r.setSize(QSizeF(contentsRect().size().width() * BTN_WIDTH_DELTA + d->frame, 
                      contentsRect().size().height() * BTN_HEIGHT_DELTA + d->frame));
     d->svg->resize(r.size());
-    r.moveCenter(QPointF(contentsRect().size().width() / 2, contentsRect().size().height() / 2));
+    r.moveCenter(contentsRect().center());
 
     if (d->side == Right) {
        d->svg->paint(&p, r, RIGHT_ARROW);
