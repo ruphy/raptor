@@ -15,6 +15,7 @@
 #include "view/raptoritemdelegate.h"
 #include "view/raptorscrollbutton.h"
 #include "engine/kickoff/applicationmodel.h"
+#include "view/raptorbreadcrumb.h"
 
 // Qt
 #include <QGraphicsLinearLayout>
@@ -52,6 +53,7 @@ public:
     RaptorScrollButton *leftScrollButton;
     QGraphicsProxyWidget *leftScrollButtonProxy;
     Plasma::LineEdit *searchLine;
+    RaptorBreadCrumb * breadCrumb;
 };
 
 RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent) : QGraphicsWidget(parent),
@@ -63,6 +65,9 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent) : QGraphicsWid
     QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(verticalLayout);
     layout->setOrientation(Qt::Horizontal);
     verticalLayout->addItem(layout);
+
+    d->breadCrumb = new RaptorBreadCrumb(this);
+    horizontalLayout->addItem(d->breadCrumb);
 
     d->searchLine = new Plasma::LineEdit(this);
     horizontalLayout->addItem(d->searchLine);

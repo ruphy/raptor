@@ -25,6 +25,8 @@ set(raptor_SRCS
     view/raptoritemdelegate.cpp
     view/raptorgraphicswidget.cpp
     view/raptorscrollbutton.cpp
+    view/raptorbreadcrumb.cpp
+    view/raptorbreadcrumbitem.cpp
     view/blur.cpp
     engine/kickoff/applicationmodel.cpp
     engine/kickoff/kickoffabstractmodel.cpp
