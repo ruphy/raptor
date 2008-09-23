@@ -65,9 +65,7 @@ void RaptorBreadCrumb::addCrumb(const QModelIndex & index)
     if (!index.isValid())
         return;
     kDebug() << d->model->data(index).toString();
-    RaptorBreadCrumbItem * item = new RaptorBreadCrumbItem();
-    item->setIcon(QIcon(d->model->data(index, Qt::DecorationRole).value<QPixmap>()));
-    item->setText(d->model->data(index).toString());
+    RaptorBreadCrumbItem * item = new RaptorBreadCrumbItem(QIcon(d->model->data(index, Qt::DecorationRole).value<QPixmap>()), d->model->data(index).toString());
     QGraphicsProxyWidget * proxy = new QGraphicsProxyWidget(this);
     proxy->setWidget(item);
     d->items.append(item);

@@ -11,8 +11,8 @@
 
 #include <QPainter>
 
-RaptorBreadCrumbItem::RaptorBreadCrumbItem(QWidget * parent)
-  : QPushButton(parent)
+RaptorBreadCrumbItem::RaptorBreadCrumbItem(const QIcon & icon, const QString & text, QWidget * parent)
+  : QPushButton(icon, text, parent)
 {
     setAttribute(Qt::WA_NoSystemBackground);
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);

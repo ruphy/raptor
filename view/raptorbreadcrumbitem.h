@@ -18,7 +18,7 @@ class RaptorBreadCrumbItem : public QPushButton
 {
     Q_OBJECT
     public:
-        RaptorBreadCrumbItem(QWidget * parent = 0);
+        RaptorBreadCrumbItem(const QIcon & icon, const QString & text, QWidget * parent = 0);
         ~RaptorBreadCrumbItem();
 
         void paintEvent(QPaintEvent * event);
