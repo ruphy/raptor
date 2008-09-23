@@ -126,13 +126,12 @@ void RaptorItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem & o
     painter->save();
     painter->setClipRect(d->optV4.rect);
 
-    QFontMetrics fm(QApplication::font());
 
     QPixmap pixmapDecoration = d->optV4.icon.pixmap(d->optV4.decorationSize);
 
     QRect decorationRect = d->optV4.rect;
-    decorationRect.translate( (decorationRect.width() - pixmapDecoration.width() - fm.height()) / 2,
-                              (decorationRect.height() - pixmapDecoration.height() - fm.height()) / 2);
+    decorationRect.translate( (decorationRect.width() - pixmapDecoration.width() ) / 2,
+                              (decorationRect.height() - pixmapDecoration.height()) / 2);
 
     decorationRect.setSize(QSize(pixmapDecoration.width(), pixmapDecoration.height()));
     painter->drawPixmap(decorationRect, pixmapDecoration);
@@ -141,9 +140,9 @@ void RaptorItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem & o
 
     // FIXME store the QString instead of calling index.data() many times
     QRect textRect = d->optV4.rect;
-    textRect.translate( (textRect.width() - fm.width(index.data().toString())) / 2, textRect.height() - fm.height());
-    textRect.setSize(QSize(fm.width(index.data().toString()), fm.height()));
-    painter->drawText(textRect, index.data().toString());
+    textRect.translate( 0, decorationRect.height());
+    textRect.setSize(QSize(textRect.width(), textRect.height() - decorationRect.height()));
+    painter->drawText(textRect, Qt::AlignHCenter, index.data().toString());
 
     painter->restore();
 
