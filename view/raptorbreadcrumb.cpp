@@ -13,6 +13,8 @@
 #include <QGraphicsLinearLayout>
 #include <QGraphicsProxyWidget>
 
+#include <KIcon>
+
 class RaptorBreadCrumb::Private
 {
     public:
@@ -29,6 +31,7 @@ RaptorBreadCrumb::RaptorBreadCrumb(QGraphicsWidget * parent)
     d->layout = new QGraphicsLinearLayout(this);
     QGraphicsProxyWidget * proxy = new QGraphicsProxyWidget(this);
     RaptorBreadCrumbItem * item = new RaptorBreadCrumbItem();
+    item->setIcon(KIcon("kget"));
     proxy->setWidget(item);
     d->layout->addItem(proxy);
 }

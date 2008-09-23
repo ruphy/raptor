@@ -9,6 +9,8 @@
 */
 #include "raptorbreadcrumbitem.h"
 
+#include <QPainter>
+
 RaptorBreadCrumbItem::RaptorBreadCrumbItem(QWidget * parent)
   : QPushButton(parent)
 {
@@ -21,5 +23,6 @@ RaptorBreadCrumbItem::~RaptorBreadCrumbItem()
 
 void RaptorBreadCrumbItem::paintEvent(QPaintEvent * event)
 {
-    QPushButton::paintEvent(event);
+    QPainter p(this);
+    p.drawPixmap(contentsRect(), icon().pixmap(22, 22));
 }
