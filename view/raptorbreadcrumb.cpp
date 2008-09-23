@@ -40,7 +40,7 @@ RaptorBreadCrumb::RaptorBreadCrumb(RaptorItemsView * view, QAbstractItemModel * 
     d(new Private(view, model))
 {
     d->layout = new QGraphicsLinearLayout(this);
-    connect(d->view, SIGNAL(clicked(const QModelIndex &)), SLOT(reload()));
+    connect(d->view, SIGNAL(enteredItem(const QModelIndex &)), SLOT(addCrumb(const QModelIndex &)));
     reload();
 }
 
@@ -64,15 +64,34 @@ void RaptorBreadCrumb::addCrumb(const QModelIndex & index)
 {
     if (!index.isValid())
         return;
-    kDebug() << d->model->data(index).toString();
-    RaptorBreadCrumbItem * item = new RaptorBreadCrumbItem(QIcon(d->model->data(index, Qt::DecorationRole).value<QPixmap>()), d->model->data(index).toString());
-    QGraphicsProxyWidget * proxy = new QGraphicsProxyWidget(this);
-    proxy->setWidget(item);
-    d->items.append(item);
-    d->layout->addItem(proxy);
 
-    if (d->model->parent(index).isValid())
-    {
-        addCrumb(d->model->parent(index));
+    for (int i = d->layout->count() - 1; i >= 0; i--) {
+        d->layout->removeAt(i);
     }
+    d->items.clear();
+
+    QModelIndex tmp = index;
+
+    do {
+
+        kDebug() << d->model->data(tmp).toString();
+        RaptorBreadCrumbItem * item = new RaptorBreadCrumbItem(QIcon(d->model->data(tmp, Qt::DecorationRole).value<QIcon>()), d->model->data(tmp).toString());
+        QGraphicsProxyWidget * proxy = new QGraphicsProxyWidget(this);
+        proxy->setWidget(item);
+        d->items.append(item);
+        d->layout->insertItem(0, proxy);
+        d->layout->invalidate();
+
+        connect(item, SIGNAL(navigationRequested(const QModelIndex &)), this, SLOT(navigate(const QModelIndex &)));
+
+        tmp = d->model->parent(tmp);
+
+    } while (tmp.isValid());
+
+}
+
+void RaptorBreadCrumb::navigate(const QModelIndex &index)
+{
+    d->view->setRootIndex(index);
+    addCrumb(index);
 }

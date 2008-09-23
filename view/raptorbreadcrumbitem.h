@@ -13,6 +13,7 @@
 #include <QPushButton>
 
 class QPaintEvent;
+class QModelIndex;
 
 class RaptorBreadCrumbItem : public QPushButton
 {
@@ -22,6 +23,15 @@ class RaptorBreadCrumbItem : public QPushButton
         ~RaptorBreadCrumbItem();
 
         void paintEvent(QPaintEvent * event);
+
+        const QModelIndex index();
+
+    signals:
+        void navigationRequested(const QModelIndex &);
+
+    private:
+        class Private;
+        Private *d;
 };
 
 #endif

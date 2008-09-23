@@ -77,6 +77,15 @@ class RaptorItemsView : public QListView
          */
         void applicationClicked(const KUrl &url);
 
+        /**
+         * This signal is emitted every time an item becomes the root item of
+         * the view. Use this signal instead of clicked() when tracking view
+         * changes.
+         *
+         * @arg entered is the just become root item.
+         */
+        void enteredItem(const QModelIndex &entered);
+
     private:
         class RaptorItemsViewPrivate;
         RaptorItemsViewPrivate *d;

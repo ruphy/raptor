@@ -23,10 +23,10 @@ class RaptorBreadCrumb : public QGraphicsWidget
         RaptorBreadCrumb(RaptorItemsView * view, QAbstractItemModel * model, QGraphicsWidget * parent);
         ~RaptorBreadCrumb();
 
-        void addCrumb(const QModelIndex & index);
-
     public slots:
         void reload();
+        void navigate(const QModelIndex &index);
+        void addCrumb(const QModelIndex & index);
 
     private:
         class Private;

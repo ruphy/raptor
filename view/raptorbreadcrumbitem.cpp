@@ -10,21 +10,41 @@
 #include "raptorbreadcrumbitem.h"
 
 #include <QPainter>
+#include <QModelIndex>
+
+class RaptorBreadCrumbItem::Private
+{
+public:
+    Private(RaptorBreadCrumbItem *q) : q(q)
+    {}
+
+    RaptorBreadCrumbItem *q;
+    QModelIndex index;
+};
 
 RaptorBreadCrumbItem::RaptorBreadCrumbItem(const QIcon & icon, const QString & text, QWidget * parent)
-  : QPushButton(icon, text, parent)
+  : QPushButton(icon, text, parent),
+    d(new Private(this))
 {
-    setAttribute(Qt::WA_NoSystemBackground);
+    //setAttribute(Qt::WA_NoSystemBackground);
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     setMaximumSize(QSize(22, 22));
+
+    connect(this, SIGNAL(clicked()), this, SIGNAL(navigationRequested(index())));
 }
 
 RaptorBreadCrumbItem::~RaptorBreadCrumbItem()
 {
+    delete d;
 }
 
 void RaptorBreadCrumbItem::paintEvent(QPaintEvent * event)
 {
     QPainter p(this);
     p.drawPixmap(contentsRect(), icon().pixmap(22, 22));
+}
+
+const QModelIndex RaptorBreadCrumbItem::index()
+{
+    return d->index;
 }
