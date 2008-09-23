@@ -15,6 +15,8 @@ RaptorBreadCrumbItem::RaptorBreadCrumbItem(QWidget * parent)
   : QPushButton(parent)
 {
     setAttribute(Qt::WA_NoSystemBackground);
+    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    setMaximumSize(QSize(22, 22));
 }
 
 RaptorBreadCrumbItem::~RaptorBreadCrumbItem()
