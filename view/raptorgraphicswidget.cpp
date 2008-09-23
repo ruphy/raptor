@@ -59,6 +59,14 @@ public:
 RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent) : QGraphicsWidget(parent),
                                                                       d(new Private(this))
 {
+    d->leftScrollButton = new RaptorScrollButton(RaptorScrollButton::Left);
+    d->view = new RaptorItemsView();
+    RaptorItemDelegate *delegate = new RaptorItemDelegate();
+    d->model = new Kickoff::ApplicationModel();
+    d->breadCrumb = new RaptorBreadCrumb(d->view, d->model, this);
+    d->searchLine = new Plasma::LineEdit(this);
+    d->rightScrollButton = new RaptorScrollButton(RaptorScrollButton::Right);
+
     QGraphicsLinearLayout *verticalLayout = new QGraphicsLinearLayout(Qt::Vertical, this);
     QGraphicsLinearLayout *horizontalLayout = new QGraphicsLinearLayout(verticalLayout);
     verticalLayout->addItem(horizontalLayout);
@@ -66,24 +74,16 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent) : QGraphicsWid
     layout->setOrientation(Qt::Horizontal);
     verticalLayout->addItem(layout);
 
-    d->breadCrumb = new RaptorBreadCrumb(this);
     horizontalLayout->addItem(d->breadCrumb);
 
-    d->searchLine = new Plasma::LineEdit(this);
     horizontalLayout->addItem(d->searchLine);
 
-    d->leftScrollButton = new RaptorScrollButton(RaptorScrollButton::Left);
     d->leftScrollButtonProxy = new QGraphicsProxyWidget(this);
     d->leftScrollButtonProxy->setWidget(d->leftScrollButton);
     connect(d->leftScrollButton, SIGNAL(clicked()), SLOT(scrollLeft()));
     layout->addItem(d->leftScrollButtonProxy);
 
-    d->view = new RaptorItemsView();
-    RaptorItemDelegate *delegate = new RaptorItemDelegate();
-
     delegate->setTextColor(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
-
-    d->model = new Kickoff::ApplicationModel();
 
     // let's make the view nicer in the applet
     d->view->setAttribute(Qt::WA_NoSystemBackground);
@@ -102,7 +102,6 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent) : QGraphicsWid
 
     layout->addItem(d->proxy);
 
-    d->rightScrollButton = new RaptorScrollButton(RaptorScrollButton::Right);
     connect(d->rightScrollButton, SIGNAL(clicked()), SLOT(scrollRight()));
     d->rightScrollButtonProxy = new QGraphicsProxyWidget(this);
     d->rightScrollButtonProxy->setWidget(d->rightScrollButton);

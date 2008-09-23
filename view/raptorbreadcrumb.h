@@ -11,13 +11,22 @@
 #define RAPTORBREADCRUMB_H
 
 #include <QGraphicsWidget>
+#include <QModelIndex>
+
+class RaptorItemsView;
+class QAbstractItemModel;
 
 class RaptorBreadCrumb : public QGraphicsWidget
 {
     Q_OBJECT
     public:
-        RaptorBreadCrumb(QGraphicsWidget * parent);
+        RaptorBreadCrumb(RaptorItemsView * view, QAbstractItemModel * model, QGraphicsWidget * parent);
         ~RaptorBreadCrumb();
+
+        void addCrumb(const QModelIndex & index);
+
+    public slots:
+        void reload();
 
     private:
         class Private;
