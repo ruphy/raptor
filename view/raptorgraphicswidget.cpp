@@ -67,6 +67,7 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent) : QGraphicsWid
     d->view = new RaptorItemsView();
     RaptorItemDelegate *delegate = new RaptorItemDelegate();
     d->model = new Kickoff::ApplicationModel();
+    d->model->init();
     d->searchModel = new Kickoff::SearchModel();
     d->breadCrumb = new RaptorBreadCrumb(d->view, d->model, this);
     d->searchLine = new Plasma::LineEdit(this);
@@ -215,6 +216,7 @@ void RaptorGraphicsWidget::refineModel()
         return;
     }
 
+    d->view->setModel(d->searchModel);
     d->manager->launchQuery(d->searchLine->text());
 }
 

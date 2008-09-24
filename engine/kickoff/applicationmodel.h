@@ -40,6 +40,8 @@ class ApplicationModel : public KickoffAbstractModel
         ApplicationModel(QObject *parent = 0);
         virtual ~ApplicationModel();
 
+        void init();
+
         /**
          * This enum describes the policy for
          * handling duplicate applications (that is,

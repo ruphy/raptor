@@ -75,7 +75,7 @@ RaptorItemsView::~RaptorItemsView()
 void RaptorItemsView::setOrientation(Qt::Orientation value)
 {
     d->orientation = value;
-    
+
     if (d->orientation == Qt::Vertical) {
         setFlow(QListView::TopToBottom);
         disconnect(d->timeLine, SIGNAL(frameChanged(int)), horizontalScrollBar(), SLOT(setValue(int)));
@@ -169,7 +169,9 @@ void RaptorItemsView::browseBack()
 
 void RaptorItemsView::setModel(Kickoff::ApplicationModel *model)
 {
+    kDebug() << "Setting model";
     QListView::setModel(model);
+    update();
 }
 
 Kickoff::ApplicationModel* RaptorItemsView::model()

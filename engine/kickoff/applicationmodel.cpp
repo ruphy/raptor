@@ -229,17 +229,22 @@ void ApplicationModelPrivate::fillNode(const QString &_relPath, AppNode *node)
 ApplicationModel::ApplicationModel(QObject *parent)
     : KickoffAbstractModel(parent), d(new ApplicationModelPrivate(this))
 {
+}
+
+ApplicationModel::~ApplicationModel()
+{
+    delete d;
+}
+
+void ApplicationModel::init()
+{
     //QDBusConnection dbus = QDBusConnection::sessionBus();
 
     //QDBusConnection::sessionBus().registerObject("/kickoff", this);
     //dbus.connect(QString(), "/kickoff", "org.kde.plasma", "reloadMenu", this, SLOT(slotReloadMenu()));
     connect(KSycoca::self(), SIGNAL(databaseChanged()), this, SLOT(checkSycocaChange()));
     d->fillNode(QString(), d->root);
-}
 
-ApplicationModel::~ApplicationModel()
-{
-    delete d;
 }
 
 bool ApplicationModel::canFetchMore(const QModelIndex &parent) const
