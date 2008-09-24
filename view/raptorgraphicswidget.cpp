@@ -222,9 +222,11 @@ void RaptorGraphicsWidget::refineModel()
 
 void RaptorGraphicsWidget::matchesChanged(const QList<Plasma::QueryMatch> &matches)
 {
+    d->searchModel->clearModelData();
+
     foreach (const Plasma::QueryMatch &ent, matches)
     {
-
+        d->searchModel->addAppNode(ent.text());
     }
 }
 

@@ -390,6 +390,30 @@ void ApplicationModel::slotReloadMenu()
     reset();
 }
 
+void ApplicationModel::addAppNode(const QString &entryname)
+{
+    kDebug() << "Creating new node";
+
+    AppNode *newnode = new AppNode();
+    newnode->icon = KIcon("nepomuk");
+    newnode->appName = entryname;
+    newnode->genericName = entryname;
+    /*newnode->relPath = relPath;
+    newnode->desktopEntry = desktopEntry;*/
+    newnode->isDir = false;
+    newnode->parent = d->root;
+
+    d->root->children.append(newnode);
+
+    reset();
+}
+
+void ApplicationModel::clearModelData()
+{
+    delete d->root;
+    d->root = new AppNode();
+}
+
 void ApplicationModel::checkSycocaChange()
 {
     if (KSycoca::self()->isChanged("services")) {
