@@ -23,6 +23,10 @@ Here come just a few ideas about the items view.
 - The item delegate should be able to decide whether draw item in description mode or normal mode. (got to think about this)
 
 
+Links:
+
+http://standards.freedesktop.org/menu-spec/latest/apa.html
+
 ...and more to come!
 
  -- Your fellow Raptor guys.
