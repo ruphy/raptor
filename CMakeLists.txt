@@ -32,6 +32,7 @@ set(raptor_SRCS
     engine/kickoff/kickoffabstractmodel.cpp
     engine/kickoff/models.cpp
     engine/kickoff/leavemodel.cpp
+    engine/kickoff/searchmodel.cpp
 )
  
 # Now make sure all files get to the right place

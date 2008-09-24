@@ -15,6 +15,7 @@
 #include "view/raptoritemdelegate.h"
 #include "view/raptorscrollbutton.h"
 #include "engine/kickoff/applicationmodel.h"
+#include "engine/kickoff/searchmodel.h"
 #include "view/raptorbreadcrumb.h"
 
 // Qt
@@ -32,6 +33,7 @@
 // Plasma
 #include <Plasma/Theme>
 #include <Plasma/LineEdit>
+#include <plasma/runnermanager.h>
 
 class RaptorGraphicsWidget::Private
 {
@@ -48,12 +50,14 @@ public:
     RaptorItemsView *view;
     QGraphicsProxyWidget *proxy;
     Kickoff::ApplicationModel *model;
+    Kickoff::SearchModel * searchModel;
     RaptorScrollButton *rightScrollButton;
     QGraphicsProxyWidget *rightScrollButtonProxy;
     RaptorScrollButton *leftScrollButton;
     QGraphicsProxyWidget *leftScrollButtonProxy;
     Plasma::LineEdit *searchLine;
     RaptorBreadCrumb * breadCrumb;
+    Plasma::RunnerManager * manager;
 };
 
 RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent) : QGraphicsWidget(parent),
@@ -63,6 +67,7 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent) : QGraphicsWid
     d->view = new RaptorItemsView();
     RaptorItemDelegate *delegate = new RaptorItemDelegate();
     d->model = new Kickoff::ApplicationModel();
+    d->searchModel = new Kickoff::SearchModel();
     d->breadCrumb = new RaptorBreadCrumb(d->view, d->model, this);
     d->searchLine = new Plasma::LineEdit(this);
     d->rightScrollButton = new RaptorScrollButton(RaptorScrollButton::Right);
@@ -100,6 +105,9 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent) : QGraphicsWid
     d->proxy = new QGraphicsProxyWidget(this);
     d->proxy->setWidget(d->view);
 
+    d->manager = new Plasma::RunnerManager(this);
+    d->manager->reloadConfiguration();
+
     layout->addItem(d->proxy);
 
     connect(d->rightScrollButton, SIGNAL(clicked()), SLOT(scrollRight()));
@@ -111,6 +119,9 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent) : QGraphicsWid
 
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(updateColors()));
     connect(d->view, SIGNAL(applicationClicked(const KUrl &)), this, SLOT(launchApplication(const KUrl &)));
+    connect(d->searchLine, SIGNAL(textEdited(const QString&)), this, SLOT(refineModel()));
+    connect(d->manager, SIGNAL(matchesChanged(const QList<Plasma::QueryMatch>&)), this,
+            SLOT(matchesChanged(const QList<Plasma::QueryMatch>&)));
 
     d->view->focusCentralItem();
 }
@@ -149,7 +160,7 @@ void RaptorGraphicsWidget::scrollRight()
     int nextRow = selected.row()+1;
     if(nextRow>rowCount-1)
         nextRow = 0;
-	
+
     QModelIndex rightOne = d->model->index(nextRow, 0);
     d->view->setCurrentIndex(rightOne);
     d->view->update();
@@ -163,12 +174,12 @@ void RaptorGraphicsWidget::updateColors()
 // QSizeF RaptorGraphicsWidget::sizeHint(Qt::SizeHint which, const QSizeF & constraint ) const
 // {
 //     QSizeF size;
-// 
+//
 //     kDebug()<<"minimum"<<d->view->minimumSize();
 //     kDebug()<<"hint"<<d->view->sizeHint();
 //     kDebug()<<"maximum"<<d->view->maximumSize();
 //     kDebug()<<"current"<<this->size().toSize();
-// 
+//
 //     switch (which) {
 //     case Qt::MinimumSize :
 //         size = QSizeF(200,100);
@@ -181,7 +192,7 @@ void RaptorGraphicsWidget::updateColors()
 //         size = QSizeF(d->view->maximumSize());
 //         break;
 //     }
-// 
+//
 //     return size;
 // }
 
@@ -194,3 +205,25 @@ void RaptorGraphicsWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
 
     QGraphicsWidget::resizeEvent(event);
 }
+
+void RaptorGraphicsWidget::refineModel()
+{
+    if ( d->searchLine->text().isEmpty() )
+    {
+        d->manager->reset();
+        d->view->setModel(d->model);
+        return;
+    }
+
+    d->manager->launchQuery(d->searchLine->text());
+}
+
+void RaptorGraphicsWidget::matchesChanged(const QList<Plasma::QueryMatch> &matches)
+{
+    foreach (const Plasma::QueryMatch &ent, matches)
+    {
+
+    }
+}
+
+#include "raptorgraphicswidget.moc"

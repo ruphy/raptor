@@ -12,6 +12,7 @@
 #define RAPTORGRAPHICSWIDGET_H
 
 #include <QGraphicsWidget>
+#include <plasma/querymatch.h>
 
 class KUrl;
 
@@ -31,6 +32,8 @@ class RaptorGraphicsWidget : public QGraphicsWidget
         void launchApplication(const KUrl &);
         void scrollLeft();
         void scrollRight();
+        void refineModel();
+        void matchesChanged(const QList<Plasma::QueryMatch>&);
 
     private:
         class Private;
