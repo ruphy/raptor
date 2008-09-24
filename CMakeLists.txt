@@ -9,7 +9,7 @@ find_package(Plasma REQUIRED)
 
 add_subdirectory(widget)
 add_subdirectory(engine)
-add_subdirectory(view/test)
+#add_subdirectory(view/test)
 
 add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
 include_directories(

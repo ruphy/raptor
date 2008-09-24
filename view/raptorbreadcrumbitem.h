@@ -29,6 +29,9 @@ class RaptorBreadCrumbItem : public QPushButton
     signals:
         void navigationRequested(const QModelIndex &);
 
+    private slots:
+        void emitNavigationRequested();
+
     private:
         class Private;
         Private *d;

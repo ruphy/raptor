@@ -26,11 +26,11 @@ RaptorBreadCrumbItem::RaptorBreadCrumbItem(const QIcon & icon, const QString & t
   : QPushButton(icon, text, parent),
     d(new Private(this))
 {
-    //setAttribute(Qt::WA_NoSystemBackground);
+    setAttribute(Qt::WA_NoSystemBackground);
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     setMaximumSize(QSize(22, 22));
 
-    connect(this, SIGNAL(clicked()), this, SIGNAL(navigationRequested(index())));
+    connect(this, SIGNAL(clicked()), SLOT(emitNavigationRequested()));
 }
 
 RaptorBreadCrumbItem::~RaptorBreadCrumbItem()
@@ -47,4 +47,9 @@ void RaptorBreadCrumbItem::paintEvent(QPaintEvent * event)
 const QModelIndex RaptorBreadCrumbItem::index()
 {
     return d->index;
+}
+
+void RaptorBreadCrumbItem::emitNavigationRequested()
+{
+    emit navigationRequested(index());
 }
