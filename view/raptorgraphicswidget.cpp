@@ -212,11 +212,19 @@ void RaptorGraphicsWidget::refineModel()
     if ( d->searchLine->text().isEmpty() )
     {
         d->manager->reset();
-        d->view->setModel(d->model);
+
+        if (d->view->model() != d->model)
+        {
+            d->view->setModel(d->model);
+        }
         return;
     }
 
-    d->view->setModel(d->searchModel);
+    if (d->view->model() != d->searchModel)
+    {
+        d->view->setModel(d->searchModel);
+    }
+
     d->manager->launchQuery(d->searchLine->text());
 }
 
@@ -226,7 +234,12 @@ void RaptorGraphicsWidget::matchesChanged(const QList<Plasma::QueryMatch> &match
 
     foreach (const Plasma::QueryMatch &ent, matches)
     {
-        d->searchModel->addAppNode(ent.text());
+        KService::Ptr service = KService::serviceByStorageId(ent.data().toString());
+
+        if(service)
+        {
+            d->searchModel->addAppNode(service);
+        }
     }
 }
 

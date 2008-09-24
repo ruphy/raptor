@@ -390,16 +390,16 @@ void ApplicationModel::slotReloadMenu()
     reset();
 }
 
-void ApplicationModel::addAppNode(const QString &entryname)
+void ApplicationModel::addAppNode(KService::Ptr entry)
 {
     kDebug() << "Creating new node";
 
     AppNode *newnode = new AppNode();
-    newnode->icon = KIcon("nepomuk");
-    newnode->appName = entryname;
-    newnode->genericName = entryname;
-    /*newnode->relPath = relPath;
-    newnode->desktopEntry = desktopEntry;*/
+    newnode->icon = KIcon(entry->icon());
+    newnode->appName = entry->name();
+    newnode->genericName = entry->genericName();
+    newnode->relPath = entry->path();
+    newnode->desktopEntry = entry->desktopEntryPath();
     newnode->isDir = false;
     newnode->parent = d->root;
 

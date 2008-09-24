@@ -87,7 +87,7 @@ class ApplicationModel : public KickoffAbstractModel
     public slots:
         void slotReloadMenu();
         void checkSycocaChange();
-        void addAppNode(const QString &entryname);
+        void addAppNode(KService::Ptr entry);
         void clearModelData();
 
     private:
