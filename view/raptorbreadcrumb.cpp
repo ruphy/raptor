@@ -41,7 +41,7 @@ RaptorBreadCrumb::RaptorBreadCrumb(RaptorItemsView * view, QAbstractItemModel * 
     d(new Private(view, model))
 {
     d->layout = new QGraphicsLinearLayout(this);
-    connect(d->view, SIGNAL(enteredItem(const QModelIndex &)), SLOT(addCrumb(const QModelIndex &)));
+    connect(d->view, SIGNAL(enteredItem(const QModelIndex &)), this, SLOT(addCrumb(const QModelIndex &)));
     reload();
 }
 
