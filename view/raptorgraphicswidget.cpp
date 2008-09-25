@@ -29,6 +29,7 @@
 #include <KDesktopFile>
 #include <KRun>
 #include <KService>
+#include <KServiceTypeTrader>
 #include <KConfig>
 #include <KDebug>
 
@@ -114,7 +115,20 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
 
     KConfigGroup config(&d->appletConfig, "PlasmaRunnerManager");
     KConfigGroup conf(&config, "Plugins");
+
     conf.writeEntry("servicesEnabled", true);
+
+    KService::List offers = KServiceTypeTrader::self()->query("Plasma/Runner");
+
+    foreach (const KService::Ptr &service, offers) {
+        KPluginInfo description(service);
+        QString runnerName = description.pluginName();
+
+        if (runnerName != "services")
+        {
+            conf.writeEntry(QString(runnerName + "Enabled"), false);
+        }
+    }
 
     conf.sync();
     config.sync();
