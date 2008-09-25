@@ -167,7 +167,7 @@ void RaptorItemsView::browseBack()
     setRootIndex( model()->parent(rootIndex()) );
 }
 
-void RaptorItemsView::setModel(Kickoff::ApplicationModel *model)
+void RaptorItemsView::setModel(QAbstractItemModel *model)
 {
     kDebug() << "Setting model";
     QListView::setModel(model);

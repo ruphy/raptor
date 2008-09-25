@@ -32,7 +32,7 @@ class RaptorItemsView : public QListView
         ~RaptorItemsView();
 
         void setOrientation(Qt::Orientation);
-        void setModel(Kickoff::ApplicationModel *model);
+        void setModel(QAbstractItemModel *model);
         Kickoff::ApplicationModel* model();
         void hideScrollBars();
         void showScrollBars();

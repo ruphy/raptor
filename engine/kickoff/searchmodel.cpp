@@ -39,6 +39,9 @@ SearchModel::~SearchModel()
 }
 void SearchModel::resultsAvailable(const QStringList& results)
 {
+    // \brief: remove this in future
+    Q_UNUSED(results);
+    // \todo: why wy commit commented code?
     /*
     foreach(const QString& result,results) {
         //kDebug() << "Search hit from" << iface->name() << result;
