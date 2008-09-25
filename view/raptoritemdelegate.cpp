@@ -61,6 +61,10 @@ RaptorItemDelegate::~RaptorItemDelegate()
 
 void RaptorItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const
 {
+
+    qreal textMargin = 3;
+    qreal iconSize = 64;
+    
     if (!index.isValid()) {
         return;
     }
@@ -125,8 +129,7 @@ void RaptorItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem & o
     painter->save();
     painter->setClipRect(d->optV4.rect);
 
-
-    QPixmap pixmapDecoration = d->optV4.icon.pixmap(d->optV4.decorationSize);
+    QPixmap pixmapDecoration = d->optV4.icon.pixmap(QSize(iconSize, iconSize));
 
     QRect decorationRect = d->optV4.rect;
     decorationRect.translate( (decorationRect.width() - pixmapDecoration.width() ) / 2,
@@ -139,7 +142,7 @@ void RaptorItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem & o
 
     // FIXME store the QString instead of calling index.data() many times
     QRect textRect = d->optV4.rect;
-    textRect.translate( 0, decorationRect.height());
+    textRect.translate( 0, decorationRect.height()+pixmapDecoration.height()+textMargin);
     textRect.setSize(QSize(textRect.width(), textRect.height() - decorationRect.height()));
     painter->drawText(textRect, Qt::AlignHCenter, index.data().toString());
 
