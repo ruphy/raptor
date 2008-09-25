@@ -16,7 +16,6 @@
 #include <QSize>
 #include <QStyleOptionViewItemV4>
 #include <QAbstractItemView>
-#include <QFontMetrics>
 #include <QApplication>
 
 //KDE

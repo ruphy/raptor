@@ -28,7 +28,7 @@ class RaptorItemDelegate : public QStyledItemDelegate
         void animatePaint(int);
 
     private:
-    	void generateBgPixmap() const;
+        void generateBgPixmap() const;
         class Private;
         Private *d;
 };
