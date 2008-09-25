@@ -21,7 +21,7 @@
 Raptor::Raptor(QObject *parent, const QVariantList &args)
     : Plasma::PopupApplet(parent, args),
     m_svg(this),
-    m_icon("plasma"),
+    m_icon("start-here-kde"),
     m_gwidget(0)
 {
     // this will get us the standard applet background, for free!
