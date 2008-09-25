@@ -33,7 +33,7 @@ class RaptorBreadCrumb::Private
         QGraphicsLinearLayout * layout;
         RaptorItemsView * view;
         QAbstractItemModel * model;
-        QList<RaptorBreadCrumbItem*> items;
+        QMap<int,RaptorBreadCrumbItem*> items;
 };
 
 RaptorBreadCrumb::RaptorBreadCrumb(RaptorItemsView * view, QAbstractItemModel * model, QGraphicsWidget * parent)
@@ -69,9 +69,13 @@ void RaptorBreadCrumb::addCrumb(const QModelIndex & index)
     for (int i = d->layout->count() - 1; i >= 0; i--) {
         d->layout->removeAt(i);
     }
+    foreach (RaptorBreadCrumbItem *itm, d->items.values()) {
+        itm->deleteLater();
+    }
     d->items.clear();
 
     QModelIndex tmp = index;
+    int position = 0;
 
     do {
 
@@ -81,7 +85,7 @@ void RaptorBreadCrumb::addCrumb(const QModelIndex & index)
                                                                tmp);
         QGraphicsProxyWidget * proxy = new QGraphicsProxyWidget(this);
         proxy->setWidget(item);
-        d->items.append(item);
+        d->items[position] = item;
         d->layout->insertItem(0, proxy);
         d->layout->invalidate();
 
@@ -89,6 +93,7 @@ void RaptorBreadCrumb::addCrumb(const QModelIndex & index)
                 this, SLOT(navigate(const QModelIndex &, RaptorBreadCrumbItem *)));
 
         tmp = d->model->parent(tmp);
+        ++position;
 
     } while (tmp.isValid());
 
@@ -97,7 +102,22 @@ void RaptorBreadCrumb::addCrumb(const QModelIndex & index)
 void RaptorBreadCrumb::navigate(const QModelIndex &index, RaptorBreadCrumbItem *item)
 {
     kDebug() << "Navigation";
-    d->view->setRootIndex(index.parent());
-    d->items.removeOne(item);
-    item->deleteLater();
+    if (index.isValid()) {
+        d->view->setRootIndex(index.parent());
+    } else {
+        d->view->setRootIndex(index);
+    }
+
+    int key;
+
+    kDebug() << "Now deleting items";
+
+    for (key = d->items.key(item); key>=0; --key)
+    {
+        RaptorBreadCrumbItem *tmp = d->items[key];
+        d->items.remove(key);
+        tmp->deleteLater();
+    }
 }
+
+#include "raptorbreadcrumb.moc"

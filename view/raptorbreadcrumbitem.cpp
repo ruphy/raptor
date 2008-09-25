@@ -57,3 +57,5 @@ void RaptorBreadCrumbItem::emitNavigationRequested()
 {
     emit navigationRequested(index(), this);
 }
+
+#include "raptorbreadcrumbitem.moc"
