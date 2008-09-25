@@ -400,7 +400,7 @@ void ApplicationModel::addAppNode(KService::Ptr entry)
     newnode->appName = entry->name();
     newnode->genericName = entry->genericName();
     newnode->relPath = entry->path();
-    newnode->desktopEntry = entry->desktopEntryPath();
+    newnode->desktopEntry = entry->entryPath();
     newnode->isDir = false;
     newnode->parent = d->root;
 

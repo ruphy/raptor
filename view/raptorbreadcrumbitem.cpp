@@ -44,6 +44,8 @@ RaptorBreadCrumbItem::~RaptorBreadCrumbItem()
 
 void RaptorBreadCrumbItem::paintEvent(QPaintEvent * event)
 {
+    Q_UNUSED(event);
+    
     QPainter p(this);
     p.drawPixmap(contentsRect(), icon().pixmap(22, 22));
 }
