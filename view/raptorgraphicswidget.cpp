@@ -35,6 +35,7 @@
 // Plasma
 #include <Plasma/Theme>
 #include <Plasma/LineEdit>
+#include <Plasma/Applet>
 #include <plasma/runnermanager.h>
 
 class RaptorGraphicsWidget::Private
@@ -60,10 +61,12 @@ public:
     Plasma::LineEdit *searchLine;
     RaptorBreadCrumb * breadCrumb;
     Plasma::RunnerManager * manager;
+    KConfigGroup appletConfig;
 };
 
-RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent) : QGraphicsWidget(parent),
-                                                                      d(new Private(this))
+RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigGroup &appletconfig)
+    : QGraphicsWidget(parent),
+      d(new Private(this))
 {
     d->leftScrollButton = new RaptorScrollButton(RaptorScrollButton::Left);
     d->view = new RaptorItemsView();
@@ -74,6 +77,7 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent) : QGraphicsWid
     d->breadCrumb = new RaptorBreadCrumb(d->view, d->model, this);
     d->searchLine = new Plasma::LineEdit(this);
     d->rightScrollButton = new RaptorScrollButton(RaptorScrollButton::Right);
+    d->appletConfig = appletconfig;
 
     QGraphicsLinearLayout *verticalLayout = new QGraphicsLinearLayout(Qt::Vertical, this);
     QGraphicsLinearLayout *horizontalLayout = new QGraphicsLinearLayout(verticalLayout);
@@ -108,7 +112,7 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent) : QGraphicsWid
     d->proxy = new QGraphicsProxyWidget(this);
     d->proxy->setWidget(d->view);
 
-    KConfigGroup config(KGlobal::config(), "RaptorRunnerConfiguration");
+    KConfigGroup config(&d->appletConfig, "PlasmaRunnerManager");
     KConfigGroup conf(&config, "Plugins");
     conf.writeEntry("servicesEnabled", true);
 

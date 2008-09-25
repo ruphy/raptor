@@ -1,6 +1,7 @@
  /* This file is part of the KDE project
 
    Copyright (C) 2008 Lukas Appelhans <l.appelhans@gmx.de>
+   Copyright (C) 2008 Dario Freddi <drf54321@gmail.com>
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
@@ -13,10 +14,10 @@
 #include <QPainter>
 #include <QFontMetrics>
 #include <QSizeF>
- 
+
 #include <plasma/svg.h>
 #include <plasma/theme.h>
- 
+
 Raptor::Raptor(QObject *parent, const QVariantList &args)
     : Plasma::PopupApplet(parent, args),
     m_svg(this),
@@ -27,8 +28,8 @@ Raptor::Raptor(QObject *parent, const QVariantList &args)
     setBackgroundHints(Plasma::Applet::StandardBackground);
     resize(200, 200);
 }
- 
- 
+
+
 Raptor::~Raptor()
 {
     if (hasFailedToLaunch()) {
@@ -37,7 +38,7 @@ Raptor::~Raptor()
         // Save settings
     }
 }
- 
+
 void Raptor::init()
 {
     // A small demonstration of the setFailedToLaunch function
@@ -48,12 +49,12 @@ void Raptor::init()
     setupView();
 
     setPopupIcon("plasma");
-} 
+}
 
 
 void Raptor::setupView()
 {
-    m_gwidget = new RaptorGraphicsWidget(this);
+    m_gwidget = new RaptorGraphicsWidget(this, globalConfig());
 }
 
 QGraphicsWidget* Raptor::graphicsWidget()
@@ -66,11 +67,11 @@ void Raptor::paintInterface(QPainter *p,
 {
 //     p->setRenderHint(QPainter::SmoothPixmapTransform);
 //     p->setRenderHint(QPainter::Antialiasing);
-//  
+//
 //     // Now we draw the applet, starting with our svg
 //     m_svg.resize((int)contentsRect.width(), (int)contentsRect.height());
 //     m_svg.paint(p, (int)contentsRect.left(), (int)contentsRect.top());
-//  
+//
 //     // We place the icon and text
 //     p->drawPixmap(7, 0, m_icon.pixmap((int)contentsRect.width(),(int)contentsRect.width()-14));
 //     p->save();
@@ -82,5 +83,5 @@ void Raptor::paintInterface(QPainter *p,
 
     PopupApplet::paintInterface(p, option, contentsRect);
 }
- 
+
 #include "raptor.moc"

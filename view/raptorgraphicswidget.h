@@ -16,12 +16,13 @@
 #include <plasma/querymatch.h>
 
 class KUrl;
+class KConfigGroup;
 
 class RaptorGraphicsWidget : public QGraphicsWidget
 {
     Q_OBJECT
     public:
-        RaptorGraphicsWidget(QGraphicsItem *parent);
+        RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigGroup &appletconfig);
         ~RaptorGraphicsWidget();
 
     protected:
