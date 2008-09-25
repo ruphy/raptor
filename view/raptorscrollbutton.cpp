@@ -1,7 +1,6 @@
 /* This file is part of the KDE project
 
-   Copyright (C) 2008 Lukas Appelhans <l.appelhans@gmx.de>,
-   Copyright (C) 2008 Dariusz Mikulski <dariusz.mikulski@gmail.com>
+   Copyright (C) 2008 Lukas Appelhans <l.appelhans@gmx.de>
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
@@ -19,14 +18,6 @@
 
 #include <KDebug>
 
-const QString BUTTON_ARROWS = "widgets/raptorarrows";
-const QString LEFT_ARROW = "leftarrow";
-const QString RIGHT_ARROW = "rightarrow";
-const float BTN_WIDTH_DELTA = 0.7;
-const float BTN_HEIGHT_DELTA = 0.6;
-const int START_FRAME = 0;
-const int END_FRAME = 20;
-
 class RaptorScrollButton::Private
 {
     public:
@@ -36,7 +27,7 @@ class RaptorScrollButton::Private
             frame(0)
         {
             svg = new Plasma::Svg(q);
-            svg->setImagePath(BUTTON_ARROWS);
+            svg->setImagePath("widgets/raptorarrows");
             svg->setContainsMultipleImages(true);
             timeLine = new QTimeLine(250, button);
         }
@@ -68,21 +59,24 @@ void RaptorScrollButton::paintEvent(QPaintEvent * event)
     Q_UNUSED(event);
 
     QPainter p(this);
-    QRectF r(contentsRect());
+    QRectF r(event->rect());
+    
+    qreal buttonRatioWidth = 0.7;
+    qreal buttonRatioHeight = 0.6;
 
     p.setRenderHint(QPainter::SmoothPixmapTransform);
     p.setRenderHint(QPainter::Antialiasing);
 
-    r.setSize(QSizeF(contentsRect().size().width() * BTN_WIDTH_DELTA + d->frame, 
-                     contentsRect().size().height() * BTN_HEIGHT_DELTA + d->frame));
+    r.setSize(QSizeF(contentsRect().size().width() * buttonRatioWidth + d->frame, 
+                     contentsRect().size().height() * buttonRatioHeight + d->frame));
     d->svg->resize(r.size());
     r.moveCenter(contentsRect().center());
 
     if (d->side == Right) {
-       d->svg->paint(&p, r, RIGHT_ARROW);
+       d->svg->paint(&p, r, "rightarrow");
     }
     else {
-       d->svg->paint(&p, r, LEFT_ARROW);
+       d->svg->paint(&p, r, "leftarrow");
     }
 }
 
@@ -92,12 +86,12 @@ bool RaptorScrollButton::eventFilter(QObject * watched, QEvent * event)
     switch(event->type())
     {
         case QEvent::HoverEnter:
-            d->timeLine->setFrameRange(START_FRAME, END_FRAME);
+            d->timeLine->setFrameRange(0, 20);
             d->timeLine->start();
             return false;
         case QEvent::HoverLeave:
             d->timeLine->stop();
-            d->frame = START_FRAME;
+            d->frame = 0;
             repaint();
             return false;
         default:
