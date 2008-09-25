@@ -19,6 +19,7 @@
 
 #include <KIcon>
 #include <KDebug>
+#include <klocalizedstring.h>
 
 class RaptorBreadCrumb::Private
 {
@@ -57,18 +58,34 @@ void RaptorBreadCrumb::reload()
     //for (int i = 0; i != d->layout->count(); i++)
     //    d->layout->removeAt(i);
     QModelIndex index = d->view->currentIndex();
-    if (d->model->parent(index).isValid())
+    if (d->model->parent(index).isValid()) {
         addCrumb(d->model->parent(index));
+    } else {
+        addCrumb(QModelIndex());
+    }
 }
 
 void RaptorBreadCrumb::addCrumb(const QModelIndex & index)
 {
-    if (!index.isValid())
+    if (!index.isValid()) {
+        RaptorBreadCrumbItem * item = new RaptorBreadCrumbItem(KIcon("go-home"), i18n("Main Menu"),
+                QModelIndex());
+        QGraphicsProxyWidget * proxy = new QGraphicsProxyWidget(this);
+        proxy->setWidget(item);
+        d->items[0] = item;
+        d->layout->insertItem(0, proxy);
+        d->layout->invalidate();
+
+        connect(item, SIGNAL(navigationRequested(const QModelIndex &, RaptorBreadCrumbItem *)),
+                this, SLOT(navigate(const QModelIndex &, RaptorBreadCrumbItem *)));
+
         return;
+    }
 
     for (int i = d->layout->count() - 1; i >= 0; i--) {
         d->layout->removeAt(i);
     }
+
     foreach (RaptorBreadCrumbItem *itm, d->items.values()) {
         itm->deleteLater();
     }
@@ -97,22 +114,30 @@ void RaptorBreadCrumb::addCrumb(const QModelIndex & index)
 
     } while (tmp.isValid());
 
+    RaptorBreadCrumbItem * item = new RaptorBreadCrumbItem(KIcon("go-home"), i18n("Main Menu"),
+                                                           QModelIndex());
+    QGraphicsProxyWidget * proxy = new QGraphicsProxyWidget(this);
+    proxy->setWidget(item);
+    d->items[position] = item;
+    d->layout->insertItem(0, proxy);
+    d->layout->invalidate();
+
+    connect(item, SIGNAL(navigationRequested(const QModelIndex &, RaptorBreadCrumbItem *)),
+            this, SLOT(navigate(const QModelIndex &, RaptorBreadCrumbItem *)));
+
 }
 
 void RaptorBreadCrumb::navigate(const QModelIndex &index, RaptorBreadCrumbItem *item)
 {
     kDebug() << "Navigation";
-    if (index.isValid()) {
-        d->view->setRootIndex(index.parent());
-    } else {
-        d->view->setRootIndex(index);
-    }
+
+    d->view->setRootIndex(index);
 
     int key;
 
     kDebug() << "Now deleting items";
 
-    for (key = d->items.key(item); key>=0; --key)
+    for (key = d->items.key(item) - 1; key>=0; --key)
     {
         RaptorBreadCrumbItem *tmp = d->items[key];
         d->items.remove(key);
