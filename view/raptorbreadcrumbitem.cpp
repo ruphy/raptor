@@ -51,5 +51,5 @@ const QModelIndex RaptorBreadCrumbItem::index()
 
 void RaptorBreadCrumbItem::emitNavigationRequested()
 {
-    emit navigationRequested(index());
+    emit navigationRequested(index(), this);
 }

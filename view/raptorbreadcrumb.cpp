@@ -22,7 +22,7 @@
 class RaptorBreadCrumb::Private
 {
     public:
-        Private(RaptorItemsView * v, QAbstractItemModel * m) 
+        Private(RaptorItemsView * v, QAbstractItemModel * m)
           : layout(0),
             view(v),
             model(m)
@@ -46,7 +46,9 @@ RaptorBreadCrumb::RaptorBreadCrumb(RaptorItemsView * view, QAbstractItemModel * 
 
 RaptorBreadCrumb::~RaptorBreadCrumb()
 {
-    qDeleteAll(d->items);
+    if (!d->items.isEmpty()) {
+        qDeleteAll(d->items);
+    }
 }
 
 void RaptorBreadCrumb::reload()
@@ -82,7 +84,8 @@ void RaptorBreadCrumb::addCrumb(const QModelIndex & index)
         d->layout->insertItem(0, proxy);
         d->layout->invalidate();
 
-        connect(item, SIGNAL(navigationRequested(const QModelIndex &)), this, SLOT(navigate(const QModelIndex &)));
+        connect(item, SIGNAL(navigationRequested(const QModelIndex &, RaptorBreadCrumbItem *)),
+                this, SLOT(navigate(const QModelIndex &, RaptorBreadCrumbItem *)));
 
         tmp = d->model->parent(tmp);
 
@@ -90,8 +93,10 @@ void RaptorBreadCrumb::addCrumb(const QModelIndex & index)
 
 }
 
-void RaptorBreadCrumb::navigate(const QModelIndex &index)
+void RaptorBreadCrumb::navigate(const QModelIndex &index, RaptorBreadCrumbItem *item)
 {
     d->view->setRootIndex(index);
     addCrumb(index);
+    d->items.removeOne(item);
+    item->deleteLater();
 }

@@ -15,6 +15,7 @@
 
 class RaptorItemsView;
 class QAbstractItemModel;
+class RaptorBreadCrumbItem;
 
 class RaptorBreadCrumb : public QGraphicsWidget
 {
@@ -25,7 +26,7 @@ class RaptorBreadCrumb : public QGraphicsWidget
 
     public slots:
         void reload();
-        void navigate(const QModelIndex &index);
+        void navigate(const QModelIndex &index, RaptorBreadCrumbItem *item);
         void addCrumb(const QModelIndex & index);
 
     private:
@@ -33,4 +34,4 @@ class RaptorBreadCrumb : public QGraphicsWidget
         Private * d;
 };
 
-#endif 
+#endif
