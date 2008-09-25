@@ -1,6 +1,7 @@
 /* This file is part of the KDE project
 
    Copyright (C) 2008 Alessandro Diaferia <alediaferia@gmail.com>
+   Copyright (C) 2008 Dario Freddi <drf54321@gmail.com>
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
@@ -28,6 +29,7 @@
 #include <KDesktopFile>
 #include <KRun>
 #include <KService>
+#include <KConfig>
 #include <KDebug>
 
 // Plasma
@@ -106,7 +108,14 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent) : QGraphicsWid
     d->proxy = new QGraphicsProxyWidget(this);
     d->proxy->setWidget(d->view);
 
-    d->manager = new Plasma::RunnerManager(this);
+    KConfigGroup config(KGlobal::config(), "RaptorRunnerConfiguration");
+    KConfigGroup conf(&config, "Plugins");
+    conf.writeEntry("servicesEnabled", true);
+
+    conf.sync();
+    config.sync();
+
+    d->manager = new Plasma::RunnerManager(config, this);
     d->manager->reloadConfiguration();
 
     layout->addItem(d->proxy);

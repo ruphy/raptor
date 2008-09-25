@@ -1,6 +1,7 @@
 /*
     Copyright 2007 Pino Toscano <pino@kde.org>
     Copyright 2007 Robert Knight <robertknight@gmail.com>
+    Copyright (C) 2008 Dario Freddi <drf54321@gmail.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
