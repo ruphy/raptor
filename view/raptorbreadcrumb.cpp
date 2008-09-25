@@ -98,7 +98,6 @@ void RaptorBreadCrumb::navigate(const QModelIndex &index, RaptorBreadCrumbItem *
 {
     kDebug() << "Navigation";
     d->view->setRootIndex(index.parent());
-    addCrumb(index);
     d->items.removeOne(item);
     item->deleteLater();
 }
