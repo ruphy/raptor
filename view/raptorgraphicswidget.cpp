@@ -88,7 +88,7 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
     verticalLayout->addItem(layout);
 
     horizontalLayout->addItem(d->breadCrumb);
-
+    horizontalLayout->addStretch();
     horizontalLayout->addItem(d->searchLine);
 
     d->leftScrollButtonProxy = new QGraphicsProxyWidget(this);
