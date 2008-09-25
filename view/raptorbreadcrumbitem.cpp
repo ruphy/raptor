@@ -1,6 +1,7 @@
 /* This file is part of the KDE project
 
    Copyright (C) 2008 Lukas Appelhans <l.appelhans@gmx.de>
+   Copyright (C) 2008 Dario Freddi <drf54321@gmail.com>
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
@@ -22,13 +23,16 @@ public:
     QModelIndex index;
 };
 
-RaptorBreadCrumbItem::RaptorBreadCrumbItem(const QIcon & icon, const QString & text, QWidget * parent)
+RaptorBreadCrumbItem::RaptorBreadCrumbItem(const QIcon & icon, const QString & text,
+                                           const QModelIndex &index,QWidget * parent)
   : QPushButton(icon, text, parent),
     d(new Private(this))
 {
     setAttribute(Qt::WA_NoSystemBackground);
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     setMaximumSize(QSize(22, 22));
+
+    d->index = index;
 
     connect(this, SIGNAL(clicked()), SLOT(emitNavigationRequested()));
 }

@@ -1,6 +1,7 @@
 /* This file is part of the KDE project
 
    Copyright (C) 2008 Lukas Appelhans <l.appelhans@gmx.de>
+   Copyright (C) 2008 Dario Freddi <drf54321@gmail.com>
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
@@ -19,7 +20,8 @@ class RaptorBreadCrumbItem : public QPushButton
 {
     Q_OBJECT
     public:
-        RaptorBreadCrumbItem(const QIcon & icon, const QString & text, QWidget * parent = 0);
+        RaptorBreadCrumbItem(const QIcon & icon, const QString & text,
+                             const QModelIndex &index, QWidget * parent = 0);
         ~RaptorBreadCrumbItem();
 
         void paintEvent(QPaintEvent * event);

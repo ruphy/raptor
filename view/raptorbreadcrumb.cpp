@@ -1,6 +1,7 @@
 /* This file is part of the KDE project
 
    Copyright (C) 2008 Lukas Appelhans <l.appelhans@gmx.de>
+   Copyright (C) 2008 Dario Freddi <drf54321@gmail.com>
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
@@ -46,9 +47,7 @@ RaptorBreadCrumb::RaptorBreadCrumb(RaptorItemsView * view, QAbstractItemModel * 
 
 RaptorBreadCrumb::~RaptorBreadCrumb()
 {
-    if (!d->items.isEmpty()) {
-        qDeleteAll(d->items);
-    }
+    qDeleteAll(d->items);
 }
 
 void RaptorBreadCrumb::reload()
@@ -77,7 +76,9 @@ void RaptorBreadCrumb::addCrumb(const QModelIndex & index)
     do {
 
         kDebug() << d->model->data(tmp).toString();
-        RaptorBreadCrumbItem * item = new RaptorBreadCrumbItem(QIcon(d->model->data(tmp, Qt::DecorationRole).value<QIcon>()), d->model->data(tmp).toString());
+        RaptorBreadCrumbItem * item = new RaptorBreadCrumbItem(QIcon(d->model->data(tmp, Qt::DecorationRole)
+                                                               .value<QIcon>()), d->model->data(tmp).toString(),
+                                                               tmp);
         QGraphicsProxyWidget * proxy = new QGraphicsProxyWidget(this);
         proxy->setWidget(item);
         d->items.append(item);
@@ -95,7 +96,8 @@ void RaptorBreadCrumb::addCrumb(const QModelIndex & index)
 
 void RaptorBreadCrumb::navigate(const QModelIndex &index, RaptorBreadCrumbItem *item)
 {
-    d->view->setRootIndex(index);
+    kDebug() << "Navigation";
+    d->view->setRootIndex(index.parent());
     addCrumb(index);
     d->items.removeOne(item);
     item->deleteLater();
