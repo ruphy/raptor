@@ -35,7 +35,8 @@ class RaptorDescriptionDelegate::Private
 
 RaptorDescriptionDelegate::RaptorDescriptionDelegate(QObject *parent) : QStyledItemDelegate(parent),
                                                                         d(new Private(this))
-{}
+{
+}
 
 RaptorDescriptionDelegate::~RaptorDescriptionDelegate()
 {}
@@ -69,6 +70,7 @@ void RaptorDescriptionDelegate::paint(QPainter *painter, const QStyleOptionViewI
 
     painter->drawPixmap(iconRect, pixmapDecoration);
 
+
     painter->setPen(d->optV4.palette.color(QPalette::Text));
 
     QRect descriptionRect = d->optV4.rect;
@@ -76,7 +78,7 @@ void RaptorDescriptionDelegate::paint(QPainter *painter, const QStyleOptionViewI
     descriptionRect.setSize(QSize(d->optV4.rect.width() - iconRect.width(), descriptionRect.height()));
 
     //TODO: define the role to use for description
-    painter->drawText(descriptionRect, Qt::AlignHCenter, index.data(Qt::DisplayRole).toString());
+    painter->drawText(descriptionRect, Qt::AlignLeft, index.data(Qt::DisplayRole).toString());
 
     painter->restore();
 }

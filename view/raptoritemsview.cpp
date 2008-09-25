@@ -10,6 +10,7 @@
 
 //Local
 #include "raptoritemsview.h"
+#include "raptordescriptiondelegate.h"
 #include "engine/kickoff/applicationmodel.h"
 #include "engine/kickoff/models.h"
 
@@ -38,6 +39,8 @@ public:
     RaptorItemsView *q;
     Qt::Orientation orientation;
     QTimeLine *timeLine;
+    Mode mode;
+    RaptorDescriptionDelegate *description_d;
 };
 
 
@@ -143,7 +146,13 @@ void RaptorItemsView::resizeEvent(QResizeEvent *event)
 
     } else {
         int size = viewport()->height();
-        setGridSize(QSize(size, size));
+        
+        if (d->mode == RaptorItemsView::DescriptionMode) {
+            setGridSize(QSize(viewport()->width(), size));
+        } else {
+            setGridSize(QSize(size, size));
+        }
+
         int iconSize = (size - fm.height());
         setIconSize(QSize(iconSize, iconSize));
     }
@@ -153,7 +162,7 @@ void RaptorItemsView::resizeEvent(QResizeEvent *event)
 
 void RaptorItemsView::enterItem(const QModelIndex &index)
 {
-    if ( model()->hasChildren(index)) {
+    if (model()->hasChildren(index)) {
         setRootIndex(index);
         emit enteredItem(index);
     } else {
@@ -209,4 +218,29 @@ void RaptorItemsView::setCurrentIndex(const QModelIndex &index)
 {
     QListView::setCurrentIndex(index);
     emit activated(index);
+}
+
+void RaptorItemsView::switchMode(Mode mode)
+{
+    d->mode = mode;
+
+    if (d->mode == DescriptionMode) {
+        setViewMode(QListView::ListMode);
+    }
+
+    if (d->description_d) {
+        setItemDelegate(d->description_d);
+    }
+}
+
+void RaptorItemsView::setDescriptionDelegate(RaptorDescriptionDelegate *delegate)
+{
+    d->description_d = delegate;
+}
+
+QRect RaptorItemsView::visualRect(const QModelIndex &index) const
+{
+    QRect rect = QListView::visualRect(index);
+    rect.setSize(gridSize());
+    return rect;
 }

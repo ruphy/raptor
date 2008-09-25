@@ -19,6 +19,8 @@ namespace Kickoff{
 class ApplicationModel;
 }
 
+class RaptorDescriptionDelegate;
+
 /**
  * A simple listview with smooth scrolling as base implementation for
  * the main items view of the menu.
@@ -28,6 +30,8 @@ class RaptorItemsView : public QListView
 {
     Q_OBJECT
     public:
+        enum Mode {NormalMode, DescriptionMode};
+
         RaptorItemsView(QWidget *parent = 0);
         ~RaptorItemsView();
 
@@ -37,10 +41,20 @@ class RaptorItemsView : public QListView
         void hideScrollBars();
         void showScrollBars();
         void focusCentralItem();
+        void setDescriptionDelegate(RaptorDescriptionDelegate *delegate);
+
+        /**
+         * This method has no effect if setDescriptionDelegate isn't called before
+         */
+        void switchMode(RaptorItemsView::Mode);
+
+        //TODO: add setItemDelegate(RaptorItemDelegate *delegate); so that the view only uses it
+        //TODO: add docs also for public members
 
     protected:
         int getNewScrollValue(const QRect &rect);
         void resizeEvent(QResizeEvent *event);
+        QRect visualRect(const QModelIndex &index) const;
 
     public slots:
         /**

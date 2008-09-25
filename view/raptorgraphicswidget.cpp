@@ -152,6 +152,7 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
             SLOT(matchesChanged(const QList<Plasma::QueryMatch>&)));
 
     d->view->focusCentralItem();
+    
 }
 
 RaptorGraphicsWidget::~RaptorGraphicsWidget()
