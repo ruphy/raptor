@@ -246,4 +246,6 @@ QRect RaptorItemsView::visualRect(const QModelIndex &index) const
         rect.setSize(gridSize());
         return rect;
     }
+
+    return rect;
 }
