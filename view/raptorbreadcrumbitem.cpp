@@ -75,7 +75,7 @@ class RaptorBreadCrumbArrow::Private
 };
 
 RaptorBreadCrumbArrow::RaptorBreadCrumbArrow(const QModelIndex &index, QAbstractItemModel * model, QWidget * parent)
-  : RaptorBreadCrumbItem(KIcon("arrow"), QString(), index, parent),
+  : RaptorBreadCrumbItem(KIcon("arrow-right"), QString(), index, parent),
     d(new Private(model))
 {
     disconnect(SIGNAL(clicked()), this, SLOT(emitNavigationRequested()));
