@@ -104,13 +104,25 @@ void RaptorBreadCrumb::addCrumb(const QModelIndex & index)
         proxy->setWidget(item);
         d->items[position] = item;
         d->layout->insertItem(0, proxy);
-        d->layout->invalidate();
 
         connect(item, SIGNAL(navigationRequested(const QModelIndex &, RaptorBreadCrumbItem *)),
                 this, SLOT(navigate(const QModelIndex &, RaptorBreadCrumbItem *)));
 
-        tmp = d->model->parent(tmp);
         ++position;
+
+        kDebug() << d->model->data(tmp).toString();
+        RaptorBreadCrumbItem * arrow = new RaptorBreadCrumbArrow(tmp, d->model);
+        QGraphicsProxyWidget * arrowProxy = new QGraphicsProxyWidget(this);
+        arrowProxy->setWidget(arrow);
+        d->items[position] = arrow;
+        d->layout->insertItem(0, arrowProxy);
+        d->layout->invalidate();
+
+        connect(arrow, SIGNAL(navigationRequested(const QModelIndex &, RaptorBreadCrumbItem *)),
+                this, SLOT(navigate(const QModelIndex &, RaptorBreadCrumbItem *)));
+
+        ++position;
+        tmp = d->model->parent(tmp);
 
     } while (tmp.isValid());
 

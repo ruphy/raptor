@@ -15,6 +15,7 @@
 
 class QPaintEvent;
 class QModelIndex;
+class QAbstractItemModel;
 
 class RaptorBreadCrumbItem : public QPushButton
 {
@@ -37,6 +38,18 @@ class RaptorBreadCrumbItem : public QPushButton
     private:
         class Private;
         Private *d;
+};
+
+class RaptorBreadCrumbArrow : public RaptorBreadCrumbItem
+{
+    Q_OBJECT
+    public:
+        RaptorBreadCrumbArrow(const QModelIndex &index, QAbstractItemModel * model, QWidget * parent = 0);
+        ~RaptorBreadCrumbArrow();
+
+    private:
+        class Private;
+        Private * d;
 };
 
 #endif

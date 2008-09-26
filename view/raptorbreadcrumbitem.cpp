@@ -12,6 +12,9 @@
 
 #include <QPainter>
 #include <QModelIndex>
+#include <QAbstractItemModel>
+
+#include <KIcon>
 
 class RaptorBreadCrumbItem::Private
 {
@@ -24,7 +27,7 @@ public:
 };
 
 RaptorBreadCrumbItem::RaptorBreadCrumbItem(const QIcon & icon, const QString & text,
-                                           const QModelIndex &index,QWidget * parent)
+                                           const QModelIndex &index, QWidget * parent)
   : QPushButton(icon, text, parent),
     d(new Private(this))
 {
@@ -58,6 +61,29 @@ const QModelIndex RaptorBreadCrumbItem::index()
 void RaptorBreadCrumbItem::emitNavigationRequested()
 {
     emit navigationRequested(index(), this);
+}
+
+class RaptorBreadCrumbArrow::Private
+{
+    public:
+        Private(QAbstractItemModel * m)
+          : model(m)
+        {}
+        ~Private() {}
+
+        QAbstractItemModel * model;
+};
+
+RaptorBreadCrumbArrow::RaptorBreadCrumbArrow(const QModelIndex &index, QAbstractItemModel * model, QWidget * parent)
+  : RaptorBreadCrumbItem(KIcon("arrow"), QString(), index, parent),
+    d(new Private(model))
+{
+    disconnect(SIGNAL(clicked()), this, SLOT(emitNavigationRequested()));
+}
+
+RaptorBreadCrumbArrow::~RaptorBreadCrumbArrow()
+{
+    delete d;
 }
 
 #include "raptorbreadcrumbitem.moc"
