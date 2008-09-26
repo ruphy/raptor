@@ -34,6 +34,7 @@ public:
     QModelIndex index;
     QTimeLine * timeLine;
     int frame;
+    QColor textColor;
 };
 
 RaptorBreadCrumbItem::RaptorBreadCrumbItem(const QIcon & icon, const QString & text,
@@ -66,8 +67,10 @@ void RaptorBreadCrumbItem::paintEvent(QPaintEvent * event)
     
     QPainter p(this);
     p.drawPixmap(contentsRect(), icon().pixmap(22, 22));
-    if (d->frame)
+    if (d->frame) {
+        p.setPen(d->textColor);
         p.drawText(contentsRect(), text());
+    }
 }
 
 const QModelIndex RaptorBreadCrumbItem::index()
@@ -103,6 +106,11 @@ void RaptorBreadCrumbItem::animatePaint(int frame)
 {
     d->frame = frame;
     repaint();
+}
+
+void RaptorBreadCrumbItem::setTextColor(const QColor &color)
+{
+    d->textColor = color;
 }
 
 class RaptorBreadCrumbArrow::Private

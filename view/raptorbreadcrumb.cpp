@@ -35,6 +35,7 @@ class RaptorBreadCrumb::Private
         RaptorItemsView * view;
         QAbstractItemModel * model;
         QMap<int,RaptorBreadCrumbItem*> items;
+        QColor textColor;
 };
 
 RaptorBreadCrumb::RaptorBreadCrumb(RaptorItemsView * view, QAbstractItemModel * model, QGraphicsWidget * parent)
@@ -100,6 +101,7 @@ void RaptorBreadCrumb::addCrumb(const QModelIndex & index)
         RaptorBreadCrumbItem * item = new RaptorBreadCrumbItem(QIcon(d->model->data(tmp, Qt::DecorationRole)
                                                                .value<QIcon>()), d->model->data(tmp).toString(),
                                                                tmp);
+        item->setTextColor(d->textColor);
         QGraphicsProxyWidget * proxy = new QGraphicsProxyWidget(this);
         proxy->setWidget(item);
         d->items[position] = item;
@@ -155,6 +157,13 @@ void RaptorBreadCrumb::navigate(const QModelIndex &index, RaptorBreadCrumbItem *
         d->items.remove(key);
         tmp->deleteLater();
     }
+}
+
+void RaptorBreadCrumb::setTextColor(const QColor &color)
+{
+    d->textColor = color;
+    foreach (RaptorBreadCrumbItem * item, d->items.values())
+        item->setTextColor(color);
 }
 
 #include "raptorbreadcrumb.moc"

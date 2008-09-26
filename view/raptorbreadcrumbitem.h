@@ -12,6 +12,7 @@
 #define RAPTORBREADCRUMBITEM_H
 
 #include <QPushButton>
+#include <QColor>
 
 class QPaintEvent;
 class QModelIndex;
@@ -30,6 +31,8 @@ class RaptorBreadCrumbItem : public QPushButton
         const QModelIndex index();
 
         bool eventFilter(QObject * watched, QEvent * event);
+
+        void setTextColor(const QColor &color);
 
     signals:
         void navigationRequested(const QModelIndex &, RaptorBreadCrumbItem *);

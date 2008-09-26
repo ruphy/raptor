@@ -76,6 +76,7 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
     d->model->init();
     d->searchModel = new Kickoff::SearchModel();
     d->breadCrumb = new RaptorBreadCrumb(d->view, d->model, this);
+    d->breadCrumb->setTextColor(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
     d->searchLine = new Plasma::LineEdit(this);
     d->rightScrollButton = new RaptorScrollButton(RaptorScrollButton::Right);
     d->appletConfig = appletconfig;
@@ -198,6 +199,7 @@ void RaptorGraphicsWidget::scrollRight()
 void RaptorGraphicsWidget::updateColors()
 {
     static_cast<RaptorItemDelegate*>(d->view->itemDelegate())->setTextColor(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
+    d->breadCrumb->setTextColor(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
 }
 
 // QSizeF RaptorGraphicsWidget::sizeHint(Qt::SizeHint which, const QSizeF & constraint ) const

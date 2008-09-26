@@ -13,6 +13,7 @@
 
 #include <QGraphicsWidget>
 #include <QModelIndex>
+#include <QColor>
 
 class RaptorItemsView;
 class QAbstractItemModel;
@@ -24,6 +25,8 @@ class RaptorBreadCrumb : public QGraphicsWidget
     public:
         RaptorBreadCrumb(RaptorItemsView * view, QAbstractItemModel * model, QGraphicsWidget * parent);
         ~RaptorBreadCrumb();
+
+        void setTextColor(const QColor &color);
 
     public slots:
         void reload();
