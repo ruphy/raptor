@@ -87,9 +87,9 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
     d->appletConfig = appletconfig;
 
     QGraphicsLinearLayout *verticalLayout = new QGraphicsLinearLayout(Qt::Vertical, this);
-    QGraphicsLinearLayout *horizontalLayout = new QGraphicsLinearLayout(verticalLayout);
+    QGraphicsLinearLayout *horizontalLayout = new QGraphicsLinearLayout();
     verticalLayout->addItem(horizontalLayout);
-    QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(verticalLayout);
+    QGraphicsLinearLayout *layout = new QGraphicsLinearLayout();
     layout->setOrientation(Qt::Horizontal);
     verticalLayout->addItem(layout);
 
@@ -237,10 +237,9 @@ void RaptorGraphicsWidget::updateColors()
 
 void RaptorGraphicsWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
 {
-    kDebug()<<"oldSize"<<event->oldSize();
-    kDebug()<<"newSize"<<event->newSize();
     kDebug()<<"preferredSize"<<preferredSize();
-    kDebug()<<"maximumHeight"<<maximumHeight();
+    kDebug()<<"maximumSize"<<maximumSize();
+    kDebug()<<"minimumSize"<<minimumSize();
 
     QGraphicsWidget::resizeEvent(event);
 }
