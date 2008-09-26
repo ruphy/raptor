@@ -2,6 +2,7 @@
 
    Copyright (C) 2008 Lukas Appelhans <l.appelhans@gmx.de>
    Copyright (C) 2008 Dario Freddi <drf54321@gmail.com>
+   Copyright (C) 2008 Alessandro Diaferia <alediaferia@gmail.com>
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
@@ -21,13 +22,17 @@
 #include <KIcon>
 #include <KDebug>
 
+const int PIXMAP_SIZE = 22;
+const int MARGIN = 5;
+
 class RaptorBreadCrumbItem::Private
 {
 public:
     Private(RaptorBreadCrumbItem *q) 
       : q(q),
         timeLine(0),
-        frame(0)
+        frame(0),
+        sizeHint(QSize(PIXMAP_SIZE, PIXMAP_SIZE))
     {
         timeLine = new QTimeLine(250, q);
     }
@@ -38,6 +43,8 @@ public:
     int frame;
     QColor textColor;
     int fontWidth;
+    QSize sizeHint;
+    QRect textRect;
 };
 
 RaptorBreadCrumbItem::RaptorBreadCrumbItem(const QIcon & icon, const QString & text,
@@ -47,7 +54,6 @@ RaptorBreadCrumbItem::RaptorBreadCrumbItem(const QIcon & icon, const QString & t
 {
     setAttribute(Qt::WA_NoSystemBackground);
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    setMaximumSize(QSize(22, 22));
 
     d->index = index;
 
@@ -71,17 +77,19 @@ void RaptorBreadCrumbItem::paintEvent(QPaintEvent * event)
 
     QPainter p(this);
     if (d->frame) {
-        setMaximumSize(QSize(44 + d->frame / 20 * d->fontWidth, 22));//TODO: calculate with QFontMetrics
-        QRect textRect(QPoint(0, 5), QSize(contentsRect().size().width() - 22, 22));
+        //FIXME: avoid magic numbers
         p.setPen(d->textColor);
-        p.drawText(textRect, text());
+        p.drawText(d->textRect, text());
         QRect pixmapRect(contentsRect());
-        pixmapRect.setSize(QSize(22, 22));
-        pixmapRect.moveRight(textRect.width());
-        p.drawPixmap(pixmapRect, icon().pixmap(22, 22));
+        pixmapRect.setSize(QSize(PIXMAP_SIZE, PIXMAP_SIZE));
+        pixmapRect.translate(d->textRect.width() + MARGIN, 0);
+        p.drawPixmap(pixmapRect, icon().pixmap(PIXMAP_SIZE, PIXMAP_SIZE));
     }
-    else
-        p.drawPixmap(contentsRect(), icon().pixmap(22, 22));
+    else {
+        p.drawPixmap(contentsRect(), icon().pixmap(PIXMAP_SIZE, PIXMAP_SIZE));
+    }
+
+    p.end();
 }
 
 const QModelIndex RaptorBreadCrumbItem::index()
@@ -106,6 +114,7 @@ bool RaptorBreadCrumbItem::eventFilter(QObject * watched, QEvent * event)
         case QEvent::HoverLeave:
             d->timeLine->stop();
             d->frame = 0;
+            updateSizes();
             repaint();
             return false;
         default:
@@ -116,13 +125,34 @@ bool RaptorBreadCrumbItem::eventFilter(QObject * watched, QEvent * event)
 void RaptorBreadCrumbItem::animatePaint(int frame)
 {
     d->frame = frame;
+    d->textRect = QRect(contentsRect().x(), contentsRect().y(), (d->frame / 20) * d->fontWidth, PIXMAP_SIZE);
+
+    updateSizes();
     repaint();
+}
+
+void RaptorBreadCrumbItem::updateSizes()
+{
+    if (d->frame) {
+        d->sizeHint = QSize((d->frame / 20) * d->fontWidth + MARGIN + PIXMAP_SIZE, PIXMAP_SIZE);
+    } else {
+        d->sizeHint = QSize(PIXMAP_SIZE, PIXMAP_SIZE);
+    }
+
+    setMinimumSize(d->sizeHint);
+    resize(d->sizeHint);
+    updateGeometry();
 }
 
 void RaptorBreadCrumbItem::updateColors()
 {
     d->textColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
     d->fontWidth = Plasma::Theme::defaultTheme()->fontMetrics().width(text());
+}
+
+QSize RaptorBreadCrumbItem::sizeHint() const
+{
+    return d->sizeHint;
 }
 
 class RaptorBreadCrumbArrow::Private
@@ -141,6 +171,7 @@ RaptorBreadCrumbArrow::RaptorBreadCrumbArrow(const QModelIndex &index, QAbstract
     d(new Private(model))
 {
     disconnect(SIGNAL(clicked()), this, SLOT(emitNavigationRequested()));
+    removeEventFilter(this);
 }
 
 RaptorBreadCrumbArrow::~RaptorBreadCrumbArrow()
