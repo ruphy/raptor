@@ -79,7 +79,7 @@ void RaptorBreadCrumbItem::paintEvent(QPaintEvent * event)
     if (d->frame) {
         //FIXME: avoid magic numbers
         p.setPen(d->textColor);
-        p.drawText(d->textRect, text());
+        p.drawText(d->textRect, Qt::AlignLeft | Qt::AlignVCenter, text());
         QRect pixmapRect(contentsRect());
         pixmapRect.setSize(QSize(PIXMAP_SIZE, PIXMAP_SIZE));
         pixmapRect.translate(d->textRect.width() + MARGIN, 0);
