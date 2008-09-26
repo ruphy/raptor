@@ -53,6 +53,8 @@ class RaptorBreadCrumbArrow : public RaptorBreadCrumbItem
         RaptorBreadCrumbArrow(const QModelIndex &index, QAbstractItemModel * model, QWidget * parent = 0);
         ~RaptorBreadCrumbArrow();
 
+        void paintEvent(QPaintEvent * event);
+
     private:
         class Private;
         Private * d;

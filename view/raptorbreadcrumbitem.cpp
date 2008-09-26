@@ -62,15 +62,14 @@ RaptorBreadCrumbItem::~RaptorBreadCrumbItem()
 void RaptorBreadCrumbItem::paintEvent(QPaintEvent * event)
 {
     Q_UNUSED(event);
-
-    kDebug() << d->frame;
     
     QPainter p(this);
-    p.drawPixmap(contentsRect(), icon().pixmap(22, 22));
     if (d->frame) {
+        setMaximumSize(QSize(22 + d->frame, 22));
         p.setPen(d->textColor);
         p.drawText(contentsRect(), text());
     }
+    p.drawPixmap(contentsRect(), icon().pixmap(22, 22));
 }
 
 const QModelIndex RaptorBreadCrumbItem::index()
@@ -134,6 +133,14 @@ RaptorBreadCrumbArrow::RaptorBreadCrumbArrow(const QModelIndex &index, QAbstract
 RaptorBreadCrumbArrow::~RaptorBreadCrumbArrow()
 {
     delete d;
+}
+
+void RaptorBreadCrumbArrow::paintEvent(QPaintEvent * event)
+{
+    Q_UNUSED(event);
+    
+    QPainter p(this);
+    p.drawPixmap(contentsRect(), icon().pixmap(22, 22));
 }
 
 #include "raptorbreadcrumbitem.moc"
