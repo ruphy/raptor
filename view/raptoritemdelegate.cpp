@@ -19,6 +19,7 @@
 #include <QApplication>
 
 //KDE
+#include <Plasma/Theme>
 #include <KDebug>
 
 #include "blur.cpp" //TODO: make this a function in Plasma::PaintUtils
@@ -36,7 +37,7 @@ class RaptorItemDelegate::Private
                 p(0)
                 {}
         ~Private()
-                {}
+                { delete p; delete timeLine; }
 
     RaptorItemDelegate *q;
     QStyleOptionViewItemV4 optV4;
@@ -92,7 +93,7 @@ void RaptorItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem & o
             d->timeLine->start();
         }
 
-//         QPixmap temp = *(d->p);
+//         QPixmap temp = *(d->p);d->optV4
 //         QPainter p(&temp);
 //         p.setCompositionMode(QPainter::CompositionMode_Source);
 //         p.drawPixmap(0, 0, *d->p);
@@ -102,7 +103,11 @@ void RaptorItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem & o
 //         painter->drawPixmap(d->optV4.rect, temp);
         painter->save();
         painter->setOpacity(qreal(d->frame)*5.0/100.0);
-        painter->drawPixmap(d->optV4.rect, *d->p);
+        QPoint topLeft(d->optV4.rect.x()+(d->optV4.decorationSize.width()-d->p->width())/2,
+                       d->optV4.rect.y()+(d->optV4.decorationSize.height()-d->p->height())/2);
+        QRect pixRect(topLeft, QSize(d->p->width(), d->p->height()));
+        pixRect.translate(10, 4);
+        painter->drawPixmap(pixRect, *d->p);
         painter->restore();
 
     } else {
@@ -112,7 +117,14 @@ void RaptorItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem & o
     }
 
     if (d->optV4.state & QStyle::State_Selected) {
-        painter->drawPixmap(d->optV4.rect, *d->p);
+        painter->save();
+//         QRect pixRect(d->optV4.rect.topLeft(), QSize(d->p->width(), d->p->height()));
+        QPoint topLeft(d->optV4.rect.x()+((d->optV4.decorationSize.width()-d->p->width())/2),
+                       d->optV4.rect.y()+((d->optV4.decorationSize.height()-d->p->height())/2));
+        QRect pixRect(topLeft, QSize(d->p->width(), d->p->height()));
+        pixRect.translate(4, 10);
+        painter->drawPixmap(pixRect, *d->p);
+        painter->restore();
     }
 
     if (d->textColor != QColor()) {
@@ -153,20 +165,24 @@ void RaptorItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem & o
 void RaptorItemDelegate::generateBgPixmap() const // TODO find a way to make this themable, preferrably via SVG.
 {
     if (!d->p) { // it's an expensive operation, so let's keep a cached pixmap.
-        QSize s(d->optV4.decorationSize.width()-14, d->optV4.decorationSize.height()-14); //FIXME: un-hardcode that 14 value (modify also below)
+        qreal blurAmount = 20;
+        QSize rectSize(d->optV4.decorationSize.width()-(blurAmount*2), d->optV4.decorationSize.height()-(blurAmount*2));
         QImage *i = new QImage(d->optV4.decorationSize, QImage::Format_ARGB32_Premultiplied);
         i->fill(0);
         QPainter p(i);
-        QLinearGradient lg(0, 7, 0,  s.height());
-        lg.setColorAt(0.0, QColor(255, 255, 255, 255));
-        lg.setColorAt(1.0, QColor(255, 255, 255, 39));
+        QLinearGradient lg(0, blurAmount*2, 0, d->optV4.decorationSize.height()-blurAmount);
+        QColor sel = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+        lg.setColorAt(0.0, sel);
+        QColor sel2 = sel;
+        sel2.setAlpha(40);
+        lg.setColorAt(1.0, sel2);
         p.setBrush(lg);
-	p.translate(0.5, 0.5);
-        p.drawRect(7, 7, s.width(), s.height());
-
-        expblur<16, 7>(*i, 8);
+        p.setPen(Qt::NoPen);
+        p.drawRect(blurAmount, blurAmount, rectSize.width(), rectSize.height());
 
         p.end();
+        
+        expblur<16, 7>(*i, blurAmount-5);
 
         d->p = new QPixmap(d->optV4.decorationSize);
         d->p->fill(Qt::transparent);
@@ -175,7 +191,7 @@ void RaptorItemDelegate::generateBgPixmap() const // TODO find a way to make thi
         pp.setCompositionMode(QPainter::CompositionMode_Source);
         pp.drawPixmap(0, 0, QPixmap::fromImage(*i));
         pp.setCompositionMode(QPainter::CompositionMode_DestinationIn);
-        pp.fillRect(d->p->rect(), QColor(0, 0, 0, 125));
+        pp.fillRect(d->p->rect(), QColor(0, 0, 0, 140));
         pp.end();
 
         delete i;
