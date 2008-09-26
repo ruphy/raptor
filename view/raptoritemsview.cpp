@@ -241,6 +241,9 @@ void RaptorItemsView::setDescriptionDelegate(RaptorDescriptionDelegate *delegate
 QRect RaptorItemsView::visualRect(const QModelIndex &index) const
 {
     QRect rect = QListView::visualRect(index);
-    rect.setSize(gridSize());
-    return rect;
+
+    if (d->mode == RaptorItemsView::DescriptionMode) {
+        rect.setSize(gridSize());
+        return rect;
+    }
 }
