@@ -48,7 +48,7 @@ void Raptor::init()
 
     setupView();
 
-    setPopupIcon("plasma");
+    setPopupIcon("start-here");
 }
 
 

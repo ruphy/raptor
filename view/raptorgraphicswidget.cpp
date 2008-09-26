@@ -44,7 +44,13 @@ class RaptorGraphicsWidget::Private
 public:
     Private(RaptorGraphicsWidget *q) : q(q),
                                        view(0),
-                                       proxy(0)
+                                       proxy(0),
+                                       model(0),
+                                       searchModel(0),
+                                       rightScrollButton(0),
+                                       rightScrollButtonProxy(0),
+                                       leftScrollButton(0),
+                                       leftScrollButtonProxy(0)
     {}
     ~Private()
     {
@@ -173,8 +179,10 @@ void RaptorGraphicsWidget::scrollLeft()
 
     int rowCount = d->model->rowCount();
     int nextRow = selected.row()-1;
-    if(nextRow<0)
+
+    if (nextRow < 0) {
         nextRow = rowCount-1;
+    }
 
     QModelIndex leftOne = d->model->index(nextRow, 0);
     d->view->setCurrentIndex(leftOne);
@@ -187,8 +195,10 @@ void RaptorGraphicsWidget::scrollRight()
 
     int rowCount = d->model->rowCount();
     int nextRow = selected.row()+1;
-    if(nextRow>rowCount-1)
+
+    if (nextRow > rowCount-1) {
         nextRow = 0;
+    }
 
     QModelIndex rightOne = d->model->index(nextRow, 0);
     d->view->setCurrentIndex(rightOne);
@@ -237,19 +247,16 @@ void RaptorGraphicsWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
 
 void RaptorGraphicsWidget::refineModel()
 {
-    if ( d->searchLine->text().isEmpty() )
-    {
+    if ( d->searchLine->text().isEmpty() ) {
         d->manager->reset();
 
-        if (d->view->model() != d->model)
-        {
+        if (d->view->model() != d->model) {
             d->view->setModel(d->model);
         }
         return;
     }
 
-    if (d->view->model() != d->searchModel)
-    {
+    if (d->view->model() != d->searchModel) {
         d->view->setModel(d->searchModel);
     }
 
@@ -260,12 +267,10 @@ void RaptorGraphicsWidget::matchesChanged(const QList<Plasma::QueryMatch> &match
 {
     d->searchModel->clearModelData();
 
-    foreach (const Plasma::QueryMatch &ent, matches)
-    {
+    foreach (const Plasma::QueryMatch &ent, matches)  {
         KService::Ptr service = KService::serviceByStorageId(ent.data().toString());
 
-        if(service)
-        {
+        if(service) {
             d->searchModel->addAppNode(service);
         }
     }

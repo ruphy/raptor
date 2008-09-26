@@ -68,6 +68,17 @@ void RaptorBreadCrumb::reload()
 
 void RaptorBreadCrumb::addCrumb(const QModelIndex & index)
 {
+
+    for (int i = d->layout->count() - 1; i >= 0; i--) {
+        d->layout->removeAt(i);
+    }
+
+    foreach (RaptorBreadCrumbItem *itm, d->items.values()) {
+        itm->deleteLater();
+    }
+    d->items.clear();
+
+
     if (!index.isValid()) {
         RaptorBreadCrumbItem * item = new RaptorBreadCrumbItem(KIcon("go-home"), i18n("Main Menu"),
                 QModelIndex());
@@ -82,15 +93,6 @@ void RaptorBreadCrumb::addCrumb(const QModelIndex & index)
 
         return;
     }
-
-    for (int i = d->layout->count() - 1; i >= 0; i--) {
-        d->layout->removeAt(i);
-    }
-
-    foreach (RaptorBreadCrumbItem *itm, d->items.values()) {
-        itm->deleteLater();
-    }
-    d->items.clear();
 
     QModelIndex tmp = index;
     int position = 0;
@@ -150,12 +152,13 @@ void RaptorBreadCrumb::navigate(const QModelIndex &index, RaptorBreadCrumbItem *
 
     kDebug() << "Now deleting items";
 
-    for (key = d->items.key(item) - 1; key>=0; --key)
-    {
+    for (key = d->items.key(item) - 1; key>=0; --key) {
         RaptorBreadCrumbItem *tmp = d->items[key];
         d->items.remove(key);
         tmp->deleteLater();
     }
+
+    kDebug() << "Items successfully deleted";
 }
 
 #include "raptorbreadcrumb.moc"
