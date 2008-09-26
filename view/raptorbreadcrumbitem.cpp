@@ -62,14 +62,20 @@ RaptorBreadCrumbItem::~RaptorBreadCrumbItem()
 void RaptorBreadCrumbItem::paintEvent(QPaintEvent * event)
 {
     Q_UNUSED(event);
-    
+
     QPainter p(this);
     if (d->frame) {
-        setMaximumSize(QSize(22 + d->frame, 22));
+        setMaximumSize(QSize(22 + d->frame * 2, 22));//TODO: calculate with QFontMetrics
+        QRect textRect(QPoint(0, 5), QSize(contentsRect().size().width() - 22, 22));
         p.setPen(d->textColor);
-        p.drawText(contentsRect(), text());
+        p.drawText(textRect, text());
+        QRect pixmapRect(contentsRect());
+        pixmapRect.setSize(QSize(22, 22));
+        pixmapRect.moveRight(textRect.width());
+        p.drawPixmap(pixmapRect, icon().pixmap(22, 22));
     }
-    p.drawPixmap(contentsRect(), icon().pixmap(22, 22));
+    else
+        p.drawPixmap(contentsRect(), icon().pixmap(22, 22));
 }
 
 const QModelIndex RaptorBreadCrumbItem::index()
