@@ -26,8 +26,6 @@ class RaptorBreadCrumb : public QGraphicsWidget
         RaptorBreadCrumb(RaptorItemsView * view, QAbstractItemModel * model, QGraphicsWidget * parent);
         ~RaptorBreadCrumb();
 
-        void setTextColor(const QColor &color);
-
     public slots:
         void reload();
         void navigate(const QModelIndex &index, RaptorBreadCrumbItem *item);

@@ -32,14 +32,13 @@ class RaptorBreadCrumbItem : public QPushButton
 
         bool eventFilter(QObject * watched, QEvent * event);
 
-        void setTextColor(const QColor &color);
-
     signals:
         void navigationRequested(const QModelIndex &, RaptorBreadCrumbItem *);
 
     private slots:
         void emitNavigationRequested();
         void animatePaint(int frame);
+        void updateColors();
 
     private:
         class Private;

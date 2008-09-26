@@ -10,6 +10,8 @@
 */
 #include "raptorbreadcrumbitem.h"
 
+#include <Plasma/Theme>
+
 #include <QPainter>
 #include <QModelIndex>
 #include <QAbstractItemModel>
@@ -35,6 +37,7 @@ public:
     QTimeLine * timeLine;
     int frame;
     QColor textColor;
+    int fontWidth;
 };
 
 RaptorBreadCrumbItem::RaptorBreadCrumbItem(const QIcon & icon, const QString & text,
@@ -48,10 +51,13 @@ RaptorBreadCrumbItem::RaptorBreadCrumbItem(const QIcon & icon, const QString & t
 
     d->index = index;
 
+    updateColors();
+
     installEventFilter(this);
 
     connect(this, SIGNAL(clicked()), SLOT(emitNavigationRequested()));
     connect(d->timeLine, SIGNAL(frameChanged(int)), SLOT(animatePaint(int)));
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), SLOT(updateColors()));
 }
 
 RaptorBreadCrumbItem::~RaptorBreadCrumbItem()
@@ -65,7 +71,7 @@ void RaptorBreadCrumbItem::paintEvent(QPaintEvent * event)
 
     QPainter p(this);
     if (d->frame) {
-        setMaximumSize(QSize(22 + d->frame * 2, 22));//TODO: calculate with QFontMetrics
+        setMaximumSize(QSize(44 + d->frame / 20 * d->fontWidth, 22));//TODO: calculate with QFontMetrics
         QRect textRect(QPoint(0, 5), QSize(contentsRect().size().width() - 22, 22));
         p.setPen(d->textColor);
         p.drawText(textRect, text());
@@ -113,9 +119,10 @@ void RaptorBreadCrumbItem::animatePaint(int frame)
     repaint();
 }
 
-void RaptorBreadCrumbItem::setTextColor(const QColor &color)
+void RaptorBreadCrumbItem::updateColors()
 {
-    d->textColor = color;
+    d->textColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+    d->fontWidth = Plasma::Theme::defaultTheme()->fontMetrics().width(text());
 }
 
 class RaptorBreadCrumbArrow::Private
