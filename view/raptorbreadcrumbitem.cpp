@@ -139,7 +139,7 @@ void RaptorBreadCrumbItem::updateSizes()
         d->sizeHint = QSize(PIXMAP_SIZE, PIXMAP_SIZE);
     }
 
-    setMinimumSize(d->sizeHint); //WARNING FIXME this leads to a crash!
+    setMinimumSize(d->sizeHint);
     resize(d->sizeHint);
     updateGeometry();
 }

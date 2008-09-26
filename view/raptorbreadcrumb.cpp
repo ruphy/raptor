@@ -2,6 +2,7 @@
 
    Copyright (C) 2008 Lukas Appelhans <l.appelhans@gmx.de>
    Copyright (C) 2008 Dario Freddi <drf54321@gmail.com>
+   Copyright (C) 2008 Alessandro Diaferia <alediaferia@gmail.com>
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
@@ -145,6 +146,12 @@ void RaptorBreadCrumb::addCrumb(const QModelIndex & index)
 void RaptorBreadCrumb::navigate(const QModelIndex &index, RaptorBreadCrumbItem *item)
 {
     kDebug() << "Navigation";
+
+    for (int i = d->layout->count() - 1; i >= 0; i--) {
+        d->layout->removeAt(i);
+    }
+
+    d->layout->invalidate();
 
     d->view->setRootIndex(index);
 
