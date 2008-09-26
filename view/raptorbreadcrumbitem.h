@@ -29,11 +29,14 @@ class RaptorBreadCrumbItem : public QPushButton
 
         const QModelIndex index();
 
+        bool eventFilter(QObject * watched, QEvent * event);
+
     signals:
         void navigationRequested(const QModelIndex &, RaptorBreadCrumbItem *);
 
     private slots:
         void emitNavigationRequested();
+        void animatePaint(int frame);
 
     private:
         class Private;

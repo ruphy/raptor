@@ -13,17 +13,27 @@
 #include <QPainter>
 #include <QModelIndex>
 #include <QAbstractItemModel>
+#include <QTimeLine>
+#include <QEvent>
 
 #include <KIcon>
+#include <KDebug>
 
 class RaptorBreadCrumbItem::Private
 {
 public:
-    Private(RaptorBreadCrumbItem *q) : q(q)
-    {}
+    Private(RaptorBreadCrumbItem *q) 
+      : q(q),
+        timeLine(0),
+        frame(0)
+    {
+        timeLine = new QTimeLine(250, q);
+    }
 
     RaptorBreadCrumbItem *q;
     QModelIndex index;
+    QTimeLine * timeLine;
+    int frame;
 };
 
 RaptorBreadCrumbItem::RaptorBreadCrumbItem(const QIcon & icon, const QString & text,
@@ -37,7 +47,10 @@ RaptorBreadCrumbItem::RaptorBreadCrumbItem(const QIcon & icon, const QString & t
 
     d->index = index;
 
+    installEventFilter(this);
+
     connect(this, SIGNAL(clicked()), SLOT(emitNavigationRequested()));
+    connect(d->timeLine, SIGNAL(frameChanged(int)), SLOT(animatePaint(int)));
 }
 
 RaptorBreadCrumbItem::~RaptorBreadCrumbItem()
@@ -48,9 +61,13 @@ RaptorBreadCrumbItem::~RaptorBreadCrumbItem()
 void RaptorBreadCrumbItem::paintEvent(QPaintEvent * event)
 {
     Q_UNUSED(event);
+
+    kDebug() << d->frame;
     
     QPainter p(this);
     p.drawPixmap(contentsRect(), icon().pixmap(22, 22));
+    if (d->frame)
+        p.drawText(contentsRect(), text());
 }
 
 const QModelIndex RaptorBreadCrumbItem::index()
@@ -61,6 +78,31 @@ const QModelIndex RaptorBreadCrumbItem::index()
 void RaptorBreadCrumbItem::emitNavigationRequested()
 {
     emit navigationRequested(index(), this);
+}
+
+bool RaptorBreadCrumbItem::eventFilter(QObject * watched, QEvent * event)
+{
+    Q_UNUSED(watched)
+    switch(event->type())
+    {
+        case QEvent::HoverEnter:
+            d->timeLine->setFrameRange(0, 20);
+            d->timeLine->start();
+            return false;
+        case QEvent::HoverLeave:
+            d->timeLine->stop();
+            d->frame = 0;
+            repaint();
+            return false;
+        default:
+            return false;
+    };
+}
+
+void RaptorBreadCrumbItem::animatePaint(int frame)
+{
+    d->frame = frame;
+    repaint();
 }
 
 class RaptorBreadCrumbArrow::Private
