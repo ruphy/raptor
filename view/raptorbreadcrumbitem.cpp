@@ -113,9 +113,11 @@ bool RaptorBreadCrumbItem::eventFilter(QObject * watched, QEvent * event)
             return false;
         case QEvent::HoverLeave:
             d->timeLine->stop();
-            d->frame = 0;
-            updateSizes();
-            repaint();
+            d->timeLine->setFrameRange(20, 0);
+            d->timeLine->start();
+//             d->frame = 0;
+//             updateSizes();
+//             repaint();
             return false;
         default:
             return false;
