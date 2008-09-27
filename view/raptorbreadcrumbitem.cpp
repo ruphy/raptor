@@ -125,23 +125,25 @@ bool RaptorBreadCrumbItem::eventFilter(QObject * watched, QEvent * event)
 void RaptorBreadCrumbItem::animatePaint(int frame)
 {
     d->frame = frame;
-    d->textRect = QRect(contentsRect().x(), contentsRect().y(), (d->frame / 20) * d->fontWidth, PIXMAP_SIZE);
+    d->textRect = QRect(contentsRect().x(), contentsRect().y(), ((d->frame * d->fontWidth) / 20 ), PIXMAP_SIZE);
 
     updateSizes();
+    kDebug()<<"repainting";
     repaint();
 }
 
 void RaptorBreadCrumbItem::updateSizes()
 {
     if (d->frame) {
-        d->sizeHint = QSize((d->frame / 20) * d->fontWidth + MARGIN + PIXMAP_SIZE, PIXMAP_SIZE);
+        d->sizeHint = QSize(((d->frame * d->fontWidth) / 20 ) + MARGIN + PIXMAP_SIZE, PIXMAP_SIZE);
     } else {
         d->sizeHint = QSize(PIXMAP_SIZE, PIXMAP_SIZE);
     }
 
+    kDebug()<<d->frame<<((d->frame * d->fontWidth) / 20 );
     setMinimumSize(d->sizeHint);
-    resize(d->sizeHint);
-    updateGeometry();
+//     resize(d->sizeHint);
+//     updateGeometry();
 }
 
 void RaptorBreadCrumbItem::updateColors()
