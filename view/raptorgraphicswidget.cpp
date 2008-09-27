@@ -177,14 +177,14 @@ void RaptorGraphicsWidget::scrollLeft()
 {
     QModelIndex selected = d->view->currentIndex();
 
-    int rowCount = d->model->rowCount();
+    int rowCount = d->model->rowCount(d->view->rootIndex());
     int nextRow = selected.row()-1;
 
     if (nextRow < 0) {
         nextRow = rowCount-1;
     }
 
-    QModelIndex leftOne = d->model->index(nextRow, 0);
+    QModelIndex leftOne = d->model->index(nextRow, 0, d->view->rootIndex());
     d->view->setCurrentIndex(leftOne);
     d->view->update();
 }
@@ -193,14 +193,14 @@ void RaptorGraphicsWidget::scrollRight()
 {
     QModelIndex selected = d->view->currentIndex();
 
-    int rowCount = d->model->rowCount();
+    int rowCount = d->model->rowCount(d->view->rootIndex());
     int nextRow = selected.row()+1;
 
     if (nextRow > rowCount-1) {
         nextRow = 0;
     }
 
-    QModelIndex rightOne = d->model->index(nextRow, 0);
+    QModelIndex rightOne = d->model->index(nextRow, 0, d->view->rootIndex());
     d->view->setCurrentIndex(rightOne);
     d->view->update();
 }

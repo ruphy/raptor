@@ -69,7 +69,7 @@ class RaptorItemsView : public QListView
         void enterItem(const QModelIndex &index);
 
         /**
-         * Browse the menu back.
+         * Browse the view back.
          */
         void browseBack();
 
