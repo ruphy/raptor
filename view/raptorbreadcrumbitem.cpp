@@ -142,8 +142,8 @@ void RaptorBreadCrumbItem::updateSizes()
     }
 
     setMinimumSize(d->sizeHint);
-//     resize(d->sizeHint);
-//     updateGeometry();
+    resize(d->sizeHint);
+    updateGeometry();
 }
 
 void RaptorBreadCrumbItem::updateColors()

@@ -145,6 +145,11 @@ void RaptorBreadCrumb::addCrumb(const QModelIndex & index)
 
 void RaptorBreadCrumb::navigate(const QModelIndex &index, RaptorBreadCrumbItem *item)
 {
+
+    if (index == d->view->rootIndex()) {
+        return;
+    }
+
     kDebug() << "Navigation";
 
     for (int i = d->layout->count() - 1; i >= 0; i--) {
