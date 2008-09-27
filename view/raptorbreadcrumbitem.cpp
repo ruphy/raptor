@@ -128,7 +128,6 @@ void RaptorBreadCrumbItem::animatePaint(int frame)
     d->textRect = QRect(contentsRect().x(), contentsRect().y(), ((d->frame * d->fontWidth) / 20 ), PIXMAP_SIZE);
 
     updateSizes();
-    kDebug()<<"repainting";
     repaint();
 }
 
@@ -140,7 +139,6 @@ void RaptorBreadCrumbItem::updateSizes()
         d->sizeHint = QSize(PIXMAP_SIZE, PIXMAP_SIZE);
     }
 
-    kDebug()<<d->frame<<((d->frame * d->fontWidth) / 20 );
     setMinimumSize(d->sizeHint);
 //     resize(d->sizeHint);
 //     updateGeometry();
