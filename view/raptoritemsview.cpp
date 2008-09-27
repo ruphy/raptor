@@ -158,11 +158,11 @@ void RaptorItemsView::enterItem(const QModelIndex &index)
 {
     if (model()->hasChildren(index)) {
         setRootIndex(index);
+        focusCentralItem();
         emit enteredItem(index);
     } else {
         emit applicationClicked(KUrl(model()->data(index, Kickoff::UrlRole).toString()));
     }
-    focusCentralItem();
 }
 
 void RaptorItemsView::browseBack()
