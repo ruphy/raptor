@@ -371,6 +371,7 @@ int ApplicationModel::rowCount(const QModelIndex &parent) const
         return d->root->children.count();
 
     AppNode *node = static_cast<AppNode*>(parent.internalPointer());
+
     return node->children.count();
 }
 
@@ -385,12 +386,12 @@ void ApplicationModel::setDuplicatePolicy(DuplicatePolicy policy)
 
 void ApplicationModel::slotReloadMenu()
 {
-    emit triggeringReload();
+    //emit triggeringReload();
     delete d->root;
     d->root = new AppNode();
     d->fillNode(QString(), d->root);
     reset();
-    emit menuReloaded();
+    //emit menuReloaded();
 
 }
 

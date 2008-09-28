@@ -156,9 +156,11 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
     connect(d->searchLine, SIGNAL(textEdited(const QString&)), this, SLOT(refineModel()));
     connect(d->manager, SIGNAL(matchesChanged(const QList<Plasma::QueryMatch>&)), this,
             SLOT(matchesChanged(const QList<Plasma::QueryMatch>&)));
+    connect(d->model, SIGNAL(triggeringReload()), d->view, SLOT(storeIndex()));
+    connect(d->model, SIGNAL(menuReloaded()), d->view, SLOT(restoreIndex()));
 
     d->view->focusCentralItem();
-    
+
 }
 
 RaptorGraphicsWidget::~RaptorGraphicsWidget()
