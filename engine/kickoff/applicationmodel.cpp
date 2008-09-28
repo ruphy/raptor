@@ -394,6 +394,7 @@ void ApplicationModel::slotReloadMenu()
         d->root = new AppNode();
         d->fillNode(QString(), d->root);
         reset();
+        d->queueReload = false;
     }
 }
 
