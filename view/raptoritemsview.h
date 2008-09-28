@@ -6,7 +6,7 @@
    modify it under the terms of the GNU General Public
    License as published by the Free Software Foundation; either
    version 2 of the License, or (at your option) any later version.
-*/ 
+*/
 
 #ifndef RAPTORITEMSVIEW_H
 #define RAPTORITEMSVIEW_H
@@ -77,6 +77,10 @@ class RaptorItemsView : public QListView
          * Reimplemented from QAbstractItemView to smoothScroll to the item
          */
         void setCurrentIndex(const QModelIndex &index);
+
+    private slots:
+        void storeIndex();
+        void restoreIndex();
 
     signals:
         /**

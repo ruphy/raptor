@@ -1,6 +1,7 @@
 /* This file is part of the KDE project
 
    Copyright (C) 2008 Alessandro Diaferia <alediaferia@gmail.com>
+   Copyright (C) 2008 Dario Freddi <drf54321@gmail.com>
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
@@ -41,6 +42,7 @@ public:
     QTimeLine *timeLine;
     Mode mode;
     RaptorDescriptionDelegate *description_d;
+    QModelIndex index;
 };
 
 
@@ -140,7 +142,7 @@ void RaptorItemsView::resizeEvent(QResizeEvent *event)
 
     } else {
         int size = viewport()->height();
-        
+
         if (d->mode == RaptorItemsView::DescriptionMode) {
             setGridSize(QSize(viewport()->width(), size));
         } else {
@@ -243,3 +245,15 @@ QRect RaptorItemsView::visualRect(const QModelIndex &index) const
 
     return rect;
 }
+
+void RaptorItemsView::storeIndex()
+{
+    d->index = rootIndex();
+}
+
+void RaptorItemsView::restoreIndex()
+{
+    setRootIndex(d->index);
+}
+
+#include "raptoritemsview.moc"
