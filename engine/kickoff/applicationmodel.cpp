@@ -385,10 +385,13 @@ void ApplicationModel::setDuplicatePolicy(DuplicatePolicy policy)
 
 void ApplicationModel::slotReloadMenu()
 {
+    emit triggeringReload();
     delete d->root;
     d->root = new AppNode();
     d->fillNode(QString(), d->root);
     reset();
+    emit menuReloaded();
+
 }
 
 void ApplicationModel::addAppNode(KService::Ptr entry)
