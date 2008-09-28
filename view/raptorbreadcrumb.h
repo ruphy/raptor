@@ -32,6 +32,9 @@ class RaptorBreadCrumb : public QGraphicsWidget
         void navigate(const QModelIndex &index, RaptorBreadCrumbItem *item);
         void addCrumb(const QModelIndex & index);
 
+    signals:
+        void bottomLevelReached();
+
     private:
         class Private;
         Private * d;

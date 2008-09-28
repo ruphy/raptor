@@ -91,10 +91,6 @@ class ApplicationModel : public KickoffAbstractModel
         void addAppNode(KService::Ptr entry);
         void clearModelData();
 
-    signals:
-        void triggeringReload();
-        void menuReloaded();
-
     private:
         friend class ApplicationModelPrivate;
         ApplicationModelPrivate *const d;

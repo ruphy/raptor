@@ -246,16 +246,4 @@ QRect RaptorItemsView::visualRect(const QModelIndex &index) const
     return rect;
 }
 
-void RaptorItemsView::storeIndex()
-{
-    kDebug() << "storing index";
-    d->index = rootIndex();
-}
-
-void RaptorItemsView::restoreIndex()
-{
-    kDebug() << "restoring index";
-    setRootIndex(d->index);
-}
-
 #include "raptoritemsview.moc"

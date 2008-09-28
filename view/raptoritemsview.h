@@ -78,10 +78,6 @@ class RaptorItemsView : public QListView
          */
         void setCurrentIndex(const QModelIndex &index);
 
-    private slots:
-        void storeIndex();
-        void restoreIndex();
-
     signals:
         /**
          * This signal is emitted when the user activates an item that is an application

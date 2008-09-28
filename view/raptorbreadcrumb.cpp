@@ -170,6 +170,10 @@ void RaptorBreadCrumb::navigate(const QModelIndex &index, RaptorBreadCrumbItem *
         tmp->deleteLater();
     }
 
+    if (d->items.count() == 1) {
+        emit bottomLevelReached();
+    }
+
     kDebug() << "Items successfully deleted";
 }
 

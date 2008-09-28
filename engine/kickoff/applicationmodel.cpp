@@ -98,7 +98,8 @@ public:
           root(new AppNode()),
           duplicatePolicy(ApplicationModel::ShowDuplicatesPolicy),
           sortOrder(Qt::AscendingOrder),
-          sortColumn(Qt::DisplayRole)
+          sortColumn(Qt::DisplayRole),
+          queueReload(false)
     {
         systemApplications = Kickoff::systemApplicationList();
     }
@@ -118,6 +119,7 @@ public:
     Qt::SortOrder sortOrder;
     int sortColumn;
     QStringList systemApplications;
+    bool queueReload;
 };
 
 bool ApplicationModelPrivate::AppNodeLessThan(AppNode *n1, AppNode *n2)
@@ -386,13 +388,13 @@ void ApplicationModel::setDuplicatePolicy(DuplicatePolicy policy)
 
 void ApplicationModel::slotReloadMenu()
 {
-    //emit triggeringReload();
-    delete d->root;
-    d->root = new AppNode();
-    d->fillNode(QString(), d->root);
-    reset();
-    //emit menuReloaded();
-
+    if (d->queueReload) {
+        kDebug() << "Reloading model";
+        delete d->root;
+        d->root = new AppNode();
+        d->fillNode(QString(), d->root);
+        reset();
+    }
 }
 
 void ApplicationModel::addAppNode(KService::Ptr entry)
@@ -422,7 +424,8 @@ void ApplicationModel::clearModelData()
 void ApplicationModel::checkSycocaChange()
 {
     if (KSycoca::self()->isChanged("services")) {
-        slotReloadMenu();
+        // Let's queue the reload
+        d->queueReload = true;
     }
 }
 
