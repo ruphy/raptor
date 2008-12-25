@@ -14,6 +14,8 @@
 
 #include <QStyledItemDelegate>
 
+class QSize;
+
 class RaptorItemDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
@@ -29,7 +31,7 @@ class RaptorItemDelegate : public QStyledItemDelegate
         void animatePaint(int);
 
     private:
-        void generateBgPixmap() const;
+        void generateBgPixmap(const QSize &s) const;
         class Private;
         Private *d;
 };

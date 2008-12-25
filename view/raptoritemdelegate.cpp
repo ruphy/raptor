@@ -63,7 +63,6 @@ RaptorItemDelegate::~RaptorItemDelegate()
 
 void RaptorItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const
 {
-
     qreal textMargin = 3;
     qreal iconSize = 64;
     
@@ -75,8 +74,10 @@ void RaptorItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem & o
     initStyleOption(&d->optV4, index);
     d->view = qobject_cast<const QAbstractItemView*>(d->optV4.widget);
 
-    generateBgPixmap(); // TODO Bg --> Background
-
+    if (!d->p) {
+        generateBgPixmap(d->optV4.decorationSize); // TODO Bg --> Background
+    }
+    
     painter->setRenderHint(QPainter::Antialiasing);
     painter->setPen(Qt::NoPen);
 
@@ -94,21 +95,21 @@ void RaptorItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem & o
             d->timeLine->start();
         }
 
-//         QPixmap temp = *(d->p);d->optV4
-//         QPainter p(&temp);
-//         p.setCompositionMode(QPainter::CompositionMode_Source);
-//         p.drawPixmap(0, 0, *d->p);
-//         p.setCompositionMode(QPainter::CompositionMode_DestinationIn);
-//         p.fillRect(temp.rect(), QColor(0, 0, 0, qreal(d->frame)*5.0/100.0));
-//         p.end();
+        QPixmap temp = (d->p)->size();//d->optV4
+        QPainter p(&temp);
+        p.setCompositionMode(QPainter::CompositionMode_Source);
+        p.drawPixmap(0, 0, *d->p);
+        p.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+        p.fillRect(temp.rect(), QColor(0, 0, 0, qreal(d->frame)*5.0/100.0));
+        p.end();
 //         painter->drawPixmap(d->optV4.rect, temp);
         painter->save();
-        painter->setOpacity(qreal(d->frame)*5.0/100.0);
+//         painter->setOpacity(qreal(d->frame)*5.0/100.0);
         QPoint topLeft(d->optV4.rect.x()+(d->optV4.decorationSize.width()-d->p->width())/2,
                        d->optV4.rect.y()+(d->optV4.decorationSize.height()-d->p->height())/2);
         QRect pixRect(topLeft, QSize(d->p->width(), d->p->height()));
-        pixRect.translate(10, 4);
-        painter->drawPixmap(pixRect, *d->p);
+//         pixRect.translate(10, 4);
+        painter->drawPixmap(pixRect, temp); //*d->p);
         painter->restore();
 
     } else {
@@ -123,7 +124,7 @@ void RaptorItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem & o
         QPoint topLeft(d->optV4.rect.x()+((d->optV4.decorationSize.width()-d->p->width())/2),
                        d->optV4.rect.y()+((d->optV4.decorationSize.height()-d->p->height())/2));
         QRect pixRect(topLeft, QSize(d->p->width(), d->p->height()));
-        pixRect.translate(4, 10);
+//         pixRect.translate(4, 10);
         painter->drawPixmap(pixRect, *d->p);
         painter->restore();
     }
@@ -140,7 +141,7 @@ void RaptorItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem & o
     //when needed.
 
     painter->save();
-    painter->setClipRect(d->optV4.rect);
+//     painter->setClipRect(d->optV4.rect);
 
     QPixmap pixmapDecoration = d->optV4.icon.pixmap(QSize(iconSize, iconSize));
 
@@ -163,11 +164,11 @@ void RaptorItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem & o
 
 }
 
-void RaptorItemDelegate::generateBgPixmap() const // TODO find a way to make this themable, preferrably via SVG.
+void RaptorItemDelegate::generateBgPixmap(const QSize &s) const // TODO find a way to make this themable, preferrably via SVG.
 {
     if (!d->p) { // it's an expensive operation, so let's keep a cached pixmap.
-        qreal blurAmount = 20;
-        QSize rectSize(d->optV4.decorationSize.width()-(blurAmount*2), d->optV4.decorationSize.height()-(blurAmount*2));
+        qreal blurAmount = 7;
+        QSize rectSize(s.width()-(blurAmount*3), s.height()-(blurAmount*3));
         QImage *i = new QImage(d->optV4.decorationSize, QImage::Format_ARGB32_Premultiplied);
         i->fill(0);
         QPainter p(i);
@@ -183,14 +184,14 @@ void RaptorItemDelegate::generateBgPixmap() const // TODO find a way to make thi
 
         p.end();
         
-        expblur<16, 7>(*i, blurAmount-5);
+        expblur<16, 7>(*i, blurAmount);
 
         d->p = new QPixmap(d->optV4.decorationSize);
         d->p->fill(Qt::transparent);
         
         QPainter pp(d->p);
         pp.setCompositionMode(QPainter::CompositionMode_Source);
-        pp.drawPixmap(0, 0, QPixmap::fromImage(*i));
+        pp.drawImage(0, 0, *i);
         pp.setCompositionMode(QPainter::CompositionMode_DestinationIn);
         pp.fillRect(d->p->rect(), QColor(0, 0, 0, 140));
         pp.end();
