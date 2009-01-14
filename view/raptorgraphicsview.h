@@ -38,6 +38,7 @@ public slots:
     void setRootIndex(const QModelIndex &);
 
 protected:
+    void items();
     void retrieveShownItems();
 
 private:

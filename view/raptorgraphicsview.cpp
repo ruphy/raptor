@@ -23,6 +23,7 @@ public:
     QAbstractItemModel *model;
     QModelIndex rootIndex;
     QSize itemsSize;
+    QList<RaptorMenuItem*> items;
     QList<RaptorMenuItem*> shownItems;
 };
 
@@ -73,9 +74,27 @@ void RaptorGraphicsView::paint(QPainter *painter, const QStyleOptionGraphicsItem
     Q_UNUSED(widget)
 }
 
-void RaptorGraphicsView::retrieveShownItems()
+void RaptorGraphicsView::items()
 {
     for (int i = 0; i < d->model->rowCount(d->rootIndex); i++) {
-        d->shownItems << new RaptorMenuItem(d->model->index(i, 0, d->rootIndex), this);
+        d->items << new RaptorMenuItem(d->model->index(i, 0, d->rootIndex), this);
+    }
+}
+
+void RaptorGraphicsView::retrieveShownItems()
+{
+    d->shownItems.clear();
+    int n;
+    if ((float)(size().width() / itemsSize().width()) == (int) size().width() / itemsSize().width()) { //FIXME: Simplify this code...
+        n = size().width() / itemsSize().width();
+    }
+    else { //Probably we show a half-item?
+        n = (size().width() / itemsSize().width()) + 1;
+    }
+    if (n <= d->shownItems.count()) {
+        d->shownItems = d->items;
+    }
+    for (int i = 0; i != n; i++) {
+        d->shownItems << items.at(i);
     }
 }
