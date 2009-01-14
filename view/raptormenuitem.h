@@ -15,12 +15,13 @@
 class QPainter;
 class QStyleOptionViewItem;
 class QModelIndex;
+class RaptorItemDelegate;
 
 class RaptorMenuItem : public QObject
 {
     Q_OBJECT
 public:
-    RaptorMenuItem(QModelIndex index, QObject *parent = 0);
+    RaptorMenuItem(QModelIndex index, RaptorItemDelegate * delegate, QObject *parent = 0);
     ~RaptorMenuItem();
 
     /**

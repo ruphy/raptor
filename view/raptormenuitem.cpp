@@ -17,7 +17,7 @@
 class RaptorMenuItem::Private
 {
 public:
-    Private(RaptorMenuItem *q) : q(q), delegate(new RaptorItemDelegate(q))
+    Private(RaptorMenuItem *q, RaptorItemDelegate * del) : q(q), delegate(del)
     {}
 
     RaptorMenuItem *q;
@@ -26,7 +26,7 @@ public:
     QRectF rect;
 };
 
-RaptorMenuItem::RaptorMenuItem(QModelIndex index, QObject *parent) : QObject(parent) , d(new Private(this))
+RaptorMenuItem::RaptorMenuItem(QModelIndex index, RaptorItemDelegate * delegate, QObject *parent) : QObject(parent) , d(new Private(this, delegate))
 {
 }
 
