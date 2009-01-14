@@ -9,6 +9,7 @@
 */
 #include "raptorgraphicsview.h"
 #include "raptormenuitem.h"
+#include "raptoritemdelegate.h"
 
 #include <QAbstractItemModel>
 #include <QModelIndex>
@@ -17,7 +18,9 @@ class RaptorGraphicsView::Private
 {
 public:
     Private(RaptorGraphicsView *q) : q(q), model(0)
-    {}
+    {
+        delegate = new RaptorItemDelegate(q);
+    }
 
     RaptorGraphicsView *q;
     QAbstractItemModel *model;
@@ -25,6 +28,7 @@ public:
     QSize itemsSize;
     QList<RaptorMenuItem*> items;
     QList<RaptorMenuItem*> shownItems;
+    RaptorItemDelegate * delegate;
 };
 
 RaptorGraphicsView::RaptorGraphicsView(QGraphicsItem *parent) : QGraphicsWidget(parent), d(new Private(this))
@@ -58,7 +62,7 @@ void RaptorGraphicsView::setItemsSize(const QSize &size)
     // update();
 }
 
-QAbstractItemModel* RaptorGraphicsView::model() const
+QAbstractItemModel* RaptorGraphicsView::model()
 {
     return d->model;
 }
@@ -77,7 +81,7 @@ void RaptorGraphicsView::paint(QPainter *painter, const QStyleOptionGraphicsItem
 void RaptorGraphicsView::items()
 {
     for (int i = 0; i < d->model->rowCount(d->rootIndex); i++) {
-        d->items << new RaptorMenuItem(d->model->index(i, 0, d->rootIndex), this);
+        d->items << new RaptorMenuItem(d->model->index(i, 0, d->rootIndex), d->delegate, this);
     }
 }
 
@@ -95,6 +99,6 @@ void RaptorGraphicsView::retrieveShownItems()
         d->shownItems = d->items;
     }
     for (int i = 0; i != n; i++) {
-        d->shownItems << items.at(i);
+        d->shownItems << d->items.at(i);
     }
 }

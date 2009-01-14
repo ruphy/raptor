@@ -11,6 +11,7 @@
 #define RAPTORGRAPHICSVIEW_H
 
 #include <QGraphicsWidget>
+#include <QModelIndex>
 
 class QAbstractItemModel;
 

@@ -11,6 +11,7 @@
 #define RAPTORMENUITEM_H
 
 #include <QObject>
+#include <QRectF>
 
 class QPainter;
 class QStyleOptionViewItem;

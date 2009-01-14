@@ -40,7 +40,7 @@ void RaptorMenuItem::paint(QPainter *painter, const QStyleOptionViewItem &option
     QStyleOptionViewItem opt = option;
 
     if (!d->rect.isNull()) {
-        opt.rect = d->rect;
+        opt.rect = d->rect.toRect();
     } else {
         d->rect = opt.rect;
     }
@@ -48,12 +48,12 @@ void RaptorMenuItem::paint(QPainter *painter, const QStyleOptionViewItem &option
     d->delegate->paint(painter, opt, d->index);
 }
 
-QRect RaptorMenuItem::rect() const
+QRectF RaptorMenuItem::rect() const
 {
     return d->rect;
 }
 
-void RaptorMenuItem::setRect(const QRect rect)
+void RaptorMenuItem::setRect(const QRectF &rect)
 {
     d->rect = rect;
 }
