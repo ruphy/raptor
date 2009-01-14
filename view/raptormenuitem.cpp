@@ -23,7 +23,7 @@ public:
     RaptorMenuItem *q;
     RaptorItemDelegate *delegate;
     QModelIndex index;
-    QRect rect;
+    QRectF rect;
 };
 
 RaptorMenuItem::RaptorMenuItem(QModelIndex index, QObject *parent) : QObject(parent) , d(new Private(this))
@@ -58,7 +58,7 @@ void RaptorMenuItem::setRect(const QRect rect)
     d->rect = rect;
 }
 
-void RaptorMenuItem::moveBy(int dx, int dy)
+void RaptorMenuItem::moveBy(float dx, float dy)
 {
     d->rect.translate(dx, dy);
 }

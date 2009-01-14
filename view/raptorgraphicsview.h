@@ -32,8 +32,13 @@ public:
     void setModel(QAbstractItemModel *model);
     QAbstractItemModel* model();
 
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
+
 public slots:
     void setRootIndex(const QModelIndex &);
+
+protected:
+    void retrieveShownItems();
 
 private:
     class Private;

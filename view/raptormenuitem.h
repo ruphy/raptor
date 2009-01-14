@@ -28,7 +28,7 @@ public:
      * This setting will override the rect passed with
      * option in the paint() method.
      */
-    void setRect(const QRect &);
+    void setRect(const QRectF &);
 
     /**
      * @Returns the rect used to paint the item. If no
@@ -36,7 +36,7 @@ public:
      * used to paint the item with the first paint() call.
      * If no paint() occurred this method will return QRect().
      */
-    QRect rect() const;
+    QRectF rect() const;
 
     /**
      * This is a convenience function and it is the same as calling:
@@ -44,7 +44,7 @@ public:
      * A paint() call is needed after this call in order to apply
      * the geometry modification.
      */
-    void moveBy(int dx, int dy);
+    void moveBy(float dx, float dy);
 
     /**
      * Paints the item with the given @param painter and the given @param option.
