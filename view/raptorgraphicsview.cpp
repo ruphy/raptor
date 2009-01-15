@@ -78,7 +78,7 @@ void RaptorGraphicsView::paint(QPainter *painter, const QStyleOptionGraphicsItem
     Q_UNUSED(widget)
 }
 
-void RaptorGraphicsView::items()
+void RaptorGraphicsView::getItems()
 {
     for (int i = 0; i < d->model->rowCount(d->rootIndex); i++) {
         d->items << new RaptorMenuItem(d->model->index(i, 0, d->rootIndex), d->delegate, this);
@@ -89,16 +89,17 @@ void RaptorGraphicsView::retrieveShownItems()
 {
     d->shownItems.clear();
     int n;
-    if ((float)(size().width() / itemsSize().width()) == (int) size().width() / itemsSize().width()) { //FIXME: Simplify this code...
+    if ((float)(size().width() / itemsSize().width())%10 != 0) { // if we don't have an x.y type number
         n = size().width() / itemsSize().width();
     }
     else { //Probably we show a half-item?
         n = (size().width() / itemsSize().width()) + 1;
     }
-    if (n <= d->shownItems.count()) {
+    if (n >= d->items.count()) {
         d->shownItems = d->items;
-    }
-    for (int i = 0; i != n; i++) {
-        d->shownItems << d->items.at(i);
+    } else {
+        for (int i = 0; i < n; i++) {
+            d->shownItems << d->items.at(i);
+        }
     }
 }
