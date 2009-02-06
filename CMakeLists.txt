@@ -5,9 +5,9 @@ project(raptor)
 # Find the required Libaries
 find_package(KDE4 REQUIRED)
 include(KDE4Defaults)
-find_package(Plasma REQUIRED)
+#find_package(Plasma REQUIRED)
 
-add_subdirectory(widget)
+#add_subdirectory(widget)
 add_subdirectory(engine)
 #add_subdirectory(view/test)
 
@@ -28,6 +28,8 @@ set(raptor_SRCS
     view/raptorbreadcrumb.cpp
     view/raptorbreadcrumbitem.cpp
     view/raptordescriptiondelegate.cpp
+    view/raptormenuitem.cpp
+    view/raptorgraphicsview.cpp
     view/blur.cpp
     engine/kickoff/applicationmodel.cpp
     engine/kickoff/kickoffabstractmodel.cpp
@@ -39,7 +41,7 @@ set(raptor_SRCS
 # Now make sure all files get to the right place
 kde4_add_plugin(plasma_applet_raptor ${raptor_SRCS})
 target_link_libraries(plasma_applet_raptor 
-                      ${PLASMA_LIBS} ${KDE4_KDEUI_LIBS} ${KDE4_SOLID_LIBS} ${KDE4_KIO_LIBS} solidcontrol)
+                      ${KDE4_PLASMA_LIBS} ${KDE4_KDEUI_LIBS} ${KDE4_SOLID_LIBS} ${KDE4_KIO_LIBS} solidcontrol)
  
 install(TARGETS plasma_applet_raptor
         DESTINATION ${PLUGIN_INSTALL_DIR})
