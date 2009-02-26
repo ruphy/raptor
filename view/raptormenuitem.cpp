@@ -1,6 +1,7 @@
 /* This file is part of the KDE project
 
    Copyright (C) 2009 Alessandro Diaferia <alediaferia@gmail.com>
+   Copyright (C) 2009 Lukas Appelhans <l.appelhans@gmx.de>
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
@@ -61,4 +62,9 @@ void RaptorMenuItem::setRect(const QRectF &rect)
 void RaptorMenuItem::moveBy(float dx, float dy)
 {
     d->rect.translate(dx, dy);
+}
+
+QModelIndex RaptorMenuItem::modelIndex() const
+{
+    return d->index;
 }

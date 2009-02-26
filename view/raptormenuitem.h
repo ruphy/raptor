@@ -1,6 +1,7 @@
 /* This file is part of the KDE project
 
    Copyright (C) 2009 Alessandro Diaferia <alediaferia@gmail.com>
+   Copyright (C) 2009 Lukas Appelhans <l.appelhans@gmx.de>
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
@@ -33,7 +34,7 @@ public:
     void setRect(const QRectF &);
 
     /**
-     * @Returns the rect used to paint the item. If no
+     * @returns the rect used to paint the item. If no
      * setRect has been called previously it will return the rect
      * used to paint the item with the first paint() call.
      * If no paint() occurred this method will return QRect().
@@ -50,9 +51,14 @@ public:
 
     /**
      * Paints the item with the given @param painter and the given @param option.
-     * @Note that the rect set using setRect() has priority over option.rect.
+     * @note that the rect set using setRect() has priority over option.rect.
      */
     void paint(QPainter *painter, const QStyleOptionViewItem &option);
+
+    /**
+     * @Returns the index associated to this item.
+     */
+    QModelIndex modelIndex() const;
 
 private:
     class Private;
