@@ -13,6 +13,7 @@
 #include <QGraphicsWidget>
 
 class QPainter;
+class QGraphicsSceneHoverEvent;
 
 class RaptorScrollButton : public QGraphicsWidget
 {

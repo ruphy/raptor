@@ -45,6 +45,7 @@ RaptorScrollButton::RaptorScrollButton(Side side, QGraphicsWidget * parent)
     d(new Private(side, this))
 {
     setAttribute(Qt::WA_NoSystemBackground);
+    setAcceptHoverEvents(true);
     update();
     installEventFilter(this);
     connect(d->timeLine, SIGNAL(frameChanged(int)), this, SLOT(animatePaint(int)));
