@@ -108,12 +108,12 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
     layout->setOrientation(Qt::Horizontal);
     verticalLayout->addItem(layout);
 
-    connect(d->leftScrollButton, SIGNAL(clicked()), SLOT(scrollLeft()));
+    connect(d->leftScrollButton, SIGNAL(clicked()), d->view, SLOT(scrollLeft()));
     layout->addItem(d->leftScrollButton);
 
     layout->addItem(d->view);
 
-    connect(d->rightScrollButton, SIGNAL(clicked()), SLOT(scrollRight()));
+    connect(d->rightScrollButton, SIGNAL(clicked()), d->view, SLOT(scrollRight()));
     layout->addItem(d->rightScrollButton);
 
     setLayout(verticalLayout);
