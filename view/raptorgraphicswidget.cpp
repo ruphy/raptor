@@ -84,7 +84,7 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
 
     d->model = new Kickoff::ApplicationModel();
     d->model->init();
-//     d->searchModel = new Kickoff::SearchModel();
+    d->searchModel = new Kickoff::SearchModel();
 //     d->breadCrumb = new RaptorBreadCrumb(d->view, d->model, this);
     d->searchLine = new Plasma::LineEdit(this);
     d->rightScrollButton = new RaptorScrollButton(RaptorScrollButton::Right, this);
@@ -134,39 +134,39 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
 //     d->view->hideScrollBars();
 // 
 //     d->proxy = new QGraphicsProxyWidget(this);
-//     d->proxy->setWidget(d->view);
-// 
-//     KConfigGroup config(&d->appletConfig, "PlasmaRunnerManager");
-//     KConfigGroup conf(&config, "Plugins");
-// 
-//     conf.writeEntry("servicesEnabled", true);
-// 
-//     KService::List offers = KServiceTypeTrader::self()->query("Plasma/Runner");
-// 
-//     foreach (const KService::Ptr &service, offers) {
-//         KPluginInfo description(service);
-//         QString runnerName = description.pluginName();
-// 
-//         if (runnerName != "services")
-//         {
-//             conf.writeEntry(QString(runnerName + "Enabled"), false);
-//         }
-//     }
-// 
-//     conf.sync();
-//     config.sync();
-// 
-//     d->manager = new Plasma::RunnerManager(config, this);
-//     d->manager->reloadConfiguration();
+//    d->proxy->setWidget(d->view);
+
+    KConfigGroup config(&d->appletConfig, "PlasmaRunnerManager");
+    KConfigGroup conf(&config, "Plugins");
+
+    conf.writeEntry("servicesEnabled", true);
+
+    KService::List offers = KServiceTypeTrader::self()->query("Plasma/Runner");
+
+    foreach (const KService::Ptr &service, offers) {
+        KPluginInfo description(service);
+        QString runnerName = description.pluginName();
+
+        if (runnerName != "services")
+        {
+            conf.writeEntry(QString(runnerName + "Enabled"), false);
+        }
+    }
+
+    conf.sync();
+    config.sync();
+
+    d->manager = new Plasma::RunnerManager(config, this);
+    d->manager->reloadConfiguration();
 // 
 //     layout->addItem(d->proxy);
 // 
 
-//     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(updateColors()));
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(updateColors()));
 //     connect(d->view, SIGNAL(applicationClicked(const KUrl &)), this, SLOT(launchApplication(const KUrl &)));
-//     connect(d->searchLine, SIGNAL(textEdited(const QString&)), this, SLOT(refineModel()));
-//     connect(d->manager, SIGNAL(matchesChanged(const QList<Plasma::QueryMatch>&)), this,
-//             SLOT(matchesChanged(const QList<Plasma::QueryMatch>&)));
+    connect(d->searchLine, SIGNAL(textEdited(const QString&)), this, SLOT(refineModel()));
+    connect(d->manager, SIGNAL(matchesChanged(const QList<Plasma::QueryMatch>&)), this,
+            SLOT(matchesChanged(const QList<Plasma::QueryMatch>&)));
 //     connect(d->breadCrumb, SIGNAL(bottomLevelReached()), d->model, SLOT(slotReloadMenu()));
 // 
 //     d->view->focusCentralItem();
