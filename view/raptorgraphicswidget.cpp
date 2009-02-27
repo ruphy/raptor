@@ -18,12 +18,14 @@
 #include "engine/kickoff/applicationmodel.h"
 #include "engine/kickoff/searchmodel.h"
 #include "view/raptorbreadcrumb.h"
+#include "view/raptorgraphicsview.h"
 
 // Qt
 #include <QGraphicsLinearLayout>
 #include <QGraphicsProxyWidget>
 #include <QGraphicsSceneResizeEvent>
 #include <QScrollBar>
+#include <QPainter>
 
 // KDE
 #include <KDesktopFile>
@@ -75,90 +77,96 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
     : QGraphicsWidget(parent),
       d(new Private(this))
 {
-    d->leftScrollButton = new RaptorScrollButton(RaptorScrollButton::Left);
-    d->view = new RaptorItemsView();
-    RaptorItemDelegate *delegate = new RaptorItemDelegate();
+//     d->leftScrollButton = new RaptorScrollButton(RaptorScrollButton::Left);
+//     d->view = new RaptorItemsView();
+//     RaptorItemDelegate *delegate = new RaptorItemDelegate();
+
     d->model = new Kickoff::ApplicationModel();
     d->model->init();
-    d->searchModel = new Kickoff::SearchModel();
-    d->breadCrumb = new RaptorBreadCrumb(d->view, d->model, this);
-    d->searchLine = new Plasma::LineEdit(this);
-    d->rightScrollButton = new RaptorScrollButton(RaptorScrollButton::Right);
+//     d->searchModel = new Kickoff::SearchModel();
+//     d->breadCrumb = new RaptorBreadCrumb(d->view, d->model, this);
+//     d->searchLine = new Plasma::LineEdit(this);
+//     d->rightScrollButton = new RaptorScrollButton(RaptorScrollButton::Right);
     d->appletConfig = appletconfig;
 
-    QGraphicsLinearLayout *verticalLayout = new QGraphicsLinearLayout(Qt::Vertical, this);
-    QGraphicsLinearLayout *horizontalLayout = new QGraphicsLinearLayout();
-    verticalLayout->addItem(horizontalLayout);
-    QGraphicsLinearLayout *layout = new QGraphicsLinearLayout();
-    layout->setOrientation(Qt::Horizontal);
-    verticalLayout->addItem(layout);
+    QGraphicsLinearLayout *verticalLayout = new QGraphicsLinearLayout(Qt::Vertical);
 
-    horizontalLayout->addItem(d->breadCrumb);
-    horizontalLayout->addStretch();
-    horizontalLayout->addItem(d->searchLine);
+//     QGraphicsLinearLayout *horizontalLayout = new QGraphicsLinearLayout();
+//     horizontalLayout->addItem(d->breadCrumb);
+//     horizontalLayout->addStretch();
+//     horizontalLayout->addItem(d->searchLine);
 
-    d->leftScrollButtonProxy = new QGraphicsProxyWidget(this);
-    d->leftScrollButtonProxy->setWidget(d->leftScrollButton);
-    connect(d->leftScrollButton, SIGNAL(clicked()), SLOT(scrollLeft()));
-    layout->addItem(d->leftScrollButtonProxy);
+//     verticalLayout->addItem(horizontalLayout);
+//     QGraphicsLinearLayout *layout = new QGraphicsLinearLayout();
+//     layout->setOrientation(Qt::Horizontal);
+//     verticalLayout->addItem(layout);
 
-    delegate->setTextColor(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
+    RaptorGraphicsView *view = new RaptorGraphicsView(this);
+    view->setModel(d->model);
+    verticalLayout->addItem(view);
 
-    // let's make the view nicer in the applet
-    d->view->setAttribute(Qt::WA_NoSystemBackground);
-    d->view->viewport()->setAutoFillBackground(true);
-    QPalette p = d->view->viewport()->palette();
-    p.setColor(QPalette::Base, Qt::transparent);
-    d->view->viewport()->setPalette(p);
-
-    d->view->setModel(d->model);
-    d->view->setItemDelegate(delegate);
-
-    d->view->hideScrollBars();
-
-    d->proxy = new QGraphicsProxyWidget(this);
-    d->proxy->setWidget(d->view);
-
-    KConfigGroup config(&d->appletConfig, "PlasmaRunnerManager");
-    KConfigGroup conf(&config, "Plugins");
-
-    conf.writeEntry("servicesEnabled", true);
-
-    KService::List offers = KServiceTypeTrader::self()->query("Plasma/Runner");
-
-    foreach (const KService::Ptr &service, offers) {
-        KPluginInfo description(service);
-        QString runnerName = description.pluginName();
-
-        if (runnerName != "services")
-        {
-            conf.writeEntry(QString(runnerName + "Enabled"), false);
-        }
-    }
-
-    conf.sync();
-    config.sync();
-
-    d->manager = new Plasma::RunnerManager(config, this);
-    d->manager->reloadConfiguration();
-
-    layout->addItem(d->proxy);
-
-    connect(d->rightScrollButton, SIGNAL(clicked()), SLOT(scrollRight()));
-    d->rightScrollButtonProxy = new QGraphicsProxyWidget(this);
-    d->rightScrollButtonProxy->setWidget(d->rightScrollButton);
-    layout->addItem(d->rightScrollButtonProxy);
+//     d->leftScrollButtonProxy = new QGraphicsProxyWidget(this);
+//     d->leftScrollButtonProxy->setWidget(d->leftScrollButton);
+//     connect(d->leftScrollButton, SIGNAL(clicked()), SLOT(scrollLeft()));
+//     layout->addItem(d->leftScrollButtonProxy);
+// 
+//     delegate->setTextColor(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
+// 
+//     // let's make the view nicer in the applet
+//     d->view->setAttribute(Qt::WA_NoSystemBackground);
+//     d->view->viewport()->setAutoFillBackground(true);
+//     QPalette p = d->view->viewport()->palette();
+//     p.setColor(QPalette::Base, Qt::transparent);
+//     d->view->viewport()->setPalette(p);
+// 
+//     d->view->setModel(d->model);
+//     d->view->setItemDelegate(delegate);
+// 
+//     d->view->hideScrollBars();
+// 
+//     d->proxy = new QGraphicsProxyWidget(this);
+//     d->proxy->setWidget(d->view);
+// 
+//     KConfigGroup config(&d->appletConfig, "PlasmaRunnerManager");
+//     KConfigGroup conf(&config, "Plugins");
+// 
+//     conf.writeEntry("servicesEnabled", true);
+// 
+//     KService::List offers = KServiceTypeTrader::self()->query("Plasma/Runner");
+// 
+//     foreach (const KService::Ptr &service, offers) {
+//         KPluginInfo description(service);
+//         QString runnerName = description.pluginName();
+// 
+//         if (runnerName != "services")
+//         {
+//             conf.writeEntry(QString(runnerName + "Enabled"), false);
+//         }
+//     }
+// 
+//     conf.sync();
+//     config.sync();
+// 
+//     d->manager = new Plasma::RunnerManager(config, this);
+//     d->manager->reloadConfiguration();
+// 
+//     layout->addItem(d->proxy);
+// 
+//     connect(d->rightScrollButton, SIGNAL(clicked()), SLOT(scrollRight()));
+//     d->rightScrollButtonProxy = new QGraphicsProxyWidget(this);
+//     d->rightScrollButtonProxy->setWidget(d->rightScrollButton);
+//     layout->addItem(d->rightScrollButtonProxy);
 
     setLayout(verticalLayout);
 
-    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(updateColors()));
-    connect(d->view, SIGNAL(applicationClicked(const KUrl &)), this, SLOT(launchApplication(const KUrl &)));
-    connect(d->searchLine, SIGNAL(textEdited(const QString&)), this, SLOT(refineModel()));
-    connect(d->manager, SIGNAL(matchesChanged(const QList<Plasma::QueryMatch>&)), this,
-            SLOT(matchesChanged(const QList<Plasma::QueryMatch>&)));
-    connect(d->breadCrumb, SIGNAL(bottomLevelReached()), d->model, SLOT(slotReloadMenu()));
-
-    d->view->focusCentralItem();
+//     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(updateColors()));
+//     connect(d->view, SIGNAL(applicationClicked(const KUrl &)), this, SLOT(launchApplication(const KUrl &)));
+//     connect(d->searchLine, SIGNAL(textEdited(const QString&)), this, SLOT(refineModel()));
+//     connect(d->manager, SIGNAL(matchesChanged(const QList<Plasma::QueryMatch>&)), this,
+//             SLOT(matchesChanged(const QList<Plasma::QueryMatch>&)));
+//     connect(d->breadCrumb, SIGNAL(bottomLevelReached()), d->model, SLOT(slotReloadMenu()));
+// 
+//     d->view->focusCentralItem();
 
 }
 
@@ -274,6 +282,13 @@ void RaptorGraphicsWidget::matchesChanged(const QList<Plasma::QueryMatch> &match
             d->searchModel->addAppNode(service);
         }
     }
+}
+
+void RaptorGraphicsWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+    Q_UNUSED(option)
+    Q_UNUSED(widget)
+    painter->fillRect(rect(), Qt::red);
 }
 
 #include "raptorgraphicswidget.moc"

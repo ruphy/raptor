@@ -26,6 +26,7 @@ Raptor::Raptor(QObject *parent, const QVariantList &args)
 {
     // this will get us the standard applet background, for free!
     setBackgroundHints(Plasma::Applet::StandardBackground);
+    setAspectRatioMode(Plasma::IgnoreAspectRatio);
     resize(200, 200);
 }
 

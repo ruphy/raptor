@@ -15,6 +15,7 @@
 #include <QModelIndex>
 
 class QAbstractItemModel;
+class QGraphicsSceneResizeEvent;
 
 class RaptorGraphicsView : public QGraphicsWidget
 {
@@ -49,6 +50,8 @@ public slots:
 protected:
     void getItems();
     void setupItems();
+
+    void resizeEvent(QGraphicsSceneResizeEvent *event);
 
 private:
     class Private;

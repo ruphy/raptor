@@ -23,7 +23,7 @@ class RaptorMenuItem : public QObject
 {
     Q_OBJECT
 public:
-    RaptorMenuItem(QModelIndex index, QObject *parent = 0);
+    RaptorMenuItem(const QModelIndex &index, QObject *parent = 0);
     ~RaptorMenuItem();
 
     /**

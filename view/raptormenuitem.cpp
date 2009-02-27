@@ -15,18 +15,21 @@
 #include <QPainter>
 #include <QModelIndex>
 
+#include <KDebug>
+
 class RaptorMenuItem::Private
 {
 public:
-    Private(RaptorMenuItem *q) : q(q)
-    {}
+    Private(const QModelIndex &index, RaptorMenuItem *q) : q(q), index(index)
+    {
+    }
 
     RaptorMenuItem *q;
     QModelIndex index;
     QRectF rect;
 };
 
-RaptorMenuItem::RaptorMenuItem(QModelIndex index, QObject *parent) : QObject(parent) , d(new Private(this))
+RaptorMenuItem::RaptorMenuItem(const QModelIndex &index, QObject *parent) : QObject(parent) , d(new Private(index, this))
 {
 }
 
@@ -42,6 +45,7 @@ QRectF RaptorMenuItem::rect() const
 
 void RaptorMenuItem::setRect(const QRectF &rect)
 {
+    kDebug() << "setting rect" << rect;
     d->rect = rect;
 }
 

@@ -15,6 +15,11 @@
 #include <QAbstractItemModel>
 #include <QModelIndex>
 #include <QList>
+#include <QPainter>
+
+#include <KDebug>
+
+#include <Plasma/Theme>
 
 class RaptorGraphicsView::Private
 {
@@ -22,6 +27,7 @@ public:
     Private(RaptorGraphicsView *q) : q(q), model(0), scrollOffset(0.0)
     {
         delegate = new RaptorItemDelegate(q);
+        delegate->setTextColor(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
     }
 
     RaptorGraphicsView *q;
@@ -34,7 +40,9 @@ public:
 };
 
 RaptorGraphicsView::RaptorGraphicsView(QGraphicsItem *parent) : QGraphicsWidget(parent), d(new Private(this))
-{}
+{
+    setViewMode(RaptorGraphicsView::Normal);
+}
 
 RaptorGraphicsView::~RaptorGraphicsView()
 {
@@ -50,7 +58,9 @@ void RaptorGraphicsView::setRootIndex(const QModelIndex &index)
 {
     d->rootIndex = index;
 
-    // update();
+    getItems();
+    setupItems();
+    update();
 }
 
 // TODO: for scroll: act on d->items and call setupItems again
@@ -87,13 +97,20 @@ QAbstractItemModel* RaptorGraphicsView::model()
 void RaptorGraphicsView::setModel(QAbstractItemModel *model)
 {
     d->model = model;
-    // update();
+    d->rootIndex = QModelIndex();
+
+    getItems();
+    kDebug() << "MODEL SET, SETTING ITEMS";
+    setupItems();
+    update();
 }
 
 void RaptorGraphicsView::setViewMode(ViewMode viewMode)
 {
     d->delegate->setViewMode((RaptorItemDelegate::ViewMode)viewMode);
-    // update();
+
+    setupItems();
+    update();
 }
 
 RaptorGraphicsView::ViewMode RaptorGraphicsView::viewMode()
@@ -104,11 +121,22 @@ RaptorGraphicsView::ViewMode RaptorGraphicsView::viewMode()
 void RaptorGraphicsView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(widget)
+    Q_UNUSED(option)
 
+    painter->fillRect(rect(), Qt::blue);
+
+    painter->setPen(Qt::green);
+    foreach (RaptorMenuItem *item, d->shownItems) {
+        QStyleOptionViewItem opt;
+        opt.rect = item->rect().toRect();
+        painter->drawRect(opt.rect);
+        d->delegate->paint(painter, opt, item->modelIndex());
+    }
 }
 
 void RaptorGraphicsView::getItems()
 {
+    d->items.clear();
     for (int i = 0; i < d->model->rowCount(d->rootIndex); i++) {
         d->items << new RaptorMenuItem(d->model->index(i, 0, d->rootIndex), this);
     }
@@ -162,7 +190,6 @@ void RaptorGraphicsView::setupItems()
 	  }
 	  sizesSum += contentsRect().height() / 2;
 
-	  int last = 0;
 	  for (; i < d->items.count(); i++) { // now we take care of left items
 	      if (sizesSum > contentsRect().width() - (contentsRect().height() / 2)) {
 		  sizesSum = contentsRect().width() - (contentsRect().height() / 2);
@@ -189,4 +216,13 @@ void RaptorGraphicsView::setupItems()
 	  }
     }
 
+}
+
+void RaptorGraphicsView::resizeEvent(QGraphicsSceneResizeEvent *event)
+{
+    Q_UNUSED(event)
+    setupItems();
+    update();
+
+    kDebug() << contentsRect();
 }

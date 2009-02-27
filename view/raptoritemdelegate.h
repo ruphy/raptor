@@ -35,7 +35,7 @@ public:
     ~RaptorItemDelegate();
 
     void paint(QPainter *painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const;
-    void setTextColor(const QColor &); // NOTE: What's the use case for this?!
+    void setTextColor(const QColor &);
 
     void setViewMode(ViewMode);
     ViewMode viewMode();
