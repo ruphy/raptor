@@ -20,13 +20,14 @@
 class RaptorMenuItem::Private
 {
 public:
-    Private(const QModelIndex &index, RaptorMenuItem *q) : q(q), index(index)
+    Private(const QModelIndex &index, RaptorMenuItem *q) : q(q), index(index), option(new QStyleOptionViewItem)
     {
     }
 
     RaptorMenuItem *q;
     QModelIndex index;
     QRectF rect;
+    QStyleOptionViewItem *option;
 };
 
 RaptorMenuItem::RaptorMenuItem(const QModelIndex &index, QObject *parent) : QObject(parent) , d(new Private(index, this))
@@ -47,6 +48,8 @@ void RaptorMenuItem::setRect(const QRectF &rect)
 {
     kDebug() << "setting rect" << rect;
     d->rect = rect;
+    d->option->rect = rect.toRect();
+    d->option->decorationSize = d->option->rect.size();
 }
 
 void RaptorMenuItem::moveBy(float dx, float dy)
@@ -57,4 +60,9 @@ void RaptorMenuItem::moveBy(float dx, float dy)
 QModelIndex RaptorMenuItem::modelIndex() const
 {
     return d->index;
+}
+
+QStyleOptionViewItem* RaptorMenuItem::option()
+{
+    return d->option;
 }

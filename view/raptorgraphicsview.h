@@ -16,6 +16,7 @@
 
 class QAbstractItemModel;
 class QGraphicsSceneResizeEvent;
+class QGraphicsSceneHoverEvent;
 
 class RaptorGraphicsView : public QGraphicsWidget
 {
@@ -52,6 +53,7 @@ protected:
     void setupItems();
 
     void resizeEvent(QGraphicsSceneResizeEvent *event);
+    void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
 
 private:
     class Private;

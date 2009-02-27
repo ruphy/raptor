@@ -49,6 +49,8 @@ public:
      */
     void moveBy(float dx, float dy);
 
+    QStyleOptionViewItem* option();
+
     /**
      * @Returns the index associated to this item.
      */

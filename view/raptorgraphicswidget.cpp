@@ -77,6 +77,7 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
     : QGraphicsWidget(parent),
       d(new Private(this))
 {
+    setAcceptHoverEvents(true);
 //     d->leftScrollButton = new RaptorScrollButton(RaptorScrollButton::Left);
 //     d->view = new RaptorItemsView();
 //     RaptorItemDelegate *delegate = new RaptorItemDelegate();
@@ -286,9 +287,10 @@ void RaptorGraphicsWidget::matchesChanged(const QList<Plasma::QueryMatch> &match
 
 void RaptorGraphicsWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    Q_UNUSED(option)
-    Q_UNUSED(widget)
-    painter->fillRect(rect(), Qt::red);
+//     Q_UNUSED(option)
+//     Q_UNUSED(widget)
+//     painter->fillRect(rect(), Qt::red);
+    QGraphicsWidget::paint(painter, option, widget);
 }
 
 #include "raptorgraphicswidget.moc"

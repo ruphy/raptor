@@ -16,6 +16,7 @@
 #include <QModelIndex>
 #include <QList>
 #include <QPainter>
+#include <QGraphicsSceneMouseEvent>
 
 #include <KDebug>
 
@@ -42,6 +43,7 @@ public:
 RaptorGraphicsView::RaptorGraphicsView(QGraphicsItem *parent) : QGraphicsWidget(parent), d(new Private(this))
 {
     setViewMode(RaptorGraphicsView::Normal);
+    setAcceptHoverEvents(true);
 }
 
 RaptorGraphicsView::~RaptorGraphicsView()
@@ -100,7 +102,6 @@ void RaptorGraphicsView::setModel(QAbstractItemModel *model)
     d->rootIndex = QModelIndex();
 
     getItems();
-    kDebug() << "MODEL SET, SETTING ITEMS";
     setupItems();
     update();
 }
@@ -123,14 +124,12 @@ void RaptorGraphicsView::paint(QPainter *painter, const QStyleOptionGraphicsItem
     Q_UNUSED(widget)
     Q_UNUSED(option)
 
-    painter->fillRect(rect(), Qt::blue);
+//     painter->fillRect(rect(), Qt::blue);
 
-    painter->setPen(Qt::green);
+//     painter->setPen(Qt::green);
     foreach (RaptorMenuItem *item, d->shownItems) {
-        QStyleOptionViewItem opt;
-        opt.rect = item->rect().toRect();
-        painter->drawRect(opt.rect);
-        d->delegate->paint(painter, opt, item->modelIndex());
+        painter->drawRect(item->rect());
+        d->delegate->paint(painter, *item->option(), item->modelIndex());
     }
 }
 
@@ -225,4 +224,15 @@ void RaptorGraphicsView::resizeEvent(QGraphicsSceneResizeEvent *event)
     update();
 
     kDebug() << contentsRect();
+}
+
+void RaptorGraphicsView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
+{
+    foreach (RaptorMenuItem *item, d->shownItems) {
+        item->option()->state = QStyle::State_None;
+        if (item->rect().contains(event->pos())) {
+            item->option()->state = QStyle::State_MouseOver;
+        }
+    }
+    update();
 }
