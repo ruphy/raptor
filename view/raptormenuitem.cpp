@@ -18,35 +18,21 @@
 class RaptorMenuItem::Private
 {
 public:
-    Private(RaptorMenuItem *q, RaptorItemDelegate * del) : q(q), delegate(del)
+    Private(RaptorMenuItem *q) : q(q)
     {}
 
     RaptorMenuItem *q;
-    RaptorItemDelegate *delegate;
     QModelIndex index;
     QRectF rect;
 };
 
-RaptorMenuItem::RaptorMenuItem(QModelIndex index, RaptorItemDelegate * delegate, QObject *parent) : QObject(parent) , d(new Private(this, delegate))
+RaptorMenuItem::RaptorMenuItem(QModelIndex index, QObject *parent) : QObject(parent) , d(new Private(this))
 {
 }
 
 RaptorMenuItem::~RaptorMenuItem()
 {
     delete d;
-}
-
-void RaptorMenuItem::paint(QPainter *painter, const QStyleOptionViewItem &option)
-{
-    QStyleOptionViewItem opt = option;
-
-    if (!d->rect.isNull()) {
-        opt.rect = d->rect.toRect();
-    } else {
-        d->rect = opt.rect;
-    }
-
-    d->delegate->paint(painter, opt, d->index);
 }
 
 QRectF RaptorMenuItem::rect() const

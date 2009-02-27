@@ -19,21 +19,38 @@ class QSize;
 class RaptorItemDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
-    public:
-        RaptorItemDelegate(QObject *parent = 0);
-        ~RaptorItemDelegate();
+public:
+    enum ViewMode {
+        SingleApp = 0, //http://nuno-icons.com/images/estilo/raptor/oneapp.png
+        TwoApps   = 1, //http://nuno-icons.com/images/estilo/raptor/menu2enteries.png
+        Normal    = 2, //http://nuno-icons.com/images/estilo/raptor/main menu.png
+        Search    = 4 //http://nuno-icons.com/images/estilo/raptor/find.png
+    };
 
-        void paint(QPainter *painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const;
-        void setTextColor(const QColor &);
+    enum DataRole {
+        Description = Qt::UserRole + 1
+    };
 
+    RaptorItemDelegate(QObject *parent = 0);
+    ~RaptorItemDelegate();
 
-    protected slots:
-        void animatePaint(int);
+    void paint(QPainter *painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const;
+    void setTextColor(const QColor &); // NOTE: What's the use case for this?!
 
-    private:
-        void generateBgPixmap(const QSize &s) const;
-        class Private;
-        Private *d;
+    void setViewMode(ViewMode);
+    ViewMode viewMode();
+
+protected:
+    void drawNormalWay(QPainter *painter, const QStyleOptionViewItem & option, const QModelIndex &index) const;
+    void drawSingleAppWay(QPainter *painter, const QStyleOptionViewItem & option, const QModelIndex &index) const;
+
+protected slots:
+    void animatePaint(int);
+
+private:
+    void generateBgPixmap(const QSize &s) const;
+    class Private;
+    Private *d;
 };
 
 #endif

@@ -30,7 +30,6 @@ public:
     QList<RaptorMenuItem*> items;
     QList<RaptorMenuItem*> shownItems;
     RaptorItemDelegate * delegate;
-    RaptorGraphicsView::ViewMode viewMode;
     float scrollOffset;
 };
 
@@ -54,30 +53,30 @@ void RaptorGraphicsView::setRootIndex(const QModelIndex &index)
     // update();
 }
 
+// TODO: for scroll: act on d->items and call setupItems again
+
 void RaptorGraphicsView::scrollRight()
 {
     if (d->items == d->shownItems)
         return;
-    d->shownItems.removeAll(d->shownItems.first());
-    if (d->shownItems.last() == d->items.last()) { //we're at the end of the items so let's begin from the beginning
-        d->shownItems.append(d->items.first());
-    }
-    else {
-        d->shownItems.append(d->items.at(d->items.indexOf(d->shownItems.last()) + 1));
-    }
+
+    RaptorMenuItem *item = d->items.first();
+    d->items.removeAll(item);
+    d->items.append(item);
+
+    setupItems();
 }
 
 void RaptorGraphicsView::scrollLeft()
 {
     if (d->items == d->shownItems)
         return;
-    d->shownItems.removeAll(d->shownItems.last());
-    if (d->shownItems.first() == d->items.first()) { //we're at the beginning of the items so let's begin from the beginning
-        d->shownItems.append(d->items.last());
-    }
-    else {
-        d->shownItems.append(d->items.at(d->items.indexOf(d->shownItems.first()) - 1));
-    }
+
+    RaptorMenuItem *item = d->items.last();
+    d->items.removeAll(item);
+    d->items.prepend(item);
+
+    setupItems();
 }
 
 QAbstractItemModel* RaptorGraphicsView::model()
@@ -93,95 +92,101 @@ void RaptorGraphicsView::setModel(QAbstractItemModel *model)
 
 void RaptorGraphicsView::setViewMode(ViewMode viewMode)
 {
-    d->viewMode = viewMode;
+    d->delegate->setViewMode((RaptorItemDelegate::ViewMode)viewMode);
     // update();
 }
 
 RaptorGraphicsView::ViewMode RaptorGraphicsView::viewMode()
 {
-    return d->viewMode;
+    return (RaptorGraphicsView::ViewMode)d->delegate->viewMode();
 }
 
 void RaptorGraphicsView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(widget)
-    switch (d->viewMode) {
-        case SingleApp:
-        break;
-        case TwoApps:
-        break;
-        case Normal:
-        break;
-        case Search:
-        break;
-    }
+
 }
 
 void RaptorGraphicsView::getItems()
 {
     for (int i = 0; i < d->model->rowCount(d->rootIndex); i++) {
-        d->items << new RaptorMenuItem(d->model->index(i, 0, d->rootIndex), d->delegate, this);
+        d->items << new RaptorMenuItem(d->model->index(i, 0, d->rootIndex), this);
     }
 }
 
-void RaptorGraphicsView::retrieveShownItems()
+void RaptorGraphicsView::setupItems()
 {
+    // NOTE: for each view mode we should setup items individually
+    // WARNING: we suppose a horizontal view
+    // WARNING: we still don't take care of partial item showing
+
     d->shownItems.clear();
-    // TODO: we should think about this code better:
-    //  - Take care of the current view mode while calculating shown items
-    //
+    ViewMode mode = viewMode();
 
-//     int n;
-//     if ((float)(size().width() / itemsSize().width())%10 != 0) { // if we don't have an x.y type number
-//         n = size().width() / itemsSize().width();
-//     }
-//     else { //Probably we show a half-item?
-//         n = (size().width() / itemsSize().width()) + 1;
-//     }
-//     if (n >= d->items.count()) {
-//         d->shownItems = d->items;
-//     } else {
-//         for (int i = 0; i < n; i++) {
-//             d->shownItems << d->items.at(i);
-//         }
-//     }
-}
-
-QSizeF RaptorGraphicsView::calculateItemSize(const QModelIndex &index)
-{
-    QSizeF size;
-
-    switch (viewMode()) {
-        case RaptorGraphicsView::Normal :
-            size = QSizeF(contentsRect().height(), contentsRect().height());
-            break;
-        case RaptorGraphicsView::SingleApp :
-            size = contentsRect().size();
-            break;
-        case RaptorGraphicsView::TwoApps :
-            size = QSizeF(contentsRect().width() / 2.0, contentsRect().height());
-            break;
-        case RaptorGraphicsView::Search :
-            retrieveShownItems();
-            bool small = false;
-            int i = 0;
-            for (; i != d->shownItems.count(); i++) {
-                if (index == d->shownItems.at(i)->modelIndex()) { //Get the the position of the index in a list of shownItems
-                    break;
-                }
+    if (mode == RaptorGraphicsView::Normal) {
+        qreal sizesSum = 0;
+        qreal size = contentsRect().height();
+        foreach (RaptorMenuItem *item, d->items) {
+            item->setRect(QRectF(QPointF(sizesSum, 0), QSizeF(size, size)));
+            sizesSum += size;
+            if (sizesSum > contentsRect().width()) {
+                break;
             }
-
-            if (i < 2 || d->shownItems.count() - 1 == i || d->shownItems.count() - 2 == i) { //Check whether it's a small one or not (last 2 and first 2 items)
-                small = true;
-            }
-
-            if (small) { // the case for half big items..
-                size = QSizeF(contentsRect().height() / 2, contentsRect().height() / 2);
-            } else {
-                size = QSizeF(contentsRect().height(), contentsRect().height());
-            }
-            break;
+            d->shownItems << item;
+        }
     }
 
-    return size;
+    else if (mode == RaptorGraphicsView::SingleApp) {
+        RaptorMenuItem *item = d->items.first(); 
+        item->setRect(QRectF(QPointF(0, 0), contentsRect().size()));
+    }
+
+    else if (mode == RaptorGraphicsView::TwoApps) {
+	qreal x = 0;
+	for (int i = 0; i < 2; i++) {
+	    RaptorMenuItem *item = d->items[i];
+	    item->setRect(QRectF(QPointF(x, 0), QSizeF(contentsRect().width() / 2.0, contentsRect().height())));
+	    x += contentsRect().width();
+	}
+     }
+
+     else if (mode == RaptorGraphicsView::Search) {
+	  qreal sizesSum = 0;
+	  int i = 0;
+	  qreal y = 0;
+
+	  for (; i < 2; i++) { // we place the first two items half sized and in column
+	      RaptorMenuItem *item = d->items[i];
+	      item->setRect(QRectF(QPointF(0, y), QSizeF(contentsRect().height() / 2, contentsRect().height() / 2)));
+	      y += contentsRect().height() / 2;
+	  }
+	  sizesSum += contentsRect().height() / 2;
+
+	  int last = 0;
+	  for (; i < d->items.count(); i++) { // now we take care of left items
+	      if (sizesSum > contentsRect().width() - (contentsRect().height() / 2)) {
+		  sizesSum = contentsRect().width() - (contentsRect().height() / 2);
+		  break;
+	      }
+
+	      if ( d->items.count() - i == 2 ) {
+		  break;
+	      }
+
+	      RaptorMenuItem *item = d->items[i]; 
+	      item->setRect(QRectF(QPointF(sizesSum, 0), QSizeF(contentsRect().height(), contentsRect().height())));
+	      d->shownItems << item;
+
+	      sizesSum += contentsRect().height();
+	  }
+
+	  int max = i + 2;
+	  y = 0;
+	  for (; i < max; i++) { // here we handle the last two items
+	      RaptorMenuItem *item = d->items[i];
+	      item->setRect(QRectF(QPointF(sizesSum, y), QSizeF(contentsRect().height() / 2, contentsRect().height() / 2)));
+	      y += contentsRect().height() / 2;
+	  }
+    }
+
 }

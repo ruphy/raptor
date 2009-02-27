@@ -23,7 +23,7 @@ class RaptorMenuItem : public QObject
 {
     Q_OBJECT
 public:
-    RaptorMenuItem(QModelIndex index, RaptorItemDelegate * delegate, QObject *parent = 0);
+    RaptorMenuItem(QModelIndex index, QObject *parent = 0);
     ~RaptorMenuItem();
 
     /**
@@ -48,12 +48,6 @@ public:
      * the geometry modification.
      */
     void moveBy(float dx, float dy);
-
-    /**
-     * Paints the item with the given @param painter and the given @param option.
-     * @note that the rect set using setRect() has priority over option.rect.
-     */
-    void paint(QPainter *painter, const QStyleOptionViewItem &option);
 
     /**
      * @Returns the index associated to this item.

@@ -48,8 +48,7 @@ public slots:
 
 protected:
     void getItems();
-    void retrieveShownItems();
-    QSizeF calculateItemSize(const QModelIndex &);
+    void setupItems();
 
 private:
     class Private;

@@ -35,19 +35,27 @@ class RaptorItemDelegate::Private
                 q(q),
                 timeLine(new QTimeLine(ANIMATION_DURATION, q)),
                 textColor(QColor()),
-                p(0)
+                p(0),
+                mode(RaptorItemDelegate::Normal)
                 {}
+
         ~Private()
                 { delete p; delete timeLine; }
 
     RaptorItemDelegate *q;
+
     QStyleOptionViewItemV4 optV4;
     const QAbstractItemView *view;
+
     QTimeLine *timeLine;
     int frame;
+
     QModelIndex index;
+
     QColor textColor;
     QPixmap *p;
+
+    RaptorItemDelegate::ViewMode mode;
 };
 
 RaptorItemDelegate::RaptorItemDelegate(QObject *parent) : QStyledItemDelegate(parent),
@@ -62,13 +70,28 @@ RaptorItemDelegate::~RaptorItemDelegate()
 }
 
 void RaptorItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const
-{
-    qreal textMargin = 3;
-    qreal iconSize = 64;
-    
+{    
     if (!index.isValid()) {
         return;
     }
+
+    switch (d->mode) {
+        case RaptorItemDelegate::Normal :
+            drawNormalWay(painter, option, index);
+            break;
+        case RaptorItemDelegate::SingleApp :
+            drawSingleAppWay(painter, option, index);
+            break;
+        default :
+            drawNormalWay(painter, option, index);
+            break;
+    }
+}
+
+void RaptorItemDelegate::drawNormalWay(QPainter *painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const
+{
+    const qreal textMargin = 3;
+    const qreal iconSize = 64;
 
     d->optV4 = option;
     initStyleOption(&d->optV4, index);
@@ -115,7 +138,7 @@ void RaptorItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem & o
     } else {
         if (d->timeLine->state() == QTimeLine::NotRunning) {
             d->index = QModelIndex();
-            }
+        }
     }
 
     if (d->optV4.state & QStyle::State_Selected) {
@@ -161,7 +184,44 @@ void RaptorItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem & o
     painter->drawText(textRect, Qt::AlignHCenter, index.data().toString());
 
     painter->restore();
+}
 
+void RaptorItemDelegate::drawSingleAppWay(QPainter *painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const
+{
+    d->optV4 = option;
+    initStyleOption(&d->optV4, index);
+
+    if (d->textColor != QColor()) {
+        d->optV4.palette.setColor(QPalette::Text, d->textColor);
+    }
+
+    painter->save();
+
+    painter->setRenderHint(QPainter::Antialiasing);
+    painter->setClipRect(d->optV4.rect);
+    painter->setPen(Qt::NoPen);
+
+    //WARNING: we assume to have a wide rect to draw icon + description.
+    //TODO: add the method setMode to the View in order to manage the description delegate
+
+    QPixmap pixmapDecoration = d->optV4.icon.pixmap(d->optV4.decorationSize);
+
+    QRect iconRect = d->optV4.rect;
+    iconRect.setSize(d->optV4.decorationSize);
+
+    painter->drawPixmap(iconRect, pixmapDecoration);
+
+
+    painter->setPen(d->optV4.palette.color(QPalette::Text));
+
+    QRect descriptionRect = d->optV4.rect;
+    descriptionRect.translate( iconRect.width(), 0);
+    descriptionRect.setSize(QSize(d->optV4.rect.width() - iconRect.width(), descriptionRect.height()));
+
+    //TODO: use standard delegate roles
+    painter->drawText(descriptionRect, Qt::AlignLeft, index.data(Qt::DisplayRole).toString());
+
+    painter->restore();
 }
 
 void RaptorItemDelegate::generateBgPixmap(const QSize &s) const // TODO find a way to make this themable, preferrably via SVG.
@@ -203,6 +263,11 @@ void RaptorItemDelegate::generateBgPixmap(const QSize &s) const // TODO find a w
 void RaptorItemDelegate::animatePaint(int frame)
 {
     d->frame = frame;
+
+    if (!d->view) { // TODO: we should avoid the use of d->view when fully ported to QGW
+        return;
+    }
+
     d->view->viewport()->update(d->optV4.rect);
 }
 
@@ -210,3 +275,14 @@ void RaptorItemDelegate::setTextColor(const QColor &color)
 {
     d->textColor = color;
 }
+
+void RaptorItemDelegate::setViewMode(RaptorItemDelegate::ViewMode mode)
+{
+    d->mode = mode;
+}
+
+RaptorItemDelegate::ViewMode RaptorItemDelegate::viewMode()
+{
+    return d->mode;
+}
+
