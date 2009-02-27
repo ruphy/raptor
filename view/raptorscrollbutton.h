@@ -10,11 +10,11 @@
 #ifndef RAPTORSCROLLBUTTON_H
 #define RAPTORSCROLLBUTTON_H
 
-#include <QPushButton>
+#include <QGraphicsWidget>
 
-class QPaintEvent;
+class QPainter;
 
-class RaptorScrollButton : public QPushButton
+class RaptorScrollButton : public QGraphicsWidget
 {
     Q_OBJECT
     public:
@@ -23,11 +23,14 @@ class RaptorScrollButton : public QPushButton
            Left,
            Right
         };
-        RaptorScrollButton(Side side, QWidget * parent = 0);
+        RaptorScrollButton(Side side, QGraphicsWidget * parent = 0);
         ~RaptorScrollButton();
 
-        void paintEvent(QPaintEvent * event);
+        void paint(QPainter * p, const QStyleOptionGraphicsItem * option, QWidget * widget);
         bool eventFilter(QObject * watched, QEvent * event);
+
+    signals:
+        void clicked();
 
     private slots:
         void animatePaint(int frame);

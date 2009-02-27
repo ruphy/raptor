@@ -13,8 +13,8 @@
 
 #include <QRectF>
 #include <QPainter>
-#include <QPaintEvent>
 #include <QTimeLine>
+#include <QStyleOptionGraphicsItem>
 
 #include <KDebug>
 
@@ -40,12 +40,12 @@ class RaptorScrollButton::Private
         QTimeLine * timeLine;
         int frame;
 };
-RaptorScrollButton::RaptorScrollButton(Side side, QWidget * parent)
-  : QPushButton(parent),
+RaptorScrollButton::RaptorScrollButton(Side side, QGraphicsWidget * parent)
+  : QGraphicsWidget(parent),
     d(new Private(side, this))
 {
     setAttribute(Qt::WA_NoSystemBackground);
-    repaint();
+    update();
     installEventFilter(this);
     connect(d->timeLine, SIGNAL(frameChanged(int)), this, SLOT(animatePaint(int)));
 }
@@ -54,18 +54,19 @@ RaptorScrollButton::~RaptorScrollButton()
 {
 }
 
-void RaptorScrollButton::paintEvent(QPaintEvent * event)
+void RaptorScrollButton::paint(QPainter * p, const QStyleOptionGraphicsItem * option, QWidget * widget)
 {
-    Q_UNUSED(event);
+    Q_UNUSED(option);
+    Q_UNUSED(widget);
 
-    QPainter p(this);
-    QRectF r(event->rect());
+    //QPainter p(this);
+    QRectF r(option->rect);
     
     qreal buttonRatioWidth = 0.7;
     qreal buttonRatioHeight = 0.6;
 
-    p.setRenderHint(QPainter::SmoothPixmapTransform);
-    p.setRenderHint(QPainter::Antialiasing);
+    p->setRenderHint(QPainter::SmoothPixmapTransform);
+    p->setRenderHint(QPainter::Antialiasing);
 
     r.setSize(QSizeF(contentsRect().size().width() * buttonRatioWidth + d->frame, 
                      contentsRect().size().height() * buttonRatioHeight + d->frame));
@@ -73,10 +74,10 @@ void RaptorScrollButton::paintEvent(QPaintEvent * event)
     r.moveCenter(contentsRect().center());
 
     if (d->side == Right) {
-       d->svg->paint(&p, r, "rightarrow");
+       d->svg->paint(p, r, "rightarrow");
     }
     else {
-       d->svg->paint(&p, r, "leftarrow");
+       d->svg->paint(p, r, "leftarrow");
     }
 }
 
@@ -85,22 +86,26 @@ bool RaptorScrollButton::eventFilter(QObject * watched, QEvent * event)
     Q_UNUSED(watched)
     switch(event->type())
     {
-        case QEvent::HoverEnter:
+        case QEvent::GraphicsSceneHoverEnter:
             d->timeLine->setFrameRange(0, 20);
             d->timeLine->start();
-            return false;
-        case QEvent::HoverLeave:
+            break;
+        case QEvent::GraphicsSceneHoverLeave:
             d->timeLine->stop();
             d->frame = 0;
-            repaint();
-            return false;
+            update();
+            break;
+        case QEvent::GraphicsSceneMousePress:
+            emit clicked();
+            break;
         default:
-            return false;
+            break;
     };
+    return false;
 }
 
 void RaptorScrollButton::animatePaint(int frame)
 {
     d->frame = frame;
-    repaint();
+    update();
 }
