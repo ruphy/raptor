@@ -18,6 +18,7 @@
 #include <QAbstractItemModel>
 #include <QTimeLine>
 #include <QEvent>
+#include <QStyleOptionGraphicsItem>
 
 #include <KIcon>
 #include <KDebug>
@@ -28,11 +29,13 @@ const int MARGIN = 5;
 class RaptorBreadCrumbItem::Private
 {
 public:
-    Private(RaptorBreadCrumbItem *q) 
+    Private(const QString &t, const QIcon &i, RaptorBreadCrumbItem *q)
       : q(q),
         timeLine(0),
         frame(0),
-        sizeHint(QSize(PIXMAP_SIZE, PIXMAP_SIZE))
+        sizeHint(QSize(PIXMAP_SIZE, PIXMAP_SIZE)),
+        text(t),
+        icon(i)
     {
         timeLine = new QTimeLine(250, q);
     }
@@ -45,14 +48,17 @@ public:
     int fontWidth;
     QSize sizeHint;
     QRect textRect;
+    QString text;
+    QIcon icon;
 };
 
 RaptorBreadCrumbItem::RaptorBreadCrumbItem(const QIcon & icon, const QString & text,
-                                           const QModelIndex &index, QWidget * parent)
-  : QPushButton(icon, text, parent),
-    d(new Private(this))
+                                           const QModelIndex &index, QGraphicsWidget * parent)
+  : QGraphicsWidget(parent),
+    d(new Private(text, icon, this))
 {
     setAttribute(Qt::WA_NoSystemBackground);
+    setAcceptHoverEvents(true);
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     d->index = index;
@@ -61,7 +67,6 @@ RaptorBreadCrumbItem::RaptorBreadCrumbItem(const QIcon & icon, const QString & t
 
     installEventFilter(this);
 
-    connect(this, SIGNAL(clicked()), SLOT(emitNavigationRequested()));
     connect(d->timeLine, SIGNAL(frameChanged(int)), SLOT(animatePaint(int)));
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), SLOT(updateColors()));
 }
@@ -71,30 +76,40 @@ RaptorBreadCrumbItem::~RaptorBreadCrumbItem()
     delete d;
 }
 
-void RaptorBreadCrumbItem::paintEvent(QPaintEvent * event)
+void RaptorBreadCrumbItem::paint(QPainter * p, const QStyleOptionGraphicsItem * option, QWidget * widget)
 {
-    Q_UNUSED(event);
+    Q_UNUSED(option);
+    Q_UNUSED(widget);
 
-    QPainter p(this);
     if (d->frame) {
         //FIXME: avoid magic numbers
-        p.setPen(d->textColor);
-        p.drawText(d->textRect, Qt::AlignLeft | Qt::AlignVCenter, text());
-        QRect pixmapRect(contentsRect());
+        p->setPen(d->textColor);
+        p->drawText(d->textRect, Qt::AlignLeft | Qt::AlignVCenter, text());
+        QRect pixmapRect(option->rect);
         pixmapRect.setSize(QSize(PIXMAP_SIZE, PIXMAP_SIZE));
         pixmapRect.translate(d->textRect.width() + MARGIN, 0);
-        p.drawPixmap(pixmapRect, icon().pixmap(PIXMAP_SIZE, PIXMAP_SIZE));
+        p->drawPixmap(pixmapRect, icon().pixmap(PIXMAP_SIZE, PIXMAP_SIZE));
     }
     else {
-        p.drawPixmap(contentsRect(), icon().pixmap(PIXMAP_SIZE, PIXMAP_SIZE));
+        p->drawPixmap(option->rect, icon().pixmap(PIXMAP_SIZE, PIXMAP_SIZE));
     }
 
-    p.end();
+    p->end();
 }
 
 const QModelIndex RaptorBreadCrumbItem::index()
 {
     return d->index;
+}
+
+QString RaptorBreadCrumbItem::text() const
+{
+    return d->text;
+}
+
+QIcon RaptorBreadCrumbItem::icon() const
+{
+    return d->icon;
 }
 
 void RaptorBreadCrumbItem::emitNavigationRequested()
@@ -107,17 +122,20 @@ bool RaptorBreadCrumbItem::eventFilter(QObject * watched, QEvent * event)
     Q_UNUSED(watched)
     switch(event->type())
     {
-        case QEvent::HoverEnter:
+        case QEvent::GraphicsSceneHoverEnter:
             d->timeLine->setFrameRange(0, 20);
             d->timeLine->start();
             return false;
-        case QEvent::HoverLeave:
+        case QEvent::GraphicsSceneHoverLeave:
             d->timeLine->stop();
             d->timeLine->setFrameRange(20, 0);
             d->timeLine->start();
 //             d->frame = 0;
 //             updateSizes();
 //             repaint();
+            return false;
+        case QEvent::GraphicsSceneMousePress:
+            emitNavigationRequested();
             return false;
         default:
             return false;
@@ -130,7 +148,7 @@ void RaptorBreadCrumbItem::animatePaint(int frame)
     d->textRect = QRect(contentsRect().x(), contentsRect().y(), ((d->frame * d->fontWidth) / 20 ), PIXMAP_SIZE);
 
     updateSizes();
-    repaint();
+    update();
 }
 
 void RaptorBreadCrumbItem::updateSizes()
@@ -152,8 +170,10 @@ void RaptorBreadCrumbItem::updateColors()
     d->fontWidth = Plasma::Theme::defaultTheme()->fontMetrics().width(text());
 }
 
-QSize RaptorBreadCrumbItem::sizeHint() const
+QSizeF RaptorBreadCrumbItem::sizeHint(Qt::SizeHint which, const QSizeF & constraint) const
 {
+    Q_UNUSED(which);
+    Q_UNUSED(constraint);
     return d->sizeHint;
 }
 
@@ -168,11 +188,10 @@ class RaptorBreadCrumbArrow::Private
         QAbstractItemModel * model;
 };
 
-RaptorBreadCrumbArrow::RaptorBreadCrumbArrow(const QModelIndex &index, QAbstractItemModel * model, QWidget * parent)
+RaptorBreadCrumbArrow::RaptorBreadCrumbArrow(const QModelIndex &index, QAbstractItemModel * model, QGraphicsWidget * parent)
   : RaptorBreadCrumbItem(KIcon("arrow-right"), QString(), index, parent),
     d(new Private(model))
 {
-    disconnect(SIGNAL(clicked()), this, SLOT(emitNavigationRequested()));
     removeEventFilter(this);
 }
 
@@ -181,12 +200,12 @@ RaptorBreadCrumbArrow::~RaptorBreadCrumbArrow()
     delete d;
 }
 
-void RaptorBreadCrumbArrow::paintEvent(QPaintEvent * event)
+void RaptorBreadCrumbArrow::paint(QPainter * p, const QStyleOptionGraphicsItem * option, QWidget * widget)
 {
-    Q_UNUSED(event);
-    
-    QPainter p(this);
-    p.drawPixmap(contentsRect(), icon().pixmap(22, 22));
+    Q_UNUSED(option);
+    Q_UNUSED(widget);
+
+    p->drawPixmap(option->rect, icon().pixmap(22, 22));
 }
 
 #include "raptorbreadcrumbitem.moc"

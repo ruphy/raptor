@@ -12,28 +12,32 @@
 #ifndef RAPTORBREADCRUMBITEM_H
 #define RAPTORBREADCRUMBITEM_H
 
-#include <QPushButton>
+#include <QGraphicsWidget>
 #include <QColor>
 
-class QPaintEvent;
 class QModelIndex;
+class QStyleOptionGraphicsItem;
 class QAbstractItemModel;
 
-class RaptorBreadCrumbItem : public QPushButton
+class RaptorBreadCrumbItem : public QGraphicsWidget
 {
     Q_OBJECT
     public:
         RaptorBreadCrumbItem(const QIcon & icon, const QString & text,
-                             const QModelIndex &index, QWidget * parent = 0);
+                             const QModelIndex &index, QGraphicsWidget * parent = 0);
         ~RaptorBreadCrumbItem();
 
-        void paintEvent(QPaintEvent * event);
+        void paint(QPainter * p, const QStyleOptionGraphicsItem * option, QWidget * widget);
 
         const QModelIndex index();
 
         bool eventFilter(QObject * watched, QEvent * event);
 
-        QSize sizeHint() const;
+        QSizeF sizeHint(Qt::SizeHint which, const QSizeF & constraint = QSizeF()) const;
+
+        QString text() const;
+
+        QIcon icon() const;
 
     signals:
         void navigationRequested(const QModelIndex &, RaptorBreadCrumbItem *);
@@ -55,10 +59,10 @@ class RaptorBreadCrumbArrow : public RaptorBreadCrumbItem
 {
     Q_OBJECT
     public:
-        RaptorBreadCrumbArrow(const QModelIndex &index, QAbstractItemModel * model, QWidget * parent = 0);
+        RaptorBreadCrumbArrow(const QModelIndex &index, QAbstractItemModel * model, QGraphicsWidget * parent = 0);
         ~RaptorBreadCrumbArrow();
 
-        void paintEvent(QPaintEvent * event);
+        void paint(QPainter * p, const QStyleOptionGraphicsItem * option, QWidget * widget);
 
     private:
         class Private;

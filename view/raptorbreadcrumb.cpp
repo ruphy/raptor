@@ -12,7 +12,7 @@
 #include "raptorbreadcrumb.h"
 #include "raptorbreadcrumbitem.h"
 
-#include "raptoritemsview.h"
+#include "raptorgraphicsview.h"
 
 #include <QGraphicsLinearLayout>
 #include <QGraphicsProxyWidget>
@@ -25,7 +25,7 @@
 class RaptorBreadCrumb::Private
 {
     public:
-        Private(RaptorItemsView * v, QAbstractItemModel * m)
+        Private(RaptorGraphicsView * v, QAbstractItemModel * m)
           : layout(0),
             view(v),
             model(m)
@@ -33,13 +33,13 @@ class RaptorBreadCrumb::Private
         ~Private() {}
 
         QGraphicsLinearLayout * layout;
-        RaptorItemsView * view;
+        RaptorGraphicsView * view;
         QAbstractItemModel * model;
         QMap<int,RaptorBreadCrumbItem*> items;
         QColor textColor;
 };
 
-RaptorBreadCrumb::RaptorBreadCrumb(RaptorItemsView * view, QAbstractItemModel * model, QGraphicsWidget * parent)
+RaptorBreadCrumb::RaptorBreadCrumb(RaptorGraphicsView * view, QAbstractItemModel * model, QGraphicsWidget * parent)
   : QGraphicsWidget(parent),
     d(new Private(view, model))
 {
@@ -59,7 +59,7 @@ void RaptorBreadCrumb::reload()
     //qDeleteAll(d->items);
     //for (int i = 0; i != d->layout->count(); i++)
     //    d->layout->removeAt(i);
-    QModelIndex index = d->view->currentIndex();
+    QModelIndex index = d->view->rootIndex();
     if (d->model->parent(index).isValid()) {
         addCrumb(d->model->parent(index));
     } else {
@@ -83,10 +83,8 @@ void RaptorBreadCrumb::addCrumb(const QModelIndex & index)
     if (!index.isValid()) {
         RaptorBreadCrumbItem * item = new RaptorBreadCrumbItem(KIcon("go-home"), i18n("Main Menu"),
                 QModelIndex());
-        QGraphicsProxyWidget * proxy = new QGraphicsProxyWidget(this);
-        proxy->setWidget(item);
         d->items[0] = item;
-        d->layout->insertItem(0, proxy);
+        d->layout->insertItem(0, item);
         d->layout->invalidate();
 
         connect(item, SIGNAL(navigationRequested(const QModelIndex &, RaptorBreadCrumbItem *)),
@@ -104,10 +102,8 @@ void RaptorBreadCrumb::addCrumb(const QModelIndex & index)
         RaptorBreadCrumbItem * item = new RaptorBreadCrumbItem(QIcon(d->model->data(tmp, Qt::DecorationRole)
                                                                .value<QIcon>()), d->model->data(tmp).toString(),
                                                                tmp);
-        QGraphicsProxyWidget * proxy = new QGraphicsProxyWidget(this);
-        proxy->setWidget(item);
         d->items[position] = item;
-        d->layout->insertItem(0, proxy);
+        d->layout->insertItem(0, item);
 
         connect(item, SIGNAL(navigationRequested(const QModelIndex &, RaptorBreadCrumbItem *)),
                 this, SLOT(navigate(const QModelIndex &, RaptorBreadCrumbItem *)));
@@ -116,10 +112,8 @@ void RaptorBreadCrumb::addCrumb(const QModelIndex & index)
 
         kDebug() << d->model->data(tmp).toString();
         RaptorBreadCrumbItem * arrow = new RaptorBreadCrumbArrow(tmp, d->model);
-        QGraphicsProxyWidget * arrowProxy = new QGraphicsProxyWidget(this);
-        arrowProxy->setWidget(arrow);
         d->items[position] = arrow;
-        d->layout->insertItem(0, arrowProxy);
+        d->layout->insertItem(0, arrow);
         d->layout->invalidate();
 
         connect(arrow, SIGNAL(navigationRequested(const QModelIndex &, RaptorBreadCrumbItem *)),
@@ -132,10 +126,8 @@ void RaptorBreadCrumb::addCrumb(const QModelIndex & index)
 
     RaptorBreadCrumbItem * item = new RaptorBreadCrumbItem(KIcon("go-home"), i18n("Main Menu"),
                                                            QModelIndex());
-    QGraphicsProxyWidget * proxy = new QGraphicsProxyWidget(this);
-    proxy->setWidget(item);
     d->items[position] = item;
-    d->layout->insertItem(0, proxy);
+    d->layout->insertItem(0, item);
     d->layout->invalidate();
 
     connect(item, SIGNAL(navigationRequested(const QModelIndex &, RaptorBreadCrumbItem *)),

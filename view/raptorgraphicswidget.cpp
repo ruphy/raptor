@@ -59,7 +59,7 @@ public:
     }
 
     RaptorGraphicsWidget *q;
-    RaptorItemsView *view;
+    RaptorGraphicsView *view;
     QGraphicsProxyWidget *proxy;
     Kickoff::ApplicationModel *model;
     Kickoff::SearchModel * searchModel;
@@ -78,14 +78,20 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
       d(new Private(this))
 {
     setAcceptHoverEvents(true);
-    d->leftScrollButton = new RaptorScrollButton(RaptorScrollButton::Left, this);
-//     d->view = new RaptorItemsView();
-//     RaptorItemDelegate *delegate = new RaptorItemDelegate();
 
     d->model = new Kickoff::ApplicationModel();
     d->model->init();
     d->searchModel = new Kickoff::SearchModel();
-//     d->breadCrumb = new RaptorBreadCrumb(d->view, d->model, this);
+
+    d->view = new RaptorGraphicsView(this);//Initialize the view as first element, some depend on it
+    d->view->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    d->view->setModel(d->model);
+
+    d->leftScrollButton = new RaptorScrollButton(RaptorScrollButton::Left, this);
+//     d->view = new RaptorItemsView();
+//     RaptorItemDelegate *delegate = new RaptorItemDelegate();
+
+    d->breadCrumb = new RaptorBreadCrumb(d->view, d->model, this);
     d->searchLine = new Plasma::LineEdit(this);
     d->rightScrollButton = new RaptorScrollButton(RaptorScrollButton::Right, this);
     d->appletConfig = appletconfig;
@@ -93,7 +99,7 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
     QGraphicsLinearLayout *verticalLayout = new QGraphicsLinearLayout(Qt::Vertical);
 
     QGraphicsLinearLayout *horizontalLayout = new QGraphicsLinearLayout();
-    //horizontalLayout->addItem(d->breadCrumb);
+    horizontalLayout->addItem(d->breadCrumb);
     horizontalLayout->addStretch();
     horizontalLayout->addItem(d->searchLine);
 
@@ -102,19 +108,12 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
     layout->setOrientation(Qt::Horizontal);
     verticalLayout->addItem(layout);
 
-    //d->leftScrollButtonProxy = new QGraphicsProxyWidget(this);
-    //d->leftScrollButtonProxy->setWidget(d->leftScrollButton);
     connect(d->leftScrollButton, SIGNAL(clicked()), SLOT(scrollLeft()));
     layout->addItem(d->leftScrollButton);
 
-    RaptorGraphicsView *view = new RaptorGraphicsView(this);
-    view->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    view->setModel(d->model);
-    layout->addItem(view);
+    layout->addItem(d->view);
 
     connect(d->rightScrollButton, SIGNAL(clicked()), SLOT(scrollRight()));
-    //d->rightScrollButtonProxy = new QGraphicsProxyWidget(this);
-    //d->rightScrollButtonProxy->setWidget(d->rightScrollButton);
     layout->addItem(d->rightScrollButton);
 
     setLayout(verticalLayout);
@@ -182,44 +181,12 @@ void RaptorGraphicsWidget::launchApplication(const KUrl &url)
 {
     KDesktopFile desktopFile(url.pathOrUrl());
     KService service(&desktopFile);
-    KRun::run(service, KUrl::List(), d->view);
-}
-
-void RaptorGraphicsWidget::scrollLeft()
-{
-    QModelIndex selected = d->view->currentIndex();
-
-    int rowCount = d->model->rowCount(d->view->rootIndex());
-    int nextRow = selected.row()-1;
-
-    if (nextRow < 0) {
-        nextRow = rowCount-1;
-    }
-
-    QModelIndex leftOne = d->model->index(nextRow, 0, d->view->rootIndex());
-    d->view->setCurrentIndex(leftOne);
-    d->view->update();
-}
-
-void RaptorGraphicsWidget::scrollRight()
-{
-    QModelIndex selected = d->view->currentIndex();
-
-    int rowCount = d->model->rowCount(d->view->rootIndex());
-    int nextRow = selected.row()+1;
-
-    if (nextRow > rowCount-1) {
-        nextRow = 0;
-    }
-
-    QModelIndex rightOne = d->model->index(nextRow, 0, d->view->rootIndex());
-    d->view->setCurrentIndex(rightOne);
-    d->view->update();
+    KRun::run(service, KUrl::List(), 0);
 }
 
 void RaptorGraphicsWidget::updateColors()
 {
-    static_cast<RaptorItemDelegate*>(d->view->itemDelegate())->setTextColor(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
+    //static_cast<RaptorItemDelegate*>(d->view->itemDelegate())->setTextColor(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
 }
 
 // QSizeF RaptorGraphicsWidget::sizeHint(Qt::SizeHint which, const QSizeF & constraint ) const

@@ -16,7 +16,7 @@
 #include <QModelIndex>
 #include <QColor>
 
-class RaptorItemsView;
+class RaptorGraphicsView;
 class QAbstractItemModel;
 class RaptorBreadCrumbItem;
 
@@ -24,7 +24,7 @@ class RaptorBreadCrumb : public QGraphicsWidget
 {
     Q_OBJECT
     public:
-        RaptorBreadCrumb(RaptorItemsView * view, QAbstractItemModel * model, QGraphicsWidget * parent);
+        RaptorBreadCrumb(RaptorGraphicsView * view, QAbstractItemModel * model, QGraphicsWidget * parent);
         ~RaptorBreadCrumb();
 
     public slots:

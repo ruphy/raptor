@@ -34,8 +34,6 @@ class RaptorGraphicsWidget : public QGraphicsWidget
     protected slots:
         void updateColors();
         void launchApplication(const KUrl &);
-        void scrollLeft();
-        void scrollRight();
         void refineModel();
         void matchesChanged(const QList<Plasma::QueryMatch>&);
 
