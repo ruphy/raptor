@@ -19,7 +19,6 @@ namespace Kickoff{
 class ApplicationModel;
 }
 
-class RaptorDescriptionDelegate;
 
 /**
  * A simple listview with smooth scrolling as base implementation for
@@ -41,7 +40,6 @@ class RaptorItemsView : public QListView
         void hideScrollBars();
         void showScrollBars();
         void focusCentralItem();
-        void setDescriptionDelegate(RaptorDescriptionDelegate *delegate);
 
         /**
          * This method has no effect if setDescriptionDelegate isn't called before

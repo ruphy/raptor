@@ -11,7 +11,6 @@
 
 //Local
 #include "raptoritemsview.h"
-#include "raptordescriptiondelegate.h"
 #include "engine/kickoff/applicationmodel.h"
 #include "engine/kickoff/models.h"
 
@@ -41,7 +40,6 @@ public:
     Qt::Orientation orientation;
     QTimeLine *timeLine;
     Mode mode;
-    RaptorDescriptionDelegate *description_d;
     QModelIndex index;
 };
 
@@ -224,14 +222,6 @@ void RaptorItemsView::switchMode(Mode mode)
         setViewMode(QListView::ListMode);
     }
 
-    if (d->description_d) {
-        setItemDelegate(d->description_d);
-    }
-}
-
-void RaptorItemsView::setDescriptionDelegate(RaptorDescriptionDelegate *delegate)
-{
-    d->description_d = delegate;
 }
 
 QRect RaptorItemsView::visualRect(const QModelIndex &index) const
