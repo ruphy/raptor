@@ -78,7 +78,7 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
       d(new Private(this))
 {
     setAcceptHoverEvents(true);
-//     d->leftScrollButton = new RaptorScrollButton(RaptorScrollButton::Left);
+    d->leftScrollButton = new RaptorScrollButton(RaptorScrollButton::Left);
 //     d->view = new RaptorItemsView();
 //     RaptorItemDelegate *delegate = new RaptorItemDelegate();
 
@@ -86,30 +86,38 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
     d->model->init();
 //     d->searchModel = new Kickoff::SearchModel();
 //     d->breadCrumb = new RaptorBreadCrumb(d->view, d->model, this);
-//     d->searchLine = new Plasma::LineEdit(this);
-//     d->rightScrollButton = new RaptorScrollButton(RaptorScrollButton::Right);
+    d->searchLine = new Plasma::LineEdit(this);
+    d->rightScrollButton = new RaptorScrollButton(RaptorScrollButton::Right);
     d->appletConfig = appletconfig;
 
     QGraphicsLinearLayout *verticalLayout = new QGraphicsLinearLayout(Qt::Vertical);
 
-//     QGraphicsLinearLayout *horizontalLayout = new QGraphicsLinearLayout();
-//     horizontalLayout->addItem(d->breadCrumb);
-//     horizontalLayout->addStretch();
-//     horizontalLayout->addItem(d->searchLine);
+    QGraphicsLinearLayout *horizontalLayout = new QGraphicsLinearLayout();
+    //horizontalLayout->addItem(d->breadCrumb);
+    horizontalLayout->addStretch();
+    horizontalLayout->addItem(d->searchLine);
 
-//     verticalLayout->addItem(horizontalLayout);
-//     QGraphicsLinearLayout *layout = new QGraphicsLinearLayout();
-//     layout->setOrientation(Qt::Horizontal);
-//     verticalLayout->addItem(layout);
+    verticalLayout->addItem(horizontalLayout);
+    QGraphicsLinearLayout *layout = new QGraphicsLinearLayout();
+    layout->setOrientation(Qt::Horizontal);
+    verticalLayout->addItem(layout);
+
+    /*d->leftScrollButtonProxy = new QGraphicsProxyWidget(this);
+    d->leftScrollButtonProxy->setWidget(d->leftScrollButton);
+    connect(d->leftScrollButton, SIGNAL(clicked()), SLOT(scrollLeft()));
+    layout->addItem(d->leftScrollButtonProxy);*/
 
     RaptorGraphicsView *view = new RaptorGraphicsView(this);
+    view->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     view->setModel(d->model);
-    verticalLayout->addItem(view);
+    layout->addItem(view);
 
-//     d->leftScrollButtonProxy = new QGraphicsProxyWidget(this);
-//     d->leftScrollButtonProxy->setWidget(d->leftScrollButton);
-//     connect(d->leftScrollButton, SIGNAL(clicked()), SLOT(scrollLeft()));
-//     layout->addItem(d->leftScrollButtonProxy);
+    /*connect(d->rightScrollButton, SIGNAL(clicked()), SLOT(scrollRight()));
+    d->rightScrollButtonProxy = new QGraphicsProxyWidget(this);
+    d->rightScrollButtonProxy->setWidget(d->rightScrollButton);
+    layout->addItem(d->rightScrollButtonProxy);*/
+
+    setLayout(verticalLayout);
 // 
 //     delegate->setTextColor(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
 // 
@@ -153,12 +161,6 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
 // 
 //     layout->addItem(d->proxy);
 // 
-//     connect(d->rightScrollButton, SIGNAL(clicked()), SLOT(scrollRight()));
-//     d->rightScrollButtonProxy = new QGraphicsProxyWidget(this);
-//     d->rightScrollButtonProxy->setWidget(d->rightScrollButton);
-//     layout->addItem(d->rightScrollButtonProxy);
-
-    setLayout(verticalLayout);
 
 //     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(updateColors()));
 //     connect(d->view, SIGNAL(applicationClicked(const KUrl &)), this, SLOT(launchApplication(const KUrl &)));
