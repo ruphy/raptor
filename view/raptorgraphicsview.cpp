@@ -65,8 +65,6 @@ void RaptorGraphicsView::setRootIndex(const QModelIndex &index)
     update();
 }
 
-// TODO: for scroll: act on d->items and call setupItems again
-
 void RaptorGraphicsView::scrollRight()
 {
     if (d->items == d->shownItems)
@@ -77,6 +75,7 @@ void RaptorGraphicsView::scrollRight()
     d->items.append(item);
 
     setupItems();
+    update();
 }
 
 void RaptorGraphicsView::scrollLeft()
@@ -89,6 +88,7 @@ void RaptorGraphicsView::scrollLeft()
     d->items.prepend(item);
 
     setupItems();
+    update();
 }
 
 QAbstractItemModel* RaptorGraphicsView::model()
@@ -128,7 +128,7 @@ void RaptorGraphicsView::paint(QPainter *painter, const QStyleOptionGraphicsItem
 
 //     painter->setPen(Qt::green);
     foreach (RaptorMenuItem *item, d->shownItems) {
-        painter->drawRect(item->rect());
+//         painter->drawRect(item->rect());
         d->delegate->paint(painter, *item->option(), item->modelIndex());
     }
 }
@@ -146,6 +146,7 @@ void RaptorGraphicsView::setupItems()
     // NOTE: for each view mode we should setup items individually
     // WARNING: we suppose a horizontal view
     // WARNING: we still don't take care of partial item showing
+    // TODO: remove tabs
 
     d->shownItems.clear();
     ViewMode mode = viewMode();

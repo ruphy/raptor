@@ -15,6 +15,7 @@
 #include <QStyledItemDelegate>
 
 class QSize;
+class QGraphicsWidget;
 
 class RaptorItemDelegate : public QStyledItemDelegate
 {
@@ -31,7 +32,7 @@ public:
         Description = Qt::UserRole + 1
     };
 
-    RaptorItemDelegate(QObject *parent = 0);
+    RaptorItemDelegate(QGraphicsWidget *parent);
     ~RaptorItemDelegate();
 
     void paint(QPainter *painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const;

@@ -18,6 +18,7 @@
 #include <QStyleOptionViewItemV4>
 #include <QAbstractItemView>
 #include <QApplication>
+#include <QGraphicsWidget>
 
 //KDE
 #include <Plasma/Theme>
@@ -31,8 +32,9 @@ const int ANIMATION_DURATION = 200; // will need to be made shorter once we have
 class RaptorItemDelegate::Private
 {
     public:
-        Private(RaptorItemDelegate *q):
+        Private(QGraphicsWidget *view, RaptorItemDelegate *q):
                 q(q),
+                view(view),
                 timeLine(new QTimeLine(ANIMATION_DURATION, q)),
                 textColor(QColor()),
                 p(0),
@@ -45,7 +47,7 @@ class RaptorItemDelegate::Private
     RaptorItemDelegate *q;
 
     QStyleOptionViewItemV4 optV4;
-    const QAbstractItemView *view;
+    QGraphicsWidget *view;
 
     QTimeLine *timeLine;
     int frame;
@@ -58,10 +60,10 @@ class RaptorItemDelegate::Private
     RaptorItemDelegate::ViewMode mode;
 };
 
-RaptorItemDelegate::RaptorItemDelegate(QObject *parent) : QStyledItemDelegate(parent),
-                                                          d(new Private(this))
+RaptorItemDelegate::RaptorItemDelegate(QGraphicsWidget *parent) : QStyledItemDelegate(parent),
+                                                          d(new Private(parent, this))
 {
-    connect(d->timeLine, SIGNAL(frameChanged(int)), this, SLOT(animatePaint(int)));
+//     connect(d->timeLine, SIGNAL(frameChanged(int)), this, SLOT(animatePaint(int)));
 }
 
 RaptorItemDelegate::~RaptorItemDelegate()
@@ -95,7 +97,6 @@ void RaptorItemDelegate::drawNormalWay(QPainter *painter, const QStyleOptionView
 
     d->optV4 = option;
     initStyleOption(&d->optV4, index);
-    d->view = qobject_cast<const QAbstractItemView*>(d->optV4.widget);
 
     if (!d->p) {
         generateBgPixmap(d->optV4.decorationSize); // TODO Bg --> Background
@@ -110,46 +111,46 @@ void RaptorItemDelegate::drawNormalWay(QPainter *painter, const QStyleOptionView
         d->optV4.state &= ~QStyle::State_MouseOver; //this removes the mouseOver state in order to draw a nicer selection rect
 
         // here comes what should be animated
-        if (d->timeLine->state() == QTimeLine::NotRunning && d->index != index) {
-
-            d->index = index;
-
-            d->timeLine->setFrameRange(0, 20);
-            d->timeLine->start();
-        }
+//         if (d->timeLine->state() == QTimeLine::NotRunning && d->index != index) {
+// 
+//             d->index = index;
+// 
+//             d->timeLine->setFrameRange(0, 20);
+//             d->timeLine->start();
+//         }
 
         QPixmap temp = (d->p)->size();//d->optV4
         QPainter p(&temp);
         p.setCompositionMode(QPainter::CompositionMode_Source);
         p.drawPixmap(0, 0, *d->p);
         p.setCompositionMode(QPainter::CompositionMode_DestinationIn);
-        p.fillRect(temp.rect(), QColor(0, 0, 0, qreal(d->frame)*5.0/100.0));
+        p.fillRect(temp.rect(), QColor(0, 0, 0, 100/*qreal(d->frame)*5.0/100.0*/));
         p.end();
 //         painter->drawPixmap(d->optV4.rect, temp);
-        painter->save();
+//         painter->save();
 //         painter->setOpacity(qreal(d->frame)*5.0/100.0);
         QPoint topLeft(d->optV4.rect.x()+(d->optV4.decorationSize.width()-d->p->width())/2,
                        d->optV4.rect.y()+(d->optV4.decorationSize.height()-d->p->height())/2);
         QRect pixRect(topLeft, QSize(d->p->width(), d->p->height()));
 //         pixRect.translate(10, 4);
         painter->drawPixmap(pixRect, temp); //*d->p);
-        painter->restore();
+//         painter->restore();
 
     } else {
-        if (d->timeLine->state() == QTimeLine::NotRunning) {
-            d->index = QModelIndex();
-        }
+//         if (d->timeLine->state() == QTimeLine::NotRunning) {
+//             d->index = QModelIndex();
+//         }
     }
 
     if (d->optV4.state & QStyle::State_Selected) {
-        painter->save();
+//         painter->save();
 //         QRect pixRect(d->optV4.rect.topLeft(), QSize(d->p->width(), d->p->height()));
         QPoint topLeft(d->optV4.rect.x()+((d->optV4.decorationSize.width()-d->p->width())/2),
                        d->optV4.rect.y()+((d->optV4.decorationSize.height()-d->p->height())/2));
         QRect pixRect(topLeft, QSize(d->p->width(), d->p->height()));
 //         pixRect.translate(4, 10);
         painter->drawPixmap(pixRect, *d->p);
-        painter->restore();
+//         painter->restore();
     }
 
     if (d->textColor != QColor()) {
@@ -268,7 +269,7 @@ void RaptorItemDelegate::animatePaint(int frame)
         return;
     }
 
-    d->view->viewport()->update(d->optV4.rect);
+    d->view->update(d->optV4.rect);
 }
 
 void RaptorItemDelegate::setTextColor(const QColor &color)
