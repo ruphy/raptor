@@ -25,7 +25,7 @@ class RaptorGraphicsWidget : public QGraphicsWidget
         RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigGroup &appletconfig);
         ~RaptorGraphicsWidget();
 
-        void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
+//         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
 
     protected:
 //         QSizeF sizeHint(Qt::SizeHint which, const QSizeF &constraint = QSizeF() ) const;

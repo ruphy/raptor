@@ -107,51 +107,51 @@ void RaptorItemDelegate::drawNormalWay(QPainter *painter, const QStyleOptionView
 
     //d->optV4.decorationSize = QSize(64, 64);
 
-    if (d->optV4.state & QStyle::State_MouseOver && !(d->optV4.state & QStyle::State_Selected) ) {
-        d->optV4.state &= ~QStyle::State_MouseOver; //this removes the mouseOver state in order to draw a nicer selection rect
-
-        // here comes what should be animated
-//         if (d->timeLine->state() == QTimeLine::NotRunning && d->index != index) {
+//     if (d->optV4.state & QStyle::State_MouseOver && !(d->optV4.state & QStyle::State_Selected) ) {
+//         d->optV4.state &= ~QStyle::State_MouseOver; //this removes the mouseOver state in order to draw a nicer selection rect
 // 
-//             d->index = index;
+//         // here comes what should be animated
+// //         if (d->timeLine->state() == QTimeLine::NotRunning && d->index != index) {
+// // 
+// //             d->index = index;
+// // 
+// //             d->timeLine->setFrameRange(0, 20);
+// //             d->timeLine->start();
+// //         }
 // 
-//             d->timeLine->setFrameRange(0, 20);
-//             d->timeLine->start();
-//         }
+//         QPixmap temp = (d->p)->size();//d->optV4
+//         QPainter p(&temp);
+//         p.setCompositionMode(QPainter::CompositionMode_Source);
+//         p.drawPixmap(0, 0, *d->p);
+//         p.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+//         p.fillRect(temp.rect(), QColor(0, 0, 0, 100/*qreal(d->frame)*5.0/100.0*/));
+//         p.end();
+// //         painter->drawPixmap(d->optV4.rect, temp);
+// //         painter->save();
+// //         painter->setOpacity(qreal(d->frame)*5.0/100.0);
+//         QPoint topLeft(d->optV4.rect.x()+(d->optV4.decorationSize.width()-d->p->width())/2,
+//                        d->optV4.rect.y()+(d->optV4.decorationSize.height()-d->p->height())/2);
+//         QRect pixRect(topLeft, QSize(d->p->width(), d->p->height()));
+// //         pixRect.translate(10, 4);
+//         painter->drawPixmap(pixRect, temp); //*d->p);
+// //         painter->restore();
+// 
+//     } else {
+// //         if (d->timeLine->state() == QTimeLine::NotRunning) {
+// //             d->index = QModelIndex();
+// //         }
+//     }
 
-        QPixmap temp = (d->p)->size();//d->optV4
-        QPainter p(&temp);
-        p.setCompositionMode(QPainter::CompositionMode_Source);
-        p.drawPixmap(0, 0, *d->p);
-        p.setCompositionMode(QPainter::CompositionMode_DestinationIn);
-        p.fillRect(temp.rect(), QColor(0, 0, 0, 100/*qreal(d->frame)*5.0/100.0*/));
-        p.end();
-//         painter->drawPixmap(d->optV4.rect, temp);
-//         painter->save();
-//         painter->setOpacity(qreal(d->frame)*5.0/100.0);
-        QPoint topLeft(d->optV4.rect.x()+(d->optV4.decorationSize.width()-d->p->width())/2,
-                       d->optV4.rect.y()+(d->optV4.decorationSize.height()-d->p->height())/2);
-        QRect pixRect(topLeft, QSize(d->p->width(), d->p->height()));
-//         pixRect.translate(10, 4);
-        painter->drawPixmap(pixRect, temp); //*d->p);
-//         painter->restore();
-
-    } else {
-//         if (d->timeLine->state() == QTimeLine::NotRunning) {
-//             d->index = QModelIndex();
-//         }
-    }
-
-    if (d->optV4.state & QStyle::State_Selected) {
-//         painter->save();
-//         QRect pixRect(d->optV4.rect.topLeft(), QSize(d->p->width(), d->p->height()));
-        QPoint topLeft(d->optV4.rect.x()+((d->optV4.decorationSize.width()-d->p->width())/2),
-                       d->optV4.rect.y()+((d->optV4.decorationSize.height()-d->p->height())/2));
-        QRect pixRect(topLeft, QSize(d->p->width(), d->p->height()));
-//         pixRect.translate(4, 10);
-        painter->drawPixmap(pixRect, *d->p);
-//         painter->restore();
-    }
+//     if (d->optV4.state & QStyle::State_Selected) {
+// //         painter->save();
+// //         QRect pixRect(d->optV4.rect.topLeft(), QSize(d->p->width(), d->p->height()));
+//         QPoint topLeft(d->optV4.rect.x()+((d->optV4.decorationSize.width()-d->p->width())/2),
+//                        d->optV4.rect.y()+((d->optV4.decorationSize.height()-d->p->height())/2));
+//         QRect pixRect(topLeft, QSize(d->p->width(), d->p->height()));
+// //         pixRect.translate(4, 10);
+//         painter->drawPixmap(pixRect, *d->p);
+// //         painter->restore();
+//     }
 
     if (d->textColor != QColor()) {
         d->optV4.palette.setColor(QPalette::Text, d->textColor);

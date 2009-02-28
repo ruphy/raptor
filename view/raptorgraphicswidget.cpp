@@ -106,7 +106,6 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
     verticalLayout->addItem(horizontalLayout);
     QGraphicsLinearLayout *layout = new QGraphicsLinearLayout();
     layout->setOrientation(Qt::Horizontal);
-    verticalLayout->addItem(layout);
 
     connect(d->leftScrollButton, SIGNAL(clicked()), d->view, SLOT(scrollLeft()));
     layout->addItem(d->leftScrollButton);
@@ -115,6 +114,8 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
 
     connect(d->rightScrollButton, SIGNAL(clicked()), d->view, SLOT(scrollRight()));
     layout->addItem(d->rightScrollButton);
+
+    verticalLayout->addItem(layout);
 
     setLayout(verticalLayout);
 // 
@@ -254,12 +255,12 @@ void RaptorGraphicsWidget::matchesChanged(const QList<Plasma::QueryMatch> &match
     }
 }
 
-void RaptorGraphicsWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
-{
-//     Q_UNUSED(option)
-//     Q_UNUSED(widget)
-//     painter->fillRect(rect(), Qt::red);
-    QGraphicsWidget::paint(painter, option, widget);
-}
+// void RaptorGraphicsWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+// {
+// //     Q_UNUSED(option)
+// //     Q_UNUSED(widget)
+// //     painter->fillRect(rect(), Qt::red);
+//     QGraphicsWidget::paint(painter, option, widget);
+// }
 
 #include "raptorgraphicswidget.moc"
