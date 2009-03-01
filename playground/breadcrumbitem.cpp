@@ -9,16 +9,20 @@
    version 2 of the License, or (at your option) any later version.
 */
 #include "breadcrumbitem.h"
+#include "breadcrumb.h"
 
 #include <QModelIndex>
 #include <QRectF>
 #include <QFontMetrics>
+#include <QTimeLine>
 
 #include <KIcon>
 #include <KLocale>
 #include <KGlobalSettings>
 
-BreadcrumbItem::BreadcrumbItem(const QModelIndex &index) : m_arrow(false), m_mainMenu(false), m_textWidth(-1)
+static int FRAMES = 20;
+
+BreadcrumbItem::BreadcrumbItem(const QModelIndex &index, Breadcrumb * parent) :QObject(parent), m_arrow(false), m_mainMenu(false), m_textWidth(-1), m_showText(false), m_timeLine(0), m_parent(parent)
 {
     if (!index.isValid()) {
         m_arrow = true;
@@ -93,5 +97,44 @@ int BreadcrumbItem::textWidth()
         QFontMetrics metrics(KGlobalSettings::menuFont());
         m_textWidth = metrics.width(name());
     }
-    return m_textWidth;
+    return m_textWidth / FRAMES * m_timeLine->currentFrame();
+}
+
+bool BreadcrumbItem::showText()
+{
+     return m_showText;
+}
+
+void BreadcrumbItem::animateShowing()
+{
+    if (!m_timeLine) {
+        m_timeLine = new QTimeLine(250, this);
+        connect(m_timeLine, SIGNAL(frameChanged(int)), this, SLOT(animate(int)));
+    }
+    //m_timeLine->stop();
+    m_timeLine->setFrameRange(0, FRAMES);
+    m_timeLine->start();
+    //animate(20);
+}
+
+void BreadcrumbItem::animateHiding()
+{
+    if (!m_timeLine) {
+        return;
+    }
+    m_timeLine->stop();
+    m_timeLine->setFrameRange(FRAMES, 0);
+    m_timeLine->start();
+}
+
+void BreadcrumbItem::animate(int frame)
+{
+    if (!frame) {
+        m_showText = false;
+    }
+    else {
+        m_showText = true;
+    }
+    m_parent->updateItemRects();
+    m_parent->update();
 }

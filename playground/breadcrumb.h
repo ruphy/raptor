@@ -1,6 +1,7 @@
 /* This file is part of the KDE project
 
-   Copyright (C) 2008 Alessandro Diaferia <alediaferia@gmail.com>
+   Copyright (C) 2009 Alessandro Diaferia <alediaferia@gmail.com>
+   Copyright (C) 2009 Lukas Appelhans <l.appelhans@gmx.de>
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
@@ -26,8 +27,9 @@ public:
     Breadcrumb(QAbstractItemModel *model, QGraphicsWidget *parent = 0);
     ~Breadcrumb();
 
-
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
+
+    void updateItemRects();
 
 public slots:
     void setCurrentItem(const QModelIndex &index);
@@ -42,12 +44,11 @@ signals:
 private:
     QAbstractItemModel *m_model;
     QList<BreadcrumbItem*> m_items;
+    BreadcrumbItem *m_current;
 
 protected:
     void resizeEvent(QGraphicsSceneResizeEvent *event);
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
-
-    void updateItemRects();
+    bool eventFilter(QObject * watched, QEvent * event);
 };
 
 #endif

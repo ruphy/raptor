@@ -13,15 +13,19 @@
 
 #include <QModelIndex>
 #include <QRectF>
-class QString;
 
-class BreadcrumbItem
+class Breadcrumb;
+class QString;
+class QTimeLine;
+
+class BreadcrumbItem : public QObject
 {
+Q_OBJECT
 public:
     /**
      * Passing no index will make the item be an arrow.
      */
-    BreadcrumbItem(const QModelIndex &index = QModelIndex());
+    BreadcrumbItem(const QModelIndex &index = QModelIndex(), Breadcrumb * parent = 0);
     ~BreadcrumbItem();
 
     bool isArrow();
@@ -38,10 +42,17 @@ public:
 
     void setRect(const QRectF &);
     QRectF rect() const;
+    bool showText();
 
     int textWidth();
 
     QModelIndex index() const;
+
+    void animateShowing();
+    void animateHiding();
+
+private slots:
+    void animate(int frame);
 
 private:
     QModelIndex m_index;
@@ -49,6 +60,9 @@ private:
     bool m_mainMenu;
     QRectF m_rect;
     int m_textWidth;
+    bool m_showText;
+    QTimeLine * m_timeLine;
+    Breadcrumb * m_parent;
 };
 
 #endif
