@@ -69,7 +69,7 @@ void RaptorBreadCrumb::reload()
 
 void RaptorBreadCrumb::addCrumb(const QModelIndex & index)
 {
-
+    kDebug() << "Ouh yeah";
     for (int i = d->layout->count() - 1; i >= 0; i--) {
         d->layout->removeAt(i);
     }

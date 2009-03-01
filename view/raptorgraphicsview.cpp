@@ -64,6 +64,7 @@ void RaptorGraphicsView::setRootIndex(const QModelIndex &index)
     getItems();
     setupItems();
     update();
+    emit enteredItem(d->rootIndex);
 }
 
 void RaptorGraphicsView::scrollRight()

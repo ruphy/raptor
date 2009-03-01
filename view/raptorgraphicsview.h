@@ -48,6 +48,9 @@ public slots:
     void scrollRight();
     void scrollLeft();
 
+signals:
+    void enteredItem(const QModelIndex &);
+
 protected:
     void getItems();
     void setupItems();
