@@ -1,6 +1,7 @@
 /* This file is part of the KDE project
 
-   Copyright (C) 2008 Alessandro Diaferia <alediaferia@gmail.com>
+   Copyright (C) 2009 Alessandro Diaferia <alediaferia@gmail.com>
+   Copyright (C) 2009 Lukas Appelhans <l.appelhans@gmx.de>
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
@@ -38,6 +39,8 @@ public:
     void setRect(const QRectF &);
     QRectF rect() const;
 
+    int textWidth();
+
     QModelIndex index() const;
 
 private:
@@ -45,6 +48,7 @@ private:
     bool m_arrow;
     bool m_mainMenu;
     QRectF m_rect;
+    int m_textWidth;
 };
 
 #endif

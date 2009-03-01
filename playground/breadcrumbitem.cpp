@@ -1,6 +1,7 @@
 /* This file is part of the KDE project
 
-   Copyright (C) 2008 Alessandro Diaferia <alediaferia@gmail.com>
+   Copyright (C) 2009 Alessandro Diaferia <alediaferia@gmail.com>
+   Copyright (C) 2009 Lukas Appelhans <l.appelhans@gmx.de>
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
@@ -11,11 +12,13 @@
 
 #include <QModelIndex>
 #include <QRectF>
+#include <QFontMetrics>
 
 #include <KIcon>
 #include <KLocale>
+#include <KGlobalSettings>
 
-BreadcrumbItem::BreadcrumbItem(const QModelIndex &index) : m_arrow(false), m_mainMenu(false)
+BreadcrumbItem::BreadcrumbItem(const QModelIndex &index) : m_arrow(false), m_mainMenu(false), m_textWidth(-1)
 {
     if (!index.isValid()) {
         m_arrow = true;
@@ -82,4 +85,13 @@ bool BreadcrumbItem::isMainMenu()
 QModelIndex BreadcrumbItem::index() const
 {
     return m_index;
+}
+
+int BreadcrumbItem::textWidth()
+{
+    if (m_textWidth == -1) {
+        QFontMetrics metrics(KGlobalSettings::menuFont());
+        m_textWidth = metrics.width(name());
+    }
+    return m_textWidth;
 }
