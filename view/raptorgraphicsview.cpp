@@ -245,6 +245,7 @@ bool RaptorGraphicsView::eventFilter(QObject * watched, QEvent * event)
         QGraphicsSceneMouseEvent * e = static_cast<QGraphicsSceneMouseEvent*>(event);
         foreach (RaptorMenuItem * item, d->shownItems) {
             if (item->rect().contains(e->pos())) {
+                kDebug() << item->modelIndex().data(Qt::DisplayRole);
                 setRootIndex(item->modelIndex());
                 break;
             }
