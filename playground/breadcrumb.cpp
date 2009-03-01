@@ -141,7 +141,7 @@ bool Breadcrumb::eventFilter(QObject * watched, QEvent * event)
                 emit changedRootIndex(current->index());
                 break;
             case QEvent::GraphicsSceneHoverMove:
-                if (m_current && (!m_current->rect().contains(e->pos()) || m_current != current)) {
+                if (!current || (m_current && m_current != current)) {
                     m_current->animateHiding();
                     m_current = 0;
                 }
