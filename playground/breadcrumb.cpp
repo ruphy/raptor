@@ -30,8 +30,9 @@ void Breadcrumb::setCurrentItem(const QModelIndex &index)
     qDeleteAll(m_items);
     m_items.clear();
 
+
     if (!index.isValid()) { // we always set the main menu as first element
-        m_items << new BreadcrumbItem; // the arrow
+        m_items << new BreadcrumbItem;; // the arrow
         BreadcrumbItem *mainMenu = new BreadcrumbItem;
         mainMenu->setIsMainMenu(true);
         m_items << mainMenu;
@@ -40,14 +41,11 @@ void Breadcrumb::setCurrentItem(const QModelIndex &index)
 
     QModelIndex currentIndex = index;
 
-    qreal x = 0;
     do {
         BreadcrumbItem *item = new BreadcrumbItem(currentIndex);
-        item->setRect(QRectF(x, 0, contentsRect().height(), contentsRect().height()));
         m_items.prepend(item);
         m_items.prepend(new BreadcrumbItem); // the arrow
 
-        x += contentsRect().height();
         currentIndex = m_model->parent(currentIndex);
     } while (currentIndex.isValid());
 
@@ -56,6 +54,8 @@ void Breadcrumb::setCurrentItem(const QModelIndex &index)
     m_items.prepend(mainMenu);
     m_items.prepend(new BreadcrumbItem);
 
+
+    updateItemRects();
     update();
 }
 
@@ -75,12 +75,15 @@ void Breadcrumb::resizeEvent(QGraphicsSceneResizeEvent *event)
 {
     Q_UNUSED(event)
 
+    updateItemRects();
+    update();
+}
+
+void Breadcrumb::updateItemRects()
+{
     qreal x = 0;
     foreach (BreadcrumbItem *item, m_items) {
         item->setRect(QRectF(x, 0, contentsRect().height(), contentsRect().height()));
         x += contentsRect().height();
     }
-
-    update();
 }
-
