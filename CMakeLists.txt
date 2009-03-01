@@ -36,6 +36,8 @@ set(raptor_SRCS
     engine/kickoff/models.cpp
     engine/kickoff/leavemodel.cpp
     engine/kickoff/searchmodel.cpp
+    playground/breadcrumb.cpp
+    playground/breadcrumbitem.cpp
 )
  
 # Now make sure all files get to the right place

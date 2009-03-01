@@ -10,9 +10,9 @@
 #ifndef BREADCRUMBITEM_H
 #define BREADCRUMBITEM_H
 
-class QModelIndex;
-class QRectF;
-class QIcon;
+#include <QModelIndex>
+#include <QRectF>
+class QString;
 
 class BreadcrumbItem
 {

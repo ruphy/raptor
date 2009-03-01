@@ -11,9 +11,14 @@
 #include "breadcrumbitem.h"
 
 #include <QRectF>
+#include <QIcon>
+#include <QPainter>
+
+#include <KDebug>
 
 Breadcrumb::Breadcrumb(QAbstractItemModel *model, QGraphicsWidget *parent) : QGraphicsWidget(parent), m_model(model)
 {
+    setCurrentItem(QModelIndex());
 }
 
 Breadcrumb::~Breadcrumb()
@@ -40,11 +45,38 @@ void Breadcrumb::setCurrentItem(const QModelIndex &index)
     do {
         m_items << new BreadcrumbItem; // the arrow
         BreadcrumbItem *item = new BreadcrumbItem(currentIndex);
-        item->setRect(QRectF(x, 0, height(), height()));
+        item->setRect(QRectF(x, 0, contentsRect().height(), contentsRect().height()));
         m_items << item;
 
-        x += height();
+        x += contentsRect().height();
         currentIndex = m_model->parent(currentIndex);
-    } while (currentIndex.isValid())
+    } while (currentIndex.isValid());
+
+    update();
+}
+
+void Breadcrumb::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+    Q_UNUSED(widget)
+    Q_UNUSED(option)
+
+    foreach (BreadcrumbItem *item, m_items) {
+        item->icon().paint(painter, item->rect().toRect());
+//         kDebug() << item->rect();
+//         painter->fillRect(item->rect(), Qt::green);
+    }
+}
+
+void Breadcrumb::resizeEvent(QGraphicsSceneResizeEvent *event)
+{
+    Q_UNUSED(event)
+
+    qreal x = 0;
+    foreach (BreadcrumbItem *item, m_items) {
+        item->setRect(QRectF(x, 0, contentsRect().height(), contentsRect().height()));
+        x += contentsRect().height();
+    }
+
+    update();
 }
 

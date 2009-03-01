@@ -38,7 +38,7 @@ QString BreadcrumbItem::name() const
         return i18n("Main Menu");
     }
 
-    return index.data().toString();
+    return m_index.data().toString();
 }
 
 QIcon BreadcrumbItem::icon() const
@@ -50,7 +50,7 @@ QIcon BreadcrumbItem::icon() const
         return KIcon("go-home");
     }
 
-    return index.data(Qt::DecorationRole).value<QIcon>();
+    return m_index.data(Qt::DecorationRole).value<QIcon>();
 }
 
 void BreadcrumbItem::setRect(const QRectF &rect)

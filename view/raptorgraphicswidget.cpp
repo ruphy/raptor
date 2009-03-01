@@ -20,6 +20,8 @@
 #include "view/raptorbreadcrumb.h"
 #include "view/raptorgraphicsview.h"
 
+#include "playground/breadcrumb.h"
+
 // Qt
 #include <QGraphicsLinearLayout>
 #include <QGraphicsProxyWidget>
@@ -68,7 +70,7 @@ public:
     RaptorScrollButton *leftScrollButton;
     QGraphicsProxyWidget *leftScrollButtonProxy;
     Plasma::LineEdit *searchLine;
-    RaptorBreadCrumb * breadCrumb;
+    Breadcrumb * breadCrumb;
     Plasma::RunnerManager * manager;
     KConfigGroup appletConfig;
 };
@@ -91,7 +93,7 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
 //     d->view = new RaptorItemsView();
 //     RaptorItemDelegate *delegate = new RaptorItemDelegate();
 
-    d->breadCrumb = new RaptorBreadCrumb(d->view, d->model, this);
+    d->breadCrumb = new Breadcrumb(d->model, this);
     d->searchLine = new Plasma::LineEdit(this);
     d->rightScrollButton = new RaptorScrollButton(RaptorScrollButton::Right, this);
     d->appletConfig = appletconfig;

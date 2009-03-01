@@ -16,13 +16,17 @@
 class BreadcrumbItem;
 class QModelIndex;
 class QAbstractItemModel;
+class QGraphicsSceneResizeEvent;
 
-class Breadcrumb : QGraphicsWidget
+class Breadcrumb : public QGraphicsWidget
 {
     Q_OBJECT
 public:
     Breadcrumb(QAbstractItemModel *model, QGraphicsWidget *parent = 0);
     ~Breadcrumb();
+
+
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
 
 public slots:
     void setCurrentItem(const QModelIndex &index);
@@ -37,6 +41,11 @@ signals:
 private:
     QAbstractItemModel *m_model;
     QList<BreadcrumbItem*> m_items;
+
+protected:
+    void resizeEvent(QGraphicsSceneResizeEvent *event);
+
+    void updateItemRects();
 };
 
 #endif
