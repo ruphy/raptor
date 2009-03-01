@@ -171,6 +171,7 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
             SLOT(matchesChanged(const QList<Plasma::QueryMatch>&)));
 
     connect(d->view, SIGNAL(enteredItem(const QModelIndex &)), d->breadCrumb, SLOT(setCurrentItem(const QModelIndex &)));
+    connect(d->breadCrumb, SIGNAL(changedRootIndex(const QModelIndex&)), d->view, SLOT(setRootIndex(const QModelIndex &)));
 //     connect(d->breadCrumb, SIGNAL(bottomLevelReached()), d->model, SLOT(slotReloadMenu()));
 // 
 //     d->view->focusCentralItem();

@@ -13,12 +13,15 @@
 #include <QRectF>
 #include <QIcon>
 #include <QPainter>
+#include <QGraphicsSceneMouseEvent>
 
 #include <KDebug>
 
 Breadcrumb::Breadcrumb(QAbstractItemModel *model, QGraphicsWidget *parent) : QGraphicsWidget(parent), m_model(model)
 {
     setCurrentItem(QModelIndex());
+    setAcceptedMouseButtons(Qt::LeftButton);
+    setAcceptHoverEvents(true);
 }
 
 Breadcrumb::~Breadcrumb()
@@ -36,6 +39,10 @@ void Breadcrumb::setCurrentItem(const QModelIndex &index)
         BreadcrumbItem *mainMenu = new BreadcrumbItem;
         mainMenu->setIsMainMenu(true);
         m_items << mainMenu;
+
+        updateItemRects();
+        update();
+
         return;
     }
 
@@ -66,8 +73,6 @@ void Breadcrumb::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 
     foreach (BreadcrumbItem *item, m_items) {
         item->icon().paint(painter, item->rect().toRect());
-//         kDebug() << item->rect();
-//         painter->fillRect(item->rect(), Qt::green);
     }
 }
 
@@ -85,5 +90,15 @@ void Breadcrumb::updateItemRects()
     foreach (BreadcrumbItem *item, m_items) {
         item->setRect(QRectF(x, 0, contentsRect().height(), contentsRect().height()));
         x += contentsRect().height();
+    }
+}
+
+void Breadcrumb::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    foreach (BreadcrumbItem *item, m_items) {
+        if (item->rect().contains(event->pos())) {
+            emit changedRootIndex(item->index());
+            break;
+        }
     }
 }

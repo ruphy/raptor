@@ -78,3 +78,8 @@ bool BreadcrumbItem::isMainMenu()
 {
     return m_mainMenu;
 }
+
+QModelIndex BreadcrumbItem::index() const
+{
+    return m_index;
+}

@@ -17,6 +17,7 @@ class BreadcrumbItem;
 class QModelIndex;
 class QAbstractItemModel;
 class QGraphicsSceneResizeEvent;
+class QGraphicsSceneMouseEvent;
 
 class Breadcrumb : public QGraphicsWidget
 {
@@ -44,6 +45,7 @@ private:
 
 protected:
     void resizeEvent(QGraphicsSceneResizeEvent *event);
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
     void updateItemRects();
 };

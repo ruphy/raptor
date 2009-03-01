@@ -38,6 +38,8 @@ public:
     void setRect(const QRectF &);
     QRectF rect() const;
 
+    QModelIndex index() const;
+
 private:
     QModelIndex m_index;
     bool m_arrow;
