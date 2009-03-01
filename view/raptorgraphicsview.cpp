@@ -136,8 +136,13 @@ void RaptorGraphicsView::paint(QPainter *painter, const QStyleOptionGraphicsItem
 
 void RaptorGraphicsView::getItems()
 {
+    kDebug() << "Get items!" << d->model->rowCount(d->rootIndex);
     d->items.clear();
+    if (d->model->canFetchMore(d->rootIndex)) {
+        d->model->fetchMore(d->rootIndex);
+    }
     for (int i = 0; i < d->model->rowCount(d->rootIndex); i++) {
+        kDebug() << "Get Item" << i << "Name:" << d->model->index(i, 0, d->rootIndex).data(Qt::DisplayRole);
         d->items << new RaptorMenuItem(d->model->index(i, 0, d->rootIndex), this);
     }
 }
