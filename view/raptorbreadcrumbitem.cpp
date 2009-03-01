@@ -206,6 +206,7 @@ void RaptorBreadCrumbArrow::paint(QPainter * p, const QStyleOptionGraphicsItem *
     Q_UNUSED(widget);
 
     p->drawPixmap(option->rect, icon().pixmap(22, 22));
+    p->end();
 }
 
 #include "raptorbreadcrumbitem.moc"

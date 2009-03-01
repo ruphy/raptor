@@ -44,6 +44,7 @@ RaptorGraphicsView::RaptorGraphicsView(QGraphicsItem *parent) : QGraphicsWidget(
 {
     setViewMode(RaptorGraphicsView::Normal);
     setAcceptHoverEvents(true);
+    installEventFilter(this);
 }
 
 RaptorGraphicsView::~RaptorGraphicsView()
@@ -236,4 +237,18 @@ void RaptorGraphicsView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
         }
     }
     update();
+}
+
+bool RaptorGraphicsView::eventFilter(QObject * watched, QEvent * event)
+{
+    if (event->type() == QEvent::GraphicsSceneMousePress) {
+        QGraphicsSceneMouseEvent * e = static_cast<QGraphicsSceneMouseEvent*>(event);
+        foreach (RaptorMenuItem * item, d->shownItems) {
+            if (item->rect().contains(e->pos())) {
+                setRootIndex(item->modelIndex());
+                break;
+            }
+        }
+    }
+    return false;
 }

@@ -55,6 +55,8 @@ protected:
     void resizeEvent(QGraphicsSceneResizeEvent *event);
     void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
 
+    bool eventFilter(QObject * watched, QEvent * event);
+
 private:
     class Private;
     Private *d;
