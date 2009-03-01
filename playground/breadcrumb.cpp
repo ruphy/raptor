@@ -135,18 +135,20 @@ bool Breadcrumb::eventFilter(QObject * watched, QEvent * event)
             break;
     }
 
-    if (current) {
+    /*if (current) {*/
         switch (event->type()) {
             case QEvent::GraphicsSceneMousePress:
-                emit changedRootIndex(current->index());
+                if (current) {
+                    emit changedRootIndex(current->index());
+                }
                 break;
             case QEvent::GraphicsSceneHoverMove:
-                if (!current || (m_current && m_current != current)) {
+                if (m_current && (!current || m_current != current)) {
                     m_current->animateHiding();
                     m_current = 0;
                 }
             case QEvent::GraphicsSceneHoverEnter:
-                if (!m_current || m_current != current) {
+                if (current && (!m_current || m_current != current)) {
                     m_current = current;
                     m_current->animateShowing();
                 }
@@ -159,6 +161,6 @@ bool Breadcrumb::eventFilter(QObject * watched, QEvent * event)
             default:
                 break;
         }
-    }
+    //}
     return false;
 }
