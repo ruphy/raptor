@@ -95,6 +95,7 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
 
     d->breadCrumb = new Breadcrumb(d->model, this);
     d->searchLine = new Plasma::LineEdit(this);
+    d->searchLine->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
     d->rightScrollButton = new RaptorScrollButton(RaptorScrollButton::Right, this);
     d->appletConfig = appletconfig;
 
@@ -102,7 +103,7 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
 
     QGraphicsLinearLayout *horizontalLayout = new QGraphicsLinearLayout();
     horizontalLayout->addItem(d->breadCrumb);
-    horizontalLayout->addStretch();
+    //horizontalLayout->addStretch();
     horizontalLayout->addItem(d->searchLine);
 
     verticalLayout->addItem(horizontalLayout);
