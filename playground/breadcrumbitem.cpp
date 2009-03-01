@@ -15,7 +15,7 @@
 #include <KIcon>
 #include <KLocale>
 
-BreadcrumbItem::BreadcrumbItem(const QModelIndex &index) : m_arrow(false)
+BreadcrumbItem::BreadcrumbItem(const QModelIndex &index) : m_arrow(false), m_mainMenu(false)
 {
     if (!index.isValid()) {
         m_arrow = true;
