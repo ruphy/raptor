@@ -10,6 +10,8 @@
 #include "breadcrumb.h"
 #include "breadcrumbitem.h"
 
+#include <QRectF>
+
 Breadcrumb::Breadcrumb(QAbstractItemModel *model, QGraphicsWidget *parent) : QGraphicsWidget(parent), m_model(model)
 {
 }
@@ -34,9 +36,15 @@ void Breadcrumb::setCurrentItem(const QModelIndex &index)
 
     QModelIndex currentIndex = index;
 
+    qreal x = 0;
     do {
         m_items << new BreadcrumbItem; // the arrow
-        m_items << new BreadcrumbItem(currentIndex);
-    } while (m_model->parent(currentIndex).isValid())
+        BreadcrumbItem *item = new BreadcrumbItem(currentIndex);
+        item->setRect(QRectF(x, 0, height(), height()));
+        m_items << item;
+
+        x += height();
+        currentIndex = m_model->parent(currentIndex);
+    } while (currentIndex.isValid())
 }
 
