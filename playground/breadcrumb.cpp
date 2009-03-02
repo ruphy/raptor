@@ -108,7 +108,7 @@ void Breadcrumb::updateItemRects()
     foreach (BreadcrumbItem *item, m_items) {
             if (item->showingText()) {
                 item->setTextRect(QRectF(x, 0, m_realFrame*item->textWidth(), contentsRect().height()));
-            } else {
+            } else if (item->textRect().width()) {
                 item->setTextRect(QRectF(x, 0, (1.0 - m_realFrame)*item->textWidth(), contentsRect().height()));
             }
             x += item->textRect().width();
