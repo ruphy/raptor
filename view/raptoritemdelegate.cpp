@@ -22,6 +22,8 @@
 
 //KDE
 #include <Plasma/Theme>
+#include <Plasma/Svg>
+
 #include <KDebug>
 
 #include "blur.cpp" //TODO: make this a function in Plasma::PaintUtils
@@ -38,8 +40,13 @@ class RaptorItemDelegate::Private
                 timeLine(new QTimeLine(ANIMATION_DURATION, q)),
                 textColor(QColor()),
                 p(0),
+                svg(0),
                 mode(RaptorItemDelegate::Normal)
-                {}
+                {
+                    svg = new Plasma::Svg(q);
+                    svg->setImagePath("widgets/overlay");
+                    svg->setContainsMultipleImages(false);
+                }
 
         ~Private()
                 { delete p; delete timeLine; }
@@ -56,6 +63,8 @@ class RaptorItemDelegate::Private
 
     QColor textColor;
     QPixmap *p;
+
+    Plasma::Svg *svg;
 
     RaptorItemDelegate::ViewMode mode;
 };
@@ -107,9 +116,9 @@ void RaptorItemDelegate::drawNormalWay(QPainter *painter, const QStyleOptionView
 
     //d->optV4.decorationSize = QSize(64, 64);
 
-//     if (d->optV4.state & QStyle::State_MouseOver && !(d->optV4.state & QStyle::State_Selected) ) {
-//         d->optV4.state &= ~QStyle::State_MouseOver; //this removes the mouseOver state in order to draw a nicer selection rect
-// 
+    if (d->optV4.state & QStyle::State_MouseOver && !(d->optV4.state & QStyle::State_Selected) ) {
+        d->optV4.state &= ~QStyle::State_MouseOver; //this removes the mouseOver state in order to draw a nicer selection rect
+
 //         // here comes what should be animated
 // //         if (d->timeLine->state() == QTimeLine::NotRunning && d->index != index) {
 // // 
@@ -135,23 +144,25 @@ void RaptorItemDelegate::drawNormalWay(QPainter *painter, const QStyleOptionView
 // //         pixRect.translate(10, 4);
 //         painter->drawPixmap(pixRect, temp); //*d->p);
 // //         painter->restore();
-// 
-//     } else {
-// //         if (d->timeLine->state() == QTimeLine::NotRunning) {
-// //             d->index = QModelIndex();
-// //         }
-//     }
+        generateBgPixmap(d->optV4.decorationSize);
+        painter->drawPixmap(d->optV4.rect, *d->p);
 
-//     if (d->optV4.state & QStyle::State_Selected) {
-// //         painter->save();
-// //         QRect pixRect(d->optV4.rect.topLeft(), QSize(d->p->width(), d->p->height()));
-//         QPoint topLeft(d->optV4.rect.x()+((d->optV4.decorationSize.width()-d->p->width())/2),
-//                        d->optV4.rect.y()+((d->optV4.decorationSize.height()-d->p->height())/2));
-//         QRect pixRect(topLeft, QSize(d->p->width(), d->p->height()));
-// //         pixRect.translate(4, 10);
-//         painter->drawPixmap(pixRect, *d->p);
-// //         painter->restore();
-//     }
+    } else {
+//         if (d->timeLine->state() == QTimeLine::NotRunning) {
+//             d->index = QModelIndex();
+//         }
+    }
+
+    if (d->optV4.state & QStyle::State_Selected) {
+//         painter->save();
+//         QRect pixRect(d->optV4.rect.topLeft(), QSize(d->p->width(), d->p->height()));
+        QPoint topLeft(d->optV4.rect.x()+((d->optV4.decorationSize.width()-d->p->width())/2),
+                       d->optV4.rect.y()+((d->optV4.decorationSize.height()-d->p->height())/2));
+        QRect pixRect(topLeft, QSize(d->p->width(), d->p->height()));
+//         pixRect.translate(4, 10);
+        painter->drawPixmap(pixRect, *d->p);
+//         painter->restore();
+    }
 
     if (d->textColor != QColor()) {
         d->optV4.palette.setColor(QPalette::Text, d->textColor);
@@ -228,36 +239,47 @@ void RaptorItemDelegate::drawSingleAppWay(QPainter *painter, const QStyleOptionV
 void RaptorItemDelegate::generateBgPixmap(const QSize &s) const // TODO find a way to make this themable, preferrably via SVG.
 {
     if (!d->p) { // it's an expensive operation, so let's keep a cached pixmap.
-        qreal blurAmount = 7;
-        QSize rectSize(s.width()-(blurAmount*3), s.height()-(blurAmount*3));
-        QImage *i = new QImage(d->optV4.decorationSize, QImage::Format_ARGB32_Premultiplied);
-        i->fill(0);
-        QPainter p(i);
-        QLinearGradient lg(0, blurAmount*2, 0, d->optV4.decorationSize.height()-blurAmount);
-        QColor sel = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
-        lg.setColorAt(0.0, sel);
-        QColor sel2 = sel;
-        sel2.setAlpha(40);
-        lg.setColorAt(1.0, sel2);
-        p.setBrush(lg);
-        p.setPen(Qt::NoPen);
-        p.drawRect(blurAmount, blurAmount, rectSize.width(), rectSize.height());
+//         qreal blurAmount = 7;
+//         QSize rectSize(s.width()-(blurAmount*3), s.height()-(blurAmount*3));
+//         QImage *i = new QImage(d->optV4.decorationSize, QImage::Format_ARGB32_Premultiplied);
+//         i->fill(0);
+//         QPainter p(i);
+//         QLinearGradient lg(0, blurAmount*2, 0, d->optV4.decorationSize.height()-blurAmount);
+//         QColor sel = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+//         lg.setColorAt(0.0, sel);
+//         QColor sel2 = sel;
+//         sel2.setAlpha(40);
+//         lg.setColorAt(1.0, sel2);
+//         p.setBrush(lg);
+//         p.setPen(Qt::NoPen);
+//         p.drawRect(blurAmount, blurAmount, rectSize.width(), rectSize.height());
+// 
+//         p.end();
+//         
+//         expblur<16, 7>(*i, blurAmount);
+// 
+//         d->p = new QPixmap(d->optV4.decorationSize);
+//         d->p->fill(Qt::transparent);
+//         
+//         QPainter pp(d->p);
+//         pp.setCompositionMode(QPainter::CompositionMode_Source);
+//         pp.drawImage(0, 0, *i);
+//         pp.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+//         pp.fillRect(d->p->rect(), QColor(0, 0, 0, 140));
+//         pp.end();
+// 
+//         delete i;
+        d->p = new QPixmap(s);
+        d->p->fill(Qt::transparent);
+
+        QPainter p(d->p);
+        p.setRenderHint(QPainter::SmoothPixmapTransform);
+        p.setRenderHint(QPainter::Antialiasing);
+
+        d->svg->resize(s);
+        d->svg->paint(&p, QRectF(QPointF(0.0, 0.0), s), "overlay");
 
         p.end();
-        
-        expblur<16, 7>(*i, blurAmount);
-
-        d->p = new QPixmap(d->optV4.decorationSize);
-        d->p->fill(Qt::transparent);
-        
-        QPainter pp(d->p);
-        pp.setCompositionMode(QPainter::CompositionMode_Source);
-        pp.drawImage(0, 0, *i);
-        pp.setCompositionMode(QPainter::CompositionMode_DestinationIn);
-        pp.fillRect(d->p->rect(), QColor(0, 0, 0, 140));
-        pp.end();
-
-        delete i;
     }
 }
 
