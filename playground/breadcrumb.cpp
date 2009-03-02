@@ -130,14 +130,18 @@ void Breadcrumb::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void Breadcrumb::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     foreach (BreadcrumbItem *item, m_items) {
-        if (m_timeLine->state() == QTimeLine::NotRunning && item->rect().contains(event->pos())) {
+        if (item->rect().contains(event->pos())) {
             if (m_currentShowing) {
                 m_currentShowing->setShowingText(false);
             }
             m_currentShowing = item;
             item->setShowingText(true);
-            m_timeLine->setFrameRange(0, FRAMES);
-            m_timeLine->start();
+
+            if (m_timeLine->state() == QTimeLine::NotRunning) {
+                m_timeLine->setFrameRange(0, FRAMES);
+                m_timeLine->start();
+            }
+            break;
         }
     }
 }
