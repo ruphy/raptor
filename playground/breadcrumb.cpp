@@ -22,6 +22,7 @@
 #include <Plasma/Theme>
 
 const int DURATION = 250; //ms
+const int FRAMES = 20;
 
 Breadcrumb::Breadcrumb(QAbstractItemModel *model, QGraphicsWidget *parent) : QGraphicsWidget(parent),
                                                                              m_model(model),
@@ -135,7 +136,7 @@ void Breadcrumb::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
             }
             m_currentShowing = item;
             item->setShowingText(true);
-            m_timeLine->setFrameRange(0, 100);
+            m_timeLine->setFrameRange(0, FRAMES);
             m_timeLine->start();
         }
     }
@@ -153,7 +154,7 @@ void Breadcrumb::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
     }
 
     if (m_timeLine->state() == QTimeLine::NotRunning) {
-        m_timeLine->setFrameRange(0, 100);
+        m_timeLine->setFrameRange(0, FRAMES);
         m_timeLine->start();
     }
 }
@@ -173,7 +174,7 @@ void Breadcrumb::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
             m_currentShowing = item;
 
             if (m_timeLine->state() == QTimeLine::NotRunning) {
-                m_timeLine->setFrameRange(0, 100);
+                m_timeLine->setFrameRange(0, FRAMES);
                 m_timeLine->start();
             }
             return;
@@ -189,7 +190,7 @@ void Breadcrumb::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
     m_currentShowing = 0;
 
     if (m_timeLine->state() == QTimeLine::NotRunning) {
-        m_timeLine->setFrameRange(0, 100);
+        m_timeLine->setFrameRange(0, FRAMES);
         m_timeLine->start();
     }
 
