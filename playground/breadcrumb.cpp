@@ -155,11 +155,11 @@ void Breadcrumb::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
     if (m_currentShowing->showingText()) {
         m_currentShowing->setShowingText(false);
         m_currentShowing = 0;
-    }
 
-    if (m_timeLine->state() == QTimeLine::NotRunning) {
-        m_timeLine->setFrameRange(0, FRAMES);
-        m_timeLine->start();
+        if (m_timeLine->state() == QTimeLine::NotRunning) {
+            m_timeLine->setFrameRange(0, FRAMES);
+            m_timeLine->start();
+        }
     }
 }
 
