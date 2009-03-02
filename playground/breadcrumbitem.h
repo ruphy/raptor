@@ -18,14 +18,13 @@ class Breadcrumb;
 class QString;
 class QTimeLine;
 
-class BreadcrumbItem : public QObject
+class BreadcrumbItem
 {
-Q_OBJECT
 public:
     /**
      * Passing no index will make the item be an arrow.
      */
-    BreadcrumbItem(const QModelIndex &index = QModelIndex(), Breadcrumb * parent = 0);
+    BreadcrumbItem(const QModelIndex &index = QModelIndex());
     ~BreadcrumbItem();
 
     bool isArrow();
@@ -42,27 +41,27 @@ public:
 
     void setRect(const QRectF &);
     QRectF rect() const;
-    bool showText();
+
+    void setTextRect(const QRectF &);
+    QRectF textRect() const;
+
+    bool showingText();
+    void setShowingText(bool);
 
     int textWidth();
 
     QModelIndex index() const;
 
-    void animateShowing();
-    void animateHiding();
-
-private slots:
-    void animate(int frame);
-
 private:
     QModelIndex m_index;
     bool m_arrow;
     bool m_mainMenu;
+
     QRectF m_rect;
+    QRectF m_textRect;
+
     int m_textWidth;
-    bool m_showText;
-    QTimeLine * m_timeLine;
-    Breadcrumb * m_parent;
+    bool m_showingText;
 };
 
 #endif

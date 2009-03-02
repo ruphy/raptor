@@ -19,6 +19,8 @@ class QModelIndex;
 class QAbstractItemModel;
 class QGraphicsSceneResizeEvent;
 class QGraphicsSceneMouseEvent;
+class QRectF;
+class QTimeLine;
 
 class Breadcrumb : public QGraphicsWidget
 {
@@ -44,11 +46,21 @@ signals:
 private:
     QAbstractItemModel *m_model;
     QList<BreadcrumbItem*> m_items;
-    BreadcrumbItem *m_current;
+    BreadcrumbItem *m_currentShowing;
+    QTimeLine *m_timeLine;
+    qreal m_realFrame;
 
 protected:
     void resizeEvent(QGraphicsSceneResizeEvent *event);
-    bool eventFilter(QObject * watched, QEvent * event);
+
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
+    void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
+
+protected slots:
+    void animate();
 };
 
 #endif

@@ -20,9 +20,7 @@
 #include <KLocale>
 #include <KGlobalSettings>
 
-static int FRAMES = 20;
-
-BreadcrumbItem::BreadcrumbItem(const QModelIndex &index, Breadcrumb * parent) :QObject(parent), m_arrow(false), m_mainMenu(false), m_textWidth(-1), m_showText(false), m_timeLine(0), m_parent(parent)
+BreadcrumbItem::BreadcrumbItem(const QModelIndex &index) : m_arrow(false), m_mainMenu(false), m_textWidth(-1), m_showingText(false)
 {
     if (!index.isValid()) {
         m_arrow = true;
@@ -97,44 +95,25 @@ int BreadcrumbItem::textWidth()
         QFontMetrics metrics(KGlobalSettings::menuFont());
         m_textWidth = metrics.width(name());
     }
-    return m_textWidth / FRAMES * m_timeLine->currentFrame();
+    return m_textWidth;
 }
 
-bool BreadcrumbItem::showText()
+bool BreadcrumbItem::showingText()
 {
-     return m_showText;
+     return m_showingText;
 }
 
-void BreadcrumbItem::animateShowing()
+void BreadcrumbItem::setShowingText(bool set)
 {
-    if (!m_timeLine) {
-        m_timeLine = new QTimeLine(250, this);
-        connect(m_timeLine, SIGNAL(frameChanged(int)), this, SLOT(animate(int)));
-    }
-    //m_timeLine->stop();
-    m_timeLine->setFrameRange(0, FRAMES);
-    m_timeLine->start();
-    //animate(20);
+    m_showingText = set;
 }
 
-void BreadcrumbItem::animateHiding()
+void BreadcrumbItem::setTextRect(const QRectF &rect)
 {
-    if (!m_timeLine) {
-        return;
-    }
-    m_timeLine->stop();
-    m_timeLine->setFrameRange(FRAMES, 0);
-    m_timeLine->start();
+    m_textRect = rect;
 }
 
-void BreadcrumbItem::animate(int frame)
+QRectF BreadcrumbItem::textRect() const
 {
-    if (!frame) {
-        m_showText = false;
-    }
-    else {
-        m_showText = true;
-    }
-    m_parent->updateItemRects();
-    m_parent->update();
+    return m_textRect;
 }

@@ -15,15 +15,25 @@
 #include <QIcon>
 #include <QPainter>
 #include <QGraphicsSceneMouseEvent>
+#include <QTimeLine>
 
 #include <KDebug>
 
-Breadcrumb::Breadcrumb(QAbstractItemModel *model, QGraphicsWidget *parent) : QGraphicsWidget(parent), m_model(model), m_current(0)
+#include <Plasma/Theme>
+
+const int DURATION = 250; //ms
+
+Breadcrumb::Breadcrumb(QAbstractItemModel *model, QGraphicsWidget *parent) : QGraphicsWidget(parent),
+                                                                             m_model(model),
+                                                                             m_currentShowing(0),
+                                                                             m_timeLine(new QTimeLine(DURATION, this)),
+                                                                             m_realFrame(1.0)
 {
     setCurrentItem(QModelIndex());
     setAcceptedMouseButtons(Qt::LeftButton);
     setAcceptHoverEvents(true);
-    installEventFilter(this);
+
+    connect (m_timeLine, SIGNAL(frameChanged(int)), this, SLOT(animate()));
 }
 
 Breadcrumb::~Breadcrumb()
@@ -37,8 +47,8 @@ void Breadcrumb::setCurrentItem(const QModelIndex &index)
 
 
     if (!index.isValid()) { // we always set the main menu as first element
-        m_items << new BreadcrumbItem(QModelIndex(), this);; // the arrow
-        BreadcrumbItem *mainMenu = new BreadcrumbItem(QModelIndex(), this);
+        m_items << new BreadcrumbItem(QModelIndex()); // the arrow
+        BreadcrumbItem *mainMenu = new BreadcrumbItem(QModelIndex());
         mainMenu->setIsMainMenu(true);
         m_items << mainMenu;
 
@@ -51,17 +61,17 @@ void Breadcrumb::setCurrentItem(const QModelIndex &index)
     QModelIndex currentIndex = index;
 
     do {
-        BreadcrumbItem *item = new BreadcrumbItem(currentIndex, this);
+        BreadcrumbItem *item = new BreadcrumbItem(currentIndex);
         m_items.prepend(item);
-        m_items.prepend(new BreadcrumbItem(QModelIndex(), this)); // the arrow
+        m_items.prepend(new BreadcrumbItem(QModelIndex())); // the arrow
 
         currentIndex = m_model->parent(currentIndex);
     } while (currentIndex.isValid());
 
-    BreadcrumbItem *mainMenu = new BreadcrumbItem(QModelIndex(), this);
+    BreadcrumbItem *mainMenu = new BreadcrumbItem(QModelIndex());
     mainMenu->setIsMainMenu(true);
     m_items.prepend(mainMenu);
-    m_items.prepend(new BreadcrumbItem(QModelIndex(), this));
+    m_items.prepend(new BreadcrumbItem(QModelIndex()));
 
 
     updateItemRects();
@@ -74,19 +84,12 @@ void Breadcrumb::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     Q_UNUSED(option)
 
     foreach (BreadcrumbItem *item, m_items) {
-        if (item->showText()) {
-            painter->setPen(QColor(Qt::white));//FIXME: Use theme color
-            QRect textRect(item->rect().toRect());
-            textRect.setWidth(item->textWidth());
-            painter->drawText(textRect, Qt::AlignLeft | Qt::AlignVCenter, item->name());
-            QRect pixmapRect(item->rect().toRect());
-            pixmapRect.setSize(QSize(pixmapRect.height(), pixmapRect.height()));
-            pixmapRect.translate(item->textWidth()/* + MARGIN*/, 0);
-            painter->drawPixmap(pixmapRect, item->icon().pixmap(pixmapRect.height(), pixmapRect.height()));
-        }
-        else {
-            item->icon().paint(painter, item->rect().toRect());
-        }
+        item->icon().paint(painter, item->rect().toRect());
+        painter->save();
+        painter->setClipRect(item->textRect());
+        painter->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
+        painter->drawText(item->textRect(), Qt::AlignVCenter, item->name());
+        painter->restore();
     }
 }
 
@@ -102,65 +105,99 @@ void Breadcrumb::updateItemRects()
 {
     qreal x = 0;
     foreach (BreadcrumbItem *item, m_items) {
-        if (item->showText()) {
-            item->setRect(QRectF(x, 0, contentsRect().height() + item->textWidth(), contentsRect().height()));
-            x += contentsRect().height() + item->textWidth();
-        }
-        else {
+            if (item->showingText()) {
+                item->setTextRect(QRectF(x, 0, m_realFrame*item->textWidth(), contentsRect().height()));
+            } else {
+                item->setTextRect(QRectF(x, 0, (1.0 - m_realFrame)*item->textWidth(), contentsRect().height()));
+            }
+            x += item->textRect().width();
             item->setRect(QRectF(x, 0, contentsRect().height(), contentsRect().height()));
             x += contentsRect().height();
+    }
+}
+
+void Breadcrumb::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    foreach (BreadcrumbItem *item, m_items) {
+        if (item->rect().contains(event->pos())) {
+            emit changedRootIndex(item->index());
+            return;
         }
     }
 }
 
-bool Breadcrumb::eventFilter(QObject * watched, QEvent * event)
+void Breadcrumb::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
-    BreadcrumbItem * current = 0;
-    QGraphicsSceneMouseEvent * e = static_cast<QGraphicsSceneMouseEvent*>(event);
-    switch (event->type()) {
-        case QEvent::GraphicsSceneMousePress:
-        case QEvent::GraphicsSceneHoverEnter:
-        case QEvent::GraphicsSceneHoverLeave:
-        case QEvent::GraphicsSceneHoverMove:
-        {
-            foreach (BreadcrumbItem *item, m_items) {
-                if (item->rect().contains(e->pos())) {
-                    current = item;
-                    break;
-                }
+    foreach (BreadcrumbItem *item, m_items) {
+        if (m_timeLine->state() == QTimeLine::NotRunning && item->rect().contains(event->pos())) {
+            if (m_currentShowing) {
+                m_currentShowing->setShowingText(false);
             }
-            break;
+            m_currentShowing = item;
+            item->setShowingText(true);
+            m_timeLine->setFrameRange(0, 100);
+            m_timeLine->start();
         }
-        default:
-            break;
+    }
+}
+
+void Breadcrumb::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+    if (!m_currentShowing) {
+        return;
     }
 
-    /*if (current) {*/
-        switch (event->type()) {
-            case QEvent::GraphicsSceneMousePress:
-                if (current) {
-                    emit changedRootIndex(current->index());
-                }
-                break;
-            case QEvent::GraphicsSceneHoverMove:
-                if (m_current && (!current || m_current != current)) {
-                    m_current->animateHiding();
-                    m_current = 0;
-                }
-            case QEvent::GraphicsSceneHoverEnter:
-                if (current && (!m_current || m_current != current)) {
-                    m_current = current;
-                    m_current->animateShowing();
-                }
-                break;
-            case QEvent::GraphicsSceneHoverLeave:
-                if (m_current) {
-                    m_current->animateHiding();
-                }
-                break;
-            default:
-                break;
+    if (m_currentShowing->showingText()) {
+        m_currentShowing->setShowingText(false);
+        m_currentShowing = 0;
+    }
+
+    if (m_timeLine->state() == QTimeLine::NotRunning) {
+        m_timeLine->setFrameRange(0, 100);
+        m_timeLine->start();
+    }
+}
+
+void Breadcrumb::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
+{
+    if ( m_currentShowing && (m_currentShowing->rect().contains(event->pos()) || m_currentShowing->textRect().contains(event->pos())) ) {
+        return;
+    }
+
+    foreach (BreadcrumbItem *item, m_items) {
+        if ( ( item->rect().contains(event->pos()) || item->textRect().contains(event->pos()) )) {
+            if (m_currentShowing) {
+                m_currentShowing->setShowingText(false);
+            }
+            item->setShowingText(true);
+            m_currentShowing = item;
+
+            if (m_timeLine->state() == QTimeLine::NotRunning) {
+                m_timeLine->setFrameRange(0, 100);
+                m_timeLine->start();
+            }
+            return;
         }
-    //}
-    return false;
+    }
+
+    // if we are here the mouse is over an empty space so let's close the open item
+    if (!m_currentShowing) {
+        return;
+    }
+
+    m_currentShowing->setShowingText(false);
+    m_currentShowing = 0;
+
+    if (m_timeLine->state() == QTimeLine::NotRunning) {
+        m_timeLine->setFrameRange(0, 100);
+        m_timeLine->start();
+    }
+
+}
+
+void Breadcrumb::animate()
+{
+    m_realFrame = m_timeLine->currentValue();
+    updateItemRects();
+    update();
 }
