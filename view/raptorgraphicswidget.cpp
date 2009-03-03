@@ -17,10 +17,9 @@
 #include "view/raptorscrollbutton.h"
 #include "engine/kickoff/applicationmodel.h"
 #include "engine/kickoff/searchmodel.h"
-#include "view/raptorbreadcrumb.h"
 #include "view/raptorgraphicsview.h"
 
-#include "playground/breadcrumb.h"
+#include "view/breadcrumb.h"
 
 // Qt
 #include <QGraphicsLinearLayout>

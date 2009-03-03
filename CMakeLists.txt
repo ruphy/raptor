@@ -26,8 +26,8 @@ set(raptor_SRCS
     view/raptoritemdelegate.cpp
     view/raptorgraphicswidget.cpp
     view/raptorscrollbutton.cpp
-    view/raptorbreadcrumb.cpp
-    view/raptorbreadcrumbitem.cpp
+    view/breadcrumb.cpp
+    view/breadcrumbitem.cpp
     view/raptormenuitem.cpp
     view/raptorgraphicsview.cpp
     view/blur.cpp
@@ -36,8 +36,6 @@ set(raptor_SRCS
     engine/kickoff/models.cpp
     engine/kickoff/leavemodel.cpp
     engine/kickoff/searchmodel.cpp
-    playground/breadcrumb.cpp
-    playground/breadcrumbitem.cpp
 )
  
 # Now make sure all files get to the right place
