@@ -45,7 +45,7 @@ protected:
     void drawNormalWay(QPainter *painter, const QStyleOptionViewItem & option, const QModelIndex &index) const;
     void drawSingleAppWay(QPainter *painter, const QStyleOptionViewItem & option, const QModelIndex &index) const;
 
-    void drawFavIcon(QPainter *painter, const QStyleOptionViewItem &option) const;
+    void drawFavIcon(QPainter *painter, const QRect &) const;
 
 protected slots:
     void animatePaint();

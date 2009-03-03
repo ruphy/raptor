@@ -126,7 +126,7 @@ void RaptorGraphicsView::paint(QPainter *painter, const QStyleOptionGraphicsItem
     Q_UNUSED(widget)
     Q_UNUSED(option)
 
-//     painter->fillRect(rect(), Qt::blue);
+//     painter->fillRect(rect(), Qt::red);
 
 //     painter->setPen(Qt::green);
     foreach (RaptorMenuItem *item, d->shownItems) {

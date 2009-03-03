@@ -28,6 +28,8 @@ public:
     QModelIndex index;
     QRectF rect;
     QStyleOptionViewItem *option;
+
+    void calculateDecorationSize();
 };
 
 RaptorMenuItem::RaptorMenuItem(const QModelIndex &index, QObject *parent) : QObject(parent) , d(new Private(index, this))
@@ -49,7 +51,8 @@ void RaptorMenuItem::setRect(const QRectF &rect)
     kDebug() << "setting rect" << rect;
     d->rect = rect;
     d->option->rect = rect.toRect();
-    d->option->decorationSize = d->option->rect.size();
+
+    d->calculateDecorationSize();
 }
 
 void RaptorMenuItem::moveBy(float dx, float dy)
@@ -65,4 +68,27 @@ QModelIndex RaptorMenuItem::modelIndex() const
 QStyleOptionViewItem* RaptorMenuItem::option()
 {
     return d->option;
+}
+
+void RaptorMenuItem::Private::calculateDecorationSize()
+{
+    int size = rect.size().width();
+
+    if (size < 16) {
+        option->decorationSize = QSize(8, 8);
+    } else if (size >= 16 || size < 22) {
+        option->decorationSize = QSize(16, 16);
+    } else if (size >= 22 || size < 32) {
+        option->decorationSize = QSize(22, 22);
+    } else if (size >= 32 || size < 48) {
+        option->decorationSize = QSize(32, 32);
+    } else if (size >= 48 || size < 64) {
+        option->decorationSize = QSize(48, 48);
+    } else if (size >= 64 || size < 128) {
+        option->decorationSize = QSize(64, 64);
+    } else if (size >= 128 || size < 256) {
+        option->decorationSize = QSize(128, 128);
+    } else {
+        option->decorationSize = QSize(256, 256);
+    }
 }

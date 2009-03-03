@@ -112,10 +112,6 @@ void RaptorItemDelegate::drawNormalWay(QPainter *painter, const QStyleOptionView
 
     d->optV4 = option;
     initStyleOption(&d->optV4, index);
-
-    if (!d->p) {
-        generateBgPixmap(d->optV4.decorationSize); // TODO Bg --> Background
-    }
     
     painter->setRenderHint(QPainter::Antialiasing);
     painter->setPen(Qt::NoPen);
@@ -132,12 +128,12 @@ void RaptorItemDelegate::drawNormalWay(QPainter *painter, const QStyleOptionView
             d->timeLine->start();
         }
 
-        generateBgPixmap(d->optV4.decorationSize);
+        generateBgPixmap(d->optV4.rect.size());
         painter->save();
         painter->setOpacity(d->frame);
         painter->drawPixmap(d->optV4.rect, *d->p);
 
-        drawFavIcon(painter, d->optV4);
+        drawFavIcon(painter, d->optV4.rect);
 
         painter->restore();
     }
@@ -162,14 +158,14 @@ void RaptorItemDelegate::drawNormalWay(QPainter *painter, const QStyleOptionView
                               (decorationRect.height() - pixmapDecoration.height()) / 2);
 
     decorationRect.setSize(QSize(pixmapDecoration.width(), pixmapDecoration.height()));
+//     painter->fillRect(decorationRect, Qt::green);
     painter->drawPixmap(decorationRect, pixmapDecoration);
 
     painter->setPen(d->optV4.palette.color(QPalette::Text));
 
     // FIXME store the QString instead of calling index.data() many times
     QRect textRect = d->optV4.rect;
-    textRect.translate( 0, decorationRect.height()+pixmapDecoration.height()+textMargin);
-    textRect.setSize(QSize(textRect.width(), textRect.height() - decorationRect.height()));
+    textRect.setY(decorationRect.y() + decorationRect.height() + textMargin);
     painter->drawText(textRect, Qt::AlignHCenter, index.data().toString());
 
     painter->restore();
@@ -213,11 +209,11 @@ void RaptorItemDelegate::drawSingleAppWay(QPainter *painter, const QStyleOptionV
     painter->restore();
 }
 
-void RaptorItemDelegate::drawFavIcon(QPainter *painter, const QStyleOptionViewItem &option) const
+void RaptorItemDelegate::drawFavIcon(QPainter *painter, const QRect &rect) const
 {
     KIcon icon("favorites");
     QRect favRect(0, 0, FAV_ICON_SIZE, FAV_ICON_SIZE);
-    favRect.translate(option.rect.x() + option.rect.width() - FAV_ICON_SIZE, 0);
+    favRect.translate(rect.x() + rect.width() - FAV_ICON_SIZE, 0);
 
     icon.paint(painter, favRect);
 }
