@@ -25,12 +25,14 @@
 #include <Plasma/Svg>
 
 #include <KDebug>
+#include <KIcon>
 
 #include "blur.cpp" //TODO: make this a function in Plasma::PaintUtils
 
 // FIXME: use Animator, for a shared timer.
 const int ANIMATION_DURATION = 200; // will need to be made shorter once we have keyboard navigation.
 const int FRAMES = 50;
+const int FAV_ICON_SIZE = 22;
 
 class RaptorItemDelegate::Private
 {
@@ -134,6 +136,9 @@ void RaptorItemDelegate::drawNormalWay(QPainter *painter, const QStyleOptionView
         painter->save();
         painter->setOpacity(d->frame);
         painter->drawPixmap(d->optV4.rect, *d->p);
+
+        drawFavIcon(painter, d->optV4);
+
         painter->restore();
     }
 
@@ -206,6 +211,15 @@ void RaptorItemDelegate::drawSingleAppWay(QPainter *painter, const QStyleOptionV
     painter->drawText(descriptionRect, Qt::AlignLeft, index.data(Qt::DisplayRole).toString());
 
     painter->restore();
+}
+
+void RaptorItemDelegate::drawFavIcon(QPainter *painter, const QStyleOptionViewItem &option) const
+{
+    KIcon icon("favorites");
+    QRect favRect(0, 0, FAV_ICON_SIZE, FAV_ICON_SIZE);
+    favRect.translate(option.rect.x() + option.rect.width() - FAV_ICON_SIZE, 0);
+
+    icon.paint(painter, favRect);
 }
 
 void RaptorItemDelegate::generateBgPixmap(const QSize &s) const // TODO find a way to make this themable, preferrably via SVG.
