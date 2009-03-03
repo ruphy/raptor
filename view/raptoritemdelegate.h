@@ -46,7 +46,7 @@ protected:
     void drawSingleAppWay(QPainter *painter, const QStyleOptionViewItem & option, const QModelIndex &index) const;
 
 protected slots:
-    void animatePaint(int);
+    void animatePaint();
 
 private:
     void generateBgPixmap(const QSize &s) const;

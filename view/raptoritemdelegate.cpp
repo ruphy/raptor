@@ -30,6 +30,7 @@
 
 // FIXME: use Animator, for a shared timer.
 const int ANIMATION_DURATION = 200; // will need to be made shorter once we have keyboard navigation.
+const int FRAMES = 50;
 
 class RaptorItemDelegate::Private
 {
@@ -38,6 +39,7 @@ class RaptorItemDelegate::Private
                 q(q),
                 view(view),
                 timeLine(new QTimeLine(ANIMATION_DURATION, q)),
+                frame(1.0),
                 textColor(QColor()),
                 p(0),
                 svg(0),
@@ -57,7 +59,7 @@ class RaptorItemDelegate::Private
     QGraphicsWidget *view;
 
     QTimeLine *timeLine;
-    int frame;
+    qreal frame;
 
     QModelIndex index;
 
@@ -67,12 +69,14 @@ class RaptorItemDelegate::Private
     Plasma::Svg *svg;
 
     RaptorItemDelegate::ViewMode mode;
+
+    QModelIndex currentIndex;
 };
 
 RaptorItemDelegate::RaptorItemDelegate(QGraphicsWidget *parent) : QStyledItemDelegate(parent),
                                                           d(new Private(parent, this))
 {
-//     connect(d->timeLine, SIGNAL(frameChanged(int)), this, SLOT(animatePaint(int)));
+    connect(d->timeLine, SIGNAL(frameChanged(int)), this, SLOT(animatePaint()));
 }
 
 RaptorItemDelegate::~RaptorItemDelegate()
@@ -117,66 +121,34 @@ void RaptorItemDelegate::drawNormalWay(QPainter *painter, const QStyleOptionView
     //d->optV4.decorationSize = QSize(64, 64);
 
     if (d->optV4.state & QStyle::State_MouseOver && !(d->optV4.state & QStyle::State_Selected) ) {
+
         d->optV4.state &= ~QStyle::State_MouseOver; //this removes the mouseOver state in order to draw a nicer selection rect
 
-//         // here comes what should be animated
-// //         if (d->timeLine->state() == QTimeLine::NotRunning && d->index != index) {
-// // 
-// //             d->index = index;
-// // 
-// //             d->timeLine->setFrameRange(0, 20);
-// //             d->timeLine->start();
-// //         }
-// 
-//         QPixmap temp = (d->p)->size();//d->optV4
-//         QPainter p(&temp);
-//         p.setCompositionMode(QPainter::CompositionMode_Source);
-//         p.drawPixmap(0, 0, *d->p);
-//         p.setCompositionMode(QPainter::CompositionMode_DestinationIn);
-//         p.fillRect(temp.rect(), QColor(0, 0, 0, 100/*qreal(d->frame)*5.0/100.0*/));
-//         p.end();
-// //         painter->drawPixmap(d->optV4.rect, temp);
-// //         painter->save();
-// //         painter->setOpacity(qreal(d->frame)*5.0/100.0);
-//         QPoint topLeft(d->optV4.rect.x()+(d->optV4.decorationSize.width()-d->p->width())/2,
-//                        d->optV4.rect.y()+(d->optV4.decorationSize.height()-d->p->height())/2);
-//         QRect pixRect(topLeft, QSize(d->p->width(), d->p->height()));
-// //         pixRect.translate(10, 4);
-//         painter->drawPixmap(pixRect, temp); //*d->p);
-// //         painter->restore();
-        generateBgPixmap(d->optV4.decorationSize);
-        painter->drawPixmap(d->optV4.rect, *d->p);
+        if (d->timeLine->state() == QTimeLine::NotRunning && d->currentIndex != index) {
+            d->currentIndex = index;
+            d->timeLine->setFrameRange(0, FRAMES);
+            d->timeLine->start();
+        }
 
-    } else {
-//         if (d->timeLine->state() == QTimeLine::NotRunning) {
-//             d->index = QModelIndex();
-//         }
+        generateBgPixmap(d->optV4.decorationSize);
+        painter->save();
+        painter->setOpacity(d->frame);
+        painter->drawPixmap(d->optV4.rect, *d->p);
+        painter->restore();
     }
 
     if (d->optV4.state & QStyle::State_Selected) {
-//         painter->save();
-//         QRect pixRect(d->optV4.rect.topLeft(), QSize(d->p->width(), d->p->height()));
         QPoint topLeft(d->optV4.rect.x()+((d->optV4.decorationSize.width()-d->p->width())/2),
                        d->optV4.rect.y()+((d->optV4.decorationSize.height()-d->p->height())/2));
         QRect pixRect(topLeft, QSize(d->p->width(), d->p->height()));
-//         pixRect.translate(4, 10);
         painter->drawPixmap(pixRect, *d->p);
-//         painter->restore();
     }
 
     if (d->textColor != QColor()) {
         d->optV4.palette.setColor(QPalette::Text, d->textColor);
     }
 
-//     QStyledItemDelegate::paint(painter, d->optV4, index);
-
-    //here follows the implementation of the painting process
-    //instead of using the one from QStyledItemDelegate.
-    //this will ease some deep changes in the paint process
-    //when needed.
-
     painter->save();
-//     painter->setClipRect(d->optV4.rect);
 
     QPixmap pixmapDecoration = d->optV4.icon.pixmap(QSize(iconSize, iconSize));
 
@@ -239,36 +211,6 @@ void RaptorItemDelegate::drawSingleAppWay(QPainter *painter, const QStyleOptionV
 void RaptorItemDelegate::generateBgPixmap(const QSize &s) const // TODO find a way to make this themable, preferrably via SVG.
 {
     if (!d->p) { // it's an expensive operation, so let's keep a cached pixmap.
-//         qreal blurAmount = 7;
-//         QSize rectSize(s.width()-(blurAmount*3), s.height()-(blurAmount*3));
-//         QImage *i = new QImage(d->optV4.decorationSize, QImage::Format_ARGB32_Premultiplied);
-//         i->fill(0);
-//         QPainter p(i);
-//         QLinearGradient lg(0, blurAmount*2, 0, d->optV4.decorationSize.height()-blurAmount);
-//         QColor sel = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
-//         lg.setColorAt(0.0, sel);
-//         QColor sel2 = sel;
-//         sel2.setAlpha(40);
-//         lg.setColorAt(1.0, sel2);
-//         p.setBrush(lg);
-//         p.setPen(Qt::NoPen);
-//         p.drawRect(blurAmount, blurAmount, rectSize.width(), rectSize.height());
-// 
-//         p.end();
-//         
-//         expblur<16, 7>(*i, blurAmount);
-// 
-//         d->p = new QPixmap(d->optV4.decorationSize);
-//         d->p->fill(Qt::transparent);
-//         
-//         QPainter pp(d->p);
-//         pp.setCompositionMode(QPainter::CompositionMode_Source);
-//         pp.drawImage(0, 0, *i);
-//         pp.setCompositionMode(QPainter::CompositionMode_DestinationIn);
-//         pp.fillRect(d->p->rect(), QColor(0, 0, 0, 140));
-//         pp.end();
-// 
-//         delete i;
         d->p = new QPixmap(s);
         d->p->fill(Qt::transparent);
 
@@ -283,11 +225,11 @@ void RaptorItemDelegate::generateBgPixmap(const QSize &s) const // TODO find a w
     }
 }
 
-void RaptorItemDelegate::animatePaint(int frame)
+void RaptorItemDelegate::animatePaint()
 {
-    d->frame = frame;
+    d->frame = d->timeLine->currentValue();
 
-    if (!d->view) { // TODO: we should avoid the use of d->view when fully ported to QGW
+    if (!d->view) {
         return;
     }
 

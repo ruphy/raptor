@@ -120,7 +120,7 @@ void Breadcrumb::updateItemRects()
 void Breadcrumb::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     foreach (BreadcrumbItem *item, m_items) {
-        if (item->rect().contains(event->pos())) {
+        if (item->rect().contains(event->pos()) || item->textRect().contains(event->pos())) {
             emit changedRootIndex(item->index());
             return;
         }
