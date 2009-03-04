@@ -110,8 +110,6 @@ void RaptorItemDelegate::drawNormalWay(QPainter *painter, const QStyleOptionView
 
     if (d->optV4.state & QStyle::State_MouseOver && !(d->optV4.state & QStyle::State_Selected) ) {
 
-        d->optV4.state &= ~QStyle::State_MouseOver; //this removes the mouseOver state in order to draw a nicer selection rect
-
         RaptorMenuItem * item = 0;
         foreach (RaptorMenuItem * i, d->view->shownItems()) {
             if (i->modelIndex() == index) {
@@ -135,7 +133,6 @@ void RaptorItemDelegate::drawNormalWay(QPainter *painter, const QStyleOptionView
         painter->setOpacity(item->timeLine()->currentValue());
         painter->drawPixmap(d->optV4.rect, *d->p);
 
-        drawFavIcon(painter, d->optV4.rect);
 
         painter->restore();
     }
@@ -162,6 +159,10 @@ void RaptorItemDelegate::drawNormalWay(QPainter *painter, const QStyleOptionView
     decorationRect.setSize(QSize(pixmapDecoration.width(), pixmapDecoration.height()));
 //     painter->fillRect(decorationRect, Qt::green);
     painter->drawPixmap(decorationRect, pixmapDecoration);
+
+    if (d->optV4.state & QStyle::State_MouseOver && !(d->optV4.state & QStyle::State_Selected) ) {
+        drawFavIcon(painter, decorationRect);
+    }
 
     painter->setPen(d->optV4.palette.color(QPalette::Text));
 
@@ -214,8 +215,9 @@ void RaptorItemDelegate::drawSingleAppWay(QPainter *painter, const QStyleOptionV
 void RaptorItemDelegate::drawFavIcon(QPainter *painter, const QRect &rect) const
 {
     KIcon icon("favorites");
-    QRect favRect(0, 0, FAV_ICON_SIZE, FAV_ICON_SIZE);
-    favRect.translate(rect.x() + rect.width() - FAV_ICON_SIZE, 0);
+    QRect favRect = rect;
+    favRect.setSize(QSize(FAV_ICON_SIZE, FAV_ICON_SIZE));
+    favRect.translate(rect.width() - FAV_ICON_SIZE, 0);
 
     icon.paint(painter, favRect);
 }
