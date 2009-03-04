@@ -18,6 +18,7 @@ class QPainter;
 class QStyleOptionViewItem;
 class QModelIndex;
 class RaptorItemDelegate;
+class QTimeLine;
 
 class RaptorMenuItem : public QObject
 {
@@ -55,6 +56,11 @@ public:
      * @Returns the index associated to this item.
      */
     QModelIndex modelIndex() const;
+
+    /**
+     * @returns the timeline of the menuitem
+     */
+    QTimeLine * timeLine();
 
 private:
     class Private;

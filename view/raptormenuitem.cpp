@@ -14,8 +14,11 @@
 #include <QStyleOptionViewItem>
 #include <QPainter>
 #include <QModelIndex>
+#include <QTimeLine>
 
 #include <KDebug>
+
+const int DURATION = 250;
 
 class RaptorMenuItem::Private
 {
@@ -28,12 +31,14 @@ public:
     QModelIndex index;
     QRectF rect;
     QStyleOptionViewItem *option;
+    QTimeLine * timeLine;
 
     void calculateDecorationSize();
 };
 
 RaptorMenuItem::RaptorMenuItem(const QModelIndex &index, QObject *parent) : QObject(parent) , d(new Private(index, this))
 {
+    d->timeLine = new QTimeLine(DURATION, this);
 }
 
 RaptorMenuItem::~RaptorMenuItem()
@@ -91,4 +96,9 @@ void RaptorMenuItem::Private::calculateDecorationSize()
     } else {
         option->decorationSize = QSize(256, 256);
     }
+}
+
+QTimeLine * RaptorMenuItem::timeLine()
+{
+    return d->timeLine;
 }
