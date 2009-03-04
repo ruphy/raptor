@@ -25,19 +25,23 @@
 class RaptorGraphicsView::Private
 {
 public:
-    Private(RaptorGraphicsView *q) : q(q), model(0), scrollOffset(0.0)
+    Private(RaptorGraphicsView *q) : q(q), model(0), currentHoveredItem(0)
     {
         delegate = new RaptorItemDelegate(q);
         delegate->setTextColor(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
     }
 
     RaptorGraphicsView *q;
+
     QAbstractItemModel *model;
     QModelIndex rootIndex;
+
     QList<RaptorMenuItem*> items;
     QList<RaptorMenuItem*> shownItems;
+
     RaptorItemDelegate * delegate;
-    float scrollOffset;
+    
+    RaptorMenuItem *currentHoveredItem;
 };
 
 RaptorGraphicsView::RaptorGraphicsView(QGraphicsItem *parent) : QGraphicsWidget(parent), d(new Private(this))
@@ -249,9 +253,10 @@ void RaptorGraphicsView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
     foreach (RaptorMenuItem *item, d->shownItems) {
         item->option()->state = QStyle::State_None;
         if (item->rect().contains(event->pos())) {
-            if (item->option()->state != QStyle::State_MouseOver) {
-                item->option()->state = QStyle::State_MouseOver;
+            item->option()->state = QStyle::State_MouseOver;
+            if (d->currentHoveredItem != item) {
                 item->timeLine()->start();
+                d->currentHoveredItem = item;
             }
         }
     }

@@ -32,7 +32,6 @@
 
 // FIXME: use Animator, for a shared timer.
 /*const int ANIMATION_DURATION = 200; // will need to be made shorter once we have keyboard navigation.*/
-const int FRAMES = 20;
 const int FAV_ICON_SIZE = 22;
 
 class RaptorItemDelegate::Private
@@ -58,8 +57,6 @@ class RaptorItemDelegate::Private
 
     QStyleOptionViewItemV4 optV4;
     RaptorGraphicsView *view;
-
-    QModelIndex index;
 
     QColor textColor;
     QPixmap *p;
@@ -135,7 +132,7 @@ void RaptorItemDelegate::drawNormalWay(QPainter *painter, const QStyleOptionView
 
         generateBgPixmap(d->optV4.rect.size());
         painter->save();
-        painter->setOpacity(item->timeLine()->currentFrame() / FRAMES);
+        painter->setOpacity(item->timeLine()->currentValue());
         painter->drawPixmap(d->optV4.rect, *d->p);
 
         drawFavIcon(painter, d->optV4.rect);
