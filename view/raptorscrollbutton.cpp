@@ -18,6 +18,8 @@
 
 #include <KDebug>
 
+const qreal BUTTON_SIZE = 32;
+
 class RaptorScrollButton::Private
 {
     public:
@@ -63,14 +65,17 @@ void RaptorScrollButton::paint(QPainter * p, const QStyleOptionGraphicsItem * op
     //QPainter p(this);
     QRectF r(option->rect);
     
-    qreal buttonRatioWidth = 0.7;
-    qreal buttonRatioHeight = 0.6;
+//     qreal buttonRatioWidth = 0.7;
+//     qreal buttonRatioHeight = 0.3;
 
     p->setRenderHint(QPainter::SmoothPixmapTransform);
     p->setRenderHint(QPainter::Antialiasing);
 
-    r.setSize(QSizeF(contentsRect().size().width() * buttonRatioWidth + d->frame, 
-                     contentsRect().size().height() * buttonRatioHeight + d->frame));
+//     r.setSize(QSizeF(contentsRect().size().width() * buttonRatioWidth + d->frame, 
+//                      contentsRect().size().height() * buttonRatioHeight + d->frame));
+
+    r.setSize(QSizeF(BUTTON_SIZE + d->frame, BUTTON_SIZE + d->frame));
+
     d->svg->resize(r.size());
     r.moveCenter(contentsRect().center());
 
