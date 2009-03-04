@@ -11,6 +11,8 @@
 #ifndef RAPTORGRAPHICSVIEW_H
 #define RAPTORGRAPHICSVIEW_H
 
+#include "raptormenuitem.h"
+
 #include <QGraphicsWidget>
 #include <QModelIndex>
 
@@ -34,6 +36,9 @@ public:
     ~RaptorGraphicsView();
 
     QModelIndex rootIndex() const;
+
+    QList<RaptorMenuItem*> items() const;
+    QList<RaptorMenuItem*> shownItems() const;
 
     void setModel(QAbstractItemModel *model);
     QAbstractItemModel* model();

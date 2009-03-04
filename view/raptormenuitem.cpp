@@ -10,6 +10,7 @@
 */
 #include "raptormenuitem.h"
 #include "raptoritemdelegate.h"
+#include "raptorgraphicsview.h"
 
 #include <QStyleOptionViewItem>
 #include <QPainter>
@@ -19,11 +20,12 @@
 #include <KDebug>
 
 const int DURATION = 250;
+const int FRAMES = 20;
 
 class RaptorMenuItem::Private
 {
 public:
-    Private(const QModelIndex &index, RaptorMenuItem *q) : q(q), index(index), option(new QStyleOptionViewItem)
+    Private(const QModelIndex &index, RaptorGraphicsView *p, RaptorMenuItem *q) : q(q), index(index), option(new QStyleOptionViewItem), view(p)
     {
     }
 
@@ -31,14 +33,17 @@ public:
     QModelIndex index;
     QRectF rect;
     QStyleOptionViewItem *option;
-    QTimeLine * timeLine;
+    QTimeLine *timeLine;
+    RaptorGraphicsView *view;
 
     void calculateDecorationSize();
 };
 
-RaptorMenuItem::RaptorMenuItem(const QModelIndex &index, QObject *parent) : QObject(parent) , d(new Private(index, this))
+RaptorMenuItem::RaptorMenuItem(const QModelIndex &index, RaptorGraphicsView *parent) : QObject(parent) , d(new Private(index, parent, this))
 {
     d->timeLine = new QTimeLine(DURATION, this);
+    d->timeLine->setFrameRange(0, 20);
+    connect(d->timeLine, SIGNAL(frameChanged(int)), SLOT(update()));
 }
 
 RaptorMenuItem::~RaptorMenuItem()
@@ -101,4 +106,9 @@ void RaptorMenuItem::Private::calculateDecorationSize()
 QTimeLine * RaptorMenuItem::timeLine()
 {
     return d->timeLine;
+}
+
+void RaptorMenuItem::update()
+{
+    d->view->update(d->rect);
 }

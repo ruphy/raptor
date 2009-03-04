@@ -2,6 +2,7 @@
 
    Copyright (C) 2008 Alessandro Diaferia <alediaferia@gmail.com>
    Copyright (C) 2008 Riccardo Iaconelli <riccardo@kde.org>
+   Copyright (C) 2009 Lukas Appelhans <l.appelhans@gmx.de>
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
@@ -11,6 +12,8 @@
 
 #ifndef RAPTORITEMDELEGATE_H
 #define RAPTORITEMDELEGATE_H
+
+#include "raptorgraphicsview.h"
 
 #include <QStyledItemDelegate>
 
@@ -32,7 +35,7 @@ public:
         Description = Qt::UserRole + 1
     };
 
-    RaptorItemDelegate(QGraphicsWidget *parent);
+    RaptorItemDelegate(RaptorGraphicsView *parent);
     ~RaptorItemDelegate();
 
     void paint(QPainter *painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const;
@@ -46,9 +49,6 @@ protected:
     void drawSingleAppWay(QPainter *painter, const QStyleOptionViewItem & option, const QModelIndex &index) const;
 
     void drawFavIcon(QPainter *painter, const QRect &) const;
-
-protected slots:
-    void animatePaint();
 
 private:
     void generateBgPixmap(const QSize &s) const;

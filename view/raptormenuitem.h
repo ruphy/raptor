@@ -19,12 +19,13 @@ class QStyleOptionViewItem;
 class QModelIndex;
 class RaptorItemDelegate;
 class QTimeLine;
+class RaptorGraphicsView;
 
 class RaptorMenuItem : public QObject
 {
     Q_OBJECT
 public:
-    RaptorMenuItem(const QModelIndex &index, QObject *parent = 0);
+    RaptorMenuItem(const QModelIndex &index, RaptorGraphicsView *parent = 0);
     ~RaptorMenuItem();
 
     /**
@@ -61,6 +62,9 @@ public:
      * @returns the timeline of the menuitem
      */
     QTimeLine * timeLine();
+
+private slots:
+    void update();
 
 private:
     class Private;

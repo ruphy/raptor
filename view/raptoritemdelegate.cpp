@@ -2,6 +2,7 @@
 
    Copyright (C) 2008 Alessandro Diaferia <alediaferia@gmail.com>
    Copyright (C) 2008 Riccardo Iaconelli <riccardo@kde.org>
+   Copyright (C) 2009 Lukas Appelhans <l.appelhans@gmx.de>
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
@@ -30,18 +31,16 @@
 #include "blur.cpp" //TODO: make this a function in Plasma::PaintUtils
 
 // FIXME: use Animator, for a shared timer.
-const int ANIMATION_DURATION = 200; // will need to be made shorter once we have keyboard navigation.
-const int FRAMES = 50;
+/*const int ANIMATION_DURATION = 200; // will need to be made shorter once we have keyboard navigation.*/
+const int FRAMES = 20;
 const int FAV_ICON_SIZE = 22;
 
 class RaptorItemDelegate::Private
 {
     public:
-        Private(QGraphicsWidget *view, RaptorItemDelegate *q):
+        Private(RaptorGraphicsView *view, RaptorItemDelegate *q):
                 q(q),
                 view(view),
-                timeLine(new QTimeLine(ANIMATION_DURATION, q)),
-                frame(1.0),
                 textColor(QColor()),
                 p(0),
                 svg(0),
@@ -53,15 +52,12 @@ class RaptorItemDelegate::Private
                 }
 
         ~Private()
-                { delete p; delete timeLine; }
+                { delete p; }
 
     RaptorItemDelegate *q;
 
     QStyleOptionViewItemV4 optV4;
-    QGraphicsWidget *view;
-
-    QTimeLine *timeLine;
-    qreal frame;
+    RaptorGraphicsView *view;
 
     QModelIndex index;
 
@@ -71,14 +67,11 @@ class RaptorItemDelegate::Private
     Plasma::Svg *svg;
 
     RaptorItemDelegate::ViewMode mode;
-
-    QModelIndex currentIndex;
 };
 
-RaptorItemDelegate::RaptorItemDelegate(QGraphicsWidget *parent) : QStyledItemDelegate(parent),
+RaptorItemDelegate::RaptorItemDelegate(RaptorGraphicsView *parent) : QStyledItemDelegate(parent),
                                                           d(new Private(parent, this))
 {
-    connect(d->timeLine, SIGNAL(frameChanged(int)), this, SLOT(animatePaint()));
 }
 
 RaptorItemDelegate::~RaptorItemDelegate()
@@ -122,15 +115,27 @@ void RaptorItemDelegate::drawNormalWay(QPainter *painter, const QStyleOptionView
 
         d->optV4.state &= ~QStyle::State_MouseOver; //this removes the mouseOver state in order to draw a nicer selection rect
 
-        if (d->timeLine->state() == QTimeLine::NotRunning && d->currentIndex != index) {
-            d->currentIndex = index;
-            d->timeLine->setFrameRange(0, FRAMES);
-            d->timeLine->start();
+        RaptorMenuItem * item = 0;
+        foreach (RaptorMenuItem * i, d->view->shownItems()) {
+            if (i->modelIndex() == index) {
+                item = i;
+                break;
+            }
         }
+
+        /*if (item->timeLine()->state() == QTimeLine::Running) {
+            item->timeLine()->stop();
+        }
+        if (item->timeLine()->state() == QTimeLine::NotRunning && item->timeLine()->currentFrame() < 1) {
+            kDebug() << "Restart timeline";
+            item->timeLine()->setFrameRange(0, FRAMES);
+            item->timeLine()->start();
+        }*/
+        kDebug() << "Current frame for" << item->modelIndex().data(Qt::DisplayRole) << "is:" << item->timeLine()->currentFrame();
 
         generateBgPixmap(d->optV4.rect.size());
         painter->save();
-        painter->setOpacity(d->frame);
+        painter->setOpacity(item->timeLine()->currentFrame() / FRAMES);
         painter->drawPixmap(d->optV4.rect, *d->p);
 
         drawFavIcon(painter, d->optV4.rect);
@@ -233,17 +238,6 @@ void RaptorItemDelegate::generateBgPixmap(const QSize &s) const // TODO find a w
 
         p.end();
     }
-}
-
-void RaptorItemDelegate::animatePaint()
-{
-    d->frame = d->timeLine->currentValue();
-
-    if (!d->view) {
-        return;
-    }
-
-    d->view->update(d->optV4.rect);
 }
 
 void RaptorItemDelegate::setTextColor(const QColor &color)

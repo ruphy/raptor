@@ -9,7 +9,6 @@
    version 2 of the License, or (at your option) any later version.
 */
 #include "raptorgraphicsview.h"
-#include "raptormenuitem.h"
 #include "raptoritemdelegate.h"
 
 #include <QAbstractItemModel>
@@ -17,6 +16,7 @@
 #include <QList>
 #include <QPainter>
 #include <QGraphicsSceneMouseEvent>
+#include <QTimeLine>
 
 #include <KDebug>
 
@@ -55,6 +55,16 @@ RaptorGraphicsView::~RaptorGraphicsView()
 QModelIndex RaptorGraphicsView::rootIndex() const
 {
     return d->rootIndex;
+}
+
+QList<RaptorMenuItem*> RaptorGraphicsView::items() const
+{
+    return d->items;
+}
+
+QList<RaptorMenuItem*> RaptorGraphicsView::shownItems() const
+{
+    return d->shownItems;
 }
 
 void RaptorGraphicsView::setRootIndex(const QModelIndex &index)
@@ -239,7 +249,10 @@ void RaptorGraphicsView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
     foreach (RaptorMenuItem *item, d->shownItems) {
         item->option()->state = QStyle::State_None;
         if (item->rect().contains(event->pos())) {
-            item->option()->state = QStyle::State_MouseOver;
+            if (item->option()->state != QStyle::State_MouseOver) {
+                item->option()->state = QStyle::State_MouseOver;
+                item->timeLine()->start();
+            }
         }
     }
     update();
