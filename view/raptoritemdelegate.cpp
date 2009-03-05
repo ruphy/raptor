@@ -51,7 +51,7 @@ class RaptorItemDelegate::Private
                 }
 
         ~Private()
-                { delete p; }
+                { delete p; delete svg;}
 
     RaptorItemDelegate *q;
 
@@ -64,6 +64,8 @@ class RaptorItemDelegate::Private
     Plasma::Svg *svg;
 
     RaptorItemDelegate::ViewMode mode;
+
+    QRect favIconRect;
 };
 
 RaptorItemDelegate::RaptorItemDelegate(RaptorGraphicsView *parent) : QStyledItemDelegate(parent),
@@ -207,12 +209,35 @@ void RaptorItemDelegate::drawSingleAppWay(QPainter *painter, const QStyleOptionV
     painter->restore();
 }
 
+bool RaptorItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index)
+{
+    Q_UNUSED(model)
+    Q_UNUSED(option)
+    Q_UNUSED(index)
+
+    kDebug() << "editor event";
+    if (event->type() != QEvent::GraphicsSceneMousePress) {
+        kDebug() << "not handled";
+        return false;
+    }
+
+    QGraphicsSceneMouseEvent *clickEvent = static_cast<QGraphicsSceneMouseEvent*>(event);
+    if (d->favIconRect.contains(clickEvent->pos().toPoint())) {
+        kDebug() << "star clicked";
+        return true;
+    }
+
+    return false;
+}
+
 void RaptorItemDelegate::drawFavIcon(QPainter *painter, const QRect &rect) const
 {
     KIcon icon("favorites");
     QRect favRect = rect;
     favRect.setSize(QSize(FAV_ICON_SIZE, FAV_ICON_SIZE));
     favRect.translate(rect.width() - FAV_ICON_SIZE, 0);
+
+    d->favIconRect = favRect;
 
     icon.paint(painter, favRect);
 }
