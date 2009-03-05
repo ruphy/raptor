@@ -76,6 +76,9 @@ QList<RaptorMenuItem*> RaptorGraphicsView::shownItems() const
 
 void RaptorGraphicsView::setRootIndex(const QModelIndex &index)
 {
+    if (index == d->rootIndex) {
+        return;
+    }
     if (!index.data(Qt::UserRole +2).isNull()) {
         emit applicationClicked(KUrl(index.data(Qt::UserRole + 2).toString())); //Qt::UserRole + 2 is Kickoff::UrlRole
         return;
