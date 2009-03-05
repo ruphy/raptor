@@ -62,6 +62,7 @@ protected:
 
     void resizeEvent(QGraphicsSceneResizeEvent *event);
     void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
 
     bool eventFilter(QObject * watched, QEvent * event);
 

@@ -156,6 +156,7 @@ void RaptorGraphicsView::getItems()
 {
 //     kDebug() << "Get items!" << d->model->rowCount(d->rootIndex);
     qDeleteAll(d->items);
+    d->currentHoveredItem = 0;
     d->items.clear();
     if (d->model->canFetchMore(d->rootIndex)) {
         d->model->fetchMore(d->rootIndex);
@@ -259,12 +260,25 @@ void RaptorGraphicsView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
         if (item->rect().contains(event->pos())) {
             item->option()->state = QStyle::State_MouseOver;
             if (d->currentHoveredItem != item) {
+                item->timeLine()->setDirection(QTimeLine::Forward);
                 item->timeLine()->start();
+                if (d->currentHoveredItem) {
+                    d->currentHoveredItem->timeLine()->setDirection(QTimeLine::Backward);
+                    d->currentHoveredItem->timeLine()->start();
+                }
                 d->currentHoveredItem = item;
             }
         }
     }
     update();
+}
+
+void RaptorGraphicsView::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+    if (d->currentHoveredItem) {
+        d->currentHoveredItem->timeLine()->setDirection(QTimeLine::Backward);
+        d->currentHoveredItem->timeLine()->start();
+    }
 }
 
 bool RaptorGraphicsView::eventFilter(QObject * watched, QEvent * event)
