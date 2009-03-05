@@ -29,6 +29,7 @@
 // KDE
 #include <KConfigGroup>
 #include <KService>
+#include <KIcon>
 #include <kdebug.h>
 
 // Local
@@ -42,6 +43,7 @@ public:
     Private(FavoritesModel *parent)
             : q(parent) {
         headerItem = new QStandardItem(i18n("Favorites"));
+        headerItem->setIcon(KIcon("rating"));
         q->appendRow(headerItem);
     }
 

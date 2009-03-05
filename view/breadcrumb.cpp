@@ -122,7 +122,11 @@ void Breadcrumb::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     foreach (BreadcrumbItem *item, m_items) {
         if (item->rect().contains(event->pos()) || item->textRect().contains(event->pos())) {
-            emit changedRootIndex(item->index());
+            if (item->isMainMenu()) {
+                emit rootMenuRequested();
+            } else {
+                emit changedRootIndex(item->index());
+            }
             return;
         }
     }

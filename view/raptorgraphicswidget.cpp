@@ -183,6 +183,7 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
 
     connect(d->view, SIGNAL(enteredItem(const QModelIndex &)), d->breadCrumb, SLOT(setCurrentItem(const QModelIndex &)));
     connect(d->breadCrumb, SIGNAL(changedRootIndex(const QModelIndex&)), d->view, SLOT(setRootIndex(const QModelIndex &)));
+    connect(d->breadCrumb, SIGNAL(rootMenuRequested()), SLOT(refineModel()));
     connect(d->favoritesIcon, SIGNAL(clicked()), SLOT(setFavoritesModel()));
 //     connect(d->breadCrumb, SIGNAL(bottomLevelReached()), d->model, SLOT(slotReloadMenu()));
 // 
@@ -260,6 +261,8 @@ void RaptorGraphicsWidget::refineModel()
 
         if (d->view->model() != d->model) {
             d->view->setModel(d->model);
+        } else {
+            d->view->setRootIndex(QModelIndex());
         }
         return;
     }

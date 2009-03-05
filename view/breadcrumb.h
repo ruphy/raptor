@@ -44,6 +44,8 @@ signals:
      */
     void changedRootIndex(const QModelIndex &);
 
+    void rootMenuRequested();
+
 private:
     RaptorGraphicsView *m_view;
     QList<BreadcrumbItem*> m_items;
