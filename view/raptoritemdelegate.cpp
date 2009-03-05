@@ -224,6 +224,11 @@ void RaptorItemDelegate::drawFavIcon(QPainter *painter, const QRect &rect) const
 
 void RaptorItemDelegate::generateBgPixmap(const QSize &s) const // TODO find a way to make this themable, preferrably via SVG.
 {
+    if (d->p && d->p->size() != s) {
+        delete d->p;
+        d->p = 0;
+    }
+
     if (!d->p) { // it's an expensive operation, so let's keep a cached pixmap.
         d->p = new QPixmap(s);
         d->p->fill(Qt::transparent);
