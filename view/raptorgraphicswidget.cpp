@@ -165,7 +165,7 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
 // 
 
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(updateColors()));
-//     connect(d->view, SIGNAL(applicationClicked(const KUrl &)), this, SLOT(launchApplication(const KUrl &)));
+    connect(d->view, SIGNAL(applicationClicked(const KUrl &)), this, SLOT(launchApplication(const KUrl &)));
     connect(d->searchLine, SIGNAL(textEdited(const QString&)), this, SLOT(refineModel()));
     connect(d->manager, SIGNAL(matchesChanged(const QList<Plasma::QueryMatch>&)), this,
             SLOT(matchesChanged(const QList<Plasma::QueryMatch>&)));

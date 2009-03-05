@@ -16,6 +16,8 @@
 #include <QGraphicsWidget>
 #include <QModelIndex>
 
+#include <KUrl>
+
 class QAbstractItemModel;
 class QGraphicsSceneResizeEvent;
 class QGraphicsSceneHoverEvent;
@@ -55,6 +57,7 @@ public slots:
 
 signals:
     void enteredItem(const QModelIndex &);
+    void applicationClicked(const KUrl &);
 
 protected:
     void getItems();
