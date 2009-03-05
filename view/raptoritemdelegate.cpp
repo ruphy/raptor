@@ -47,7 +47,7 @@ class RaptorItemDelegate::Private
                 {
                     svg = new Plasma::Svg(q);
                     svg->setImagePath("widgets/overlay");
-                    svg->setContainsMultipleImages(false);
+                    svg->setContainsMultipleImages(true);
                 }
 
         ~Private()
