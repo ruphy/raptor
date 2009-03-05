@@ -31,6 +31,9 @@ public:
         delegate->setTextColor(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
     }
 
+    ~Private()
+    { qDeleteAll(items); items.clear(); shownItems.clear(); }
+
     RaptorGraphicsView *q;
 
     QAbstractItemModel *model;
