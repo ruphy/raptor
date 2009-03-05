@@ -61,6 +61,7 @@ protected:
     void setupItems();
 
     void resizeEvent(QGraphicsSceneResizeEvent *event);
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
     void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
 

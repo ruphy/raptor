@@ -250,6 +250,20 @@ void RaptorGraphicsView::resizeEvent(QGraphicsSceneResizeEvent *event)
     kDebug() << contentsRect();
 }
 
+void RaptorGraphicsView::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
+    foreach (RaptorMenuItem *item, d->shownItems) {
+        item->option()->state = QStyle::State_None;
+        if (item->rect().contains(event->pos())) {
+            item->option()->state = QStyle::State_MouseOver;
+            item->timeLine()->setDirection(QTimeLine::Forward);
+            item->timeLine()->start();
+            d->currentHoveredItem = item;
+        }
+    }
+    update();
+}
+
 void RaptorGraphicsView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 {
     foreach (RaptorMenuItem *item, d->shownItems) {
@@ -276,6 +290,7 @@ void RaptorGraphicsView::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
         d->currentHoveredItem->timeLine()->setDirection(QTimeLine::Backward);
         d->currentHoveredItem->timeLine()->start();
     }
+    update();
 }
 
 bool RaptorGraphicsView::eventFilter(QObject * watched, QEvent * event)
