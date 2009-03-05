@@ -47,7 +47,7 @@ class RaptorItemDelegate::Private
                 {
                     svg = new Plasma::Svg(q);
                     svg->setImagePath("widgets/overlay");
-                    svg->setContainsMultipleImages(false);
+                    svg->setContainsMultipleImages(true);
                 }
 
         ~Private()
@@ -108,25 +108,15 @@ void RaptorItemDelegate::drawNormalWay(QPainter *painter, const QStyleOptionView
 
     //d->optV4.decorationSize = QSize(64, 64);
 
+    RaptorMenuItem * item = 0;
+    foreach (RaptorMenuItem * i, d->view->shownItems()) {
+	if (i->modelIndex() == index) {
+	    item = i;
+	    break;
+	}
+    }
+
     if (d->optV4.state & QStyle::State_MouseOver && !(d->optV4.state & QStyle::State_Selected) ) {
-
-        RaptorMenuItem * item = 0;
-        foreach (RaptorMenuItem * i, d->view->shownItems()) {
-            if (i->modelIndex() == index) {
-                item = i;
-                break;
-            }
-        }
-
-        /*if (item->timeLine()->state() == QTimeLine::Running) {
-            item->timeLine()->stop();
-        }
-        if (item->timeLine()->state() == QTimeLine::NotRunning && item->timeLine()->currentFrame() < 1) {
-            kDebug() << "Restart timeline";
-            item->timeLine()->setFrameRange(0, FRAMES);
-            item->timeLine()->start();
-        }*/
-//         kDebug() << "Current frame for" << item->modelIndex().data(Qt::DisplayRole) << "is:" << item->timeLine()->currentFrame();
 
         generateBgPixmap(d->optV4.rect.size());
         painter->save();
@@ -161,7 +151,10 @@ void RaptorItemDelegate::drawNormalWay(QPainter *painter, const QStyleOptionView
     painter->drawPixmap(decorationRect, pixmapDecoration);
 
     if (d->optV4.state & QStyle::State_MouseOver && !(d->optV4.state & QStyle::State_Selected) ) {
+        painter->save();
+        painter->setOpacity(item->timeLine()->currentValue());
         drawFavIcon(painter, decorationRect);
+        painter->restore();
     }
 
     painter->setPen(d->optV4.palette.color(QPalette::Text));
