@@ -21,12 +21,13 @@ class QGraphicsSceneResizeEvent;
 class QGraphicsSceneMouseEvent;
 class QRectF;
 class QTimeLine;
+class RaptorGraphicsView;
 
 class Breadcrumb : public QGraphicsWidget
 {
     Q_OBJECT
 public:
-    Breadcrumb(QAbstractItemModel *model, QGraphicsWidget *parent = 0);
+    Breadcrumb(RaptorGraphicsView *view, QGraphicsWidget *parent = 0);
     ~Breadcrumb();
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
@@ -44,7 +45,7 @@ signals:
     void changedRootIndex(const QModelIndex &);
 
 private:
-    QAbstractItemModel *m_model;
+    RaptorGraphicsView *m_view;
     QList<BreadcrumbItem*> m_items;
     BreadcrumbItem *m_currentShowing;
     QTimeLine *m_timeLine;

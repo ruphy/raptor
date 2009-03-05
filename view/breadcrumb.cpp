@@ -10,6 +10,7 @@
 */
 #include "breadcrumb.h"
 #include "breadcrumbitem.h"
+#include "raptorgraphicsview.h"
 
 #include <QRectF>
 #include <QIcon>
@@ -24,8 +25,8 @@
 const int DURATION = 250; //ms
 const int FRAMES = 20;
 
-Breadcrumb::Breadcrumb(QAbstractItemModel *model, QGraphicsWidget *parent) : QGraphicsWidget(parent),
-                                                                             m_model(model),
+Breadcrumb::Breadcrumb(RaptorGraphicsView *view, QGraphicsWidget *parent) : QGraphicsWidget(parent),
+                                                                             m_view(view),
                                                                              m_currentShowing(0),
                                                                              m_timeLine(new QTimeLine(DURATION, this)),
                                                                              m_realFrame(1.0)
@@ -66,7 +67,7 @@ void Breadcrumb::setCurrentItem(const QModelIndex &index)
         m_items.prepend(item);
         m_items.prepend(new BreadcrumbItem(QModelIndex())); // the arrow
 
-        currentIndex = m_model->parent(currentIndex);
+        currentIndex = m_view->model()->parent(currentIndex);
     } while (currentIndex.isValid());
 
     BreadcrumbItem *mainMenu = new BreadcrumbItem(QModelIndex());

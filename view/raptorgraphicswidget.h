@@ -32,6 +32,7 @@ class RaptorGraphicsWidget : public QGraphicsWidget
         void resizeEvent(QGraphicsSceneResizeEvent *event);
 
     protected slots:
+        void setFavoritesModel();
         void updateColors();
         void launchApplication(const KUrl &);
         void refineModel();

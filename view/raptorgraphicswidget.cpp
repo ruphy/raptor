@@ -17,6 +17,7 @@
 #include "view/raptorscrollbutton.h"
 #include "engine/kickoff/applicationmodel.h"
 #include "engine/kickoff/searchmodel.h"
+#include "engine/kickoff/favoritesmodel.h"
 #include "view/raptorgraphicsview.h"
 
 #include "view/breadcrumb.h"
@@ -35,10 +36,12 @@
 #include <KServiceTypeTrader>
 #include <KConfig>
 #include <KDebug>
+#include <KIcon>
 
 // Plasma
 #include <Plasma/Theme>
 #include <Plasma/LineEdit>
+#include <Plasma/IconWidget>
 #include <Plasma/Applet>
 #include <plasma/runnermanager.h>
 
@@ -57,6 +60,7 @@ public:
     {}
     ~Private()
     {
+        delete searchModel;
     }
 
     RaptorGraphicsWidget *q;
@@ -64,12 +68,14 @@ public:
     QGraphicsProxyWidget *proxy;
     Kickoff::ApplicationModel *model;
     Kickoff::SearchModel * searchModel;
+    Kickoff::FavoritesModel * favoritesModel;
     RaptorScrollButton *rightScrollButton;
     QGraphicsProxyWidget *rightScrollButtonProxy;
     RaptorScrollButton *leftScrollButton;
     QGraphicsProxyWidget *leftScrollButtonProxy;
     Plasma::LineEdit *searchLine;
     Breadcrumb * breadCrumb;
+    Plasma::IconWidget * favoritesIcon;
     Plasma::RunnerManager * manager;
     KConfigGroup appletConfig;
 };
@@ -80,9 +86,10 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
 {
     setAcceptHoverEvents(true);
 
-    d->model = new Kickoff::ApplicationModel();
+    d->model = new Kickoff::ApplicationModel(this);
     d->model->init();
     d->searchModel = new Kickoff::SearchModel();
+    d->favoritesModel = new Kickoff::FavoritesModel(this);
 
     d->view = new RaptorGraphicsView(this);//Initialize the view as first element, some depend on it
     d->view->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -92,8 +99,11 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
 //     d->view = new RaptorItemsView();
 //     RaptorItemDelegate *delegate = new RaptorItemDelegate();
 
-    d->breadCrumb = new Breadcrumb(d->model, this);
+    d->breadCrumb = new Breadcrumb(d->view, this);
     d->searchLine = new Plasma::LineEdit(this);
+    d->favoritesIcon = new Plasma::IconWidget(this);
+    d->favoritesIcon->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
+    d->favoritesIcon->setIcon(KIcon("rating"));
     d->searchLine->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
     d->rightScrollButton = new RaptorScrollButton(RaptorScrollButton::Right, this);
     d->appletConfig = appletconfig;
@@ -103,6 +113,7 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
     QGraphicsLinearLayout *horizontalLayout = new QGraphicsLinearLayout();
     horizontalLayout->addItem(d->breadCrumb);
     //horizontalLayout->addStretch();
+    horizontalLayout->addItem(d->favoritesIcon);
     horizontalLayout->addItem(d->searchLine);
 
     verticalLayout->addItem(horizontalLayout);
@@ -172,6 +183,7 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
 
     connect(d->view, SIGNAL(enteredItem(const QModelIndex &)), d->breadCrumb, SLOT(setCurrentItem(const QModelIndex &)));
     connect(d->breadCrumb, SIGNAL(changedRootIndex(const QModelIndex&)), d->view, SLOT(setRootIndex(const QModelIndex &)));
+    connect(d->favoritesIcon, SIGNAL(clicked()), SLOT(setFavoritesModel()));
 //     connect(d->breadCrumb, SIGNAL(bottomLevelReached()), d->model, SLOT(slotReloadMenu()));
 // 
 //     d->view->focusCentralItem();
@@ -181,6 +193,18 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
 RaptorGraphicsWidget::~RaptorGraphicsWidget()
 {
     delete d;
+}
+
+void RaptorGraphicsWidget::setFavoritesModel()
+{
+    if (d->view->model() == d->favoritesModel) {
+        //d->view->setRootIndex(QModelIndex());
+        refineModel();
+    }
+    else {
+        d->view->setModel(d->favoritesModel);
+        d->view->setRootIndex(d->favoritesModel->index(0, 0, QModelIndex()));
+    }
 }
 
 void RaptorGraphicsWidget::launchApplication(const KUrl &url)
