@@ -256,12 +256,25 @@ void RaptorGraphicsView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
         if (item->rect().contains(event->pos())) {
             item->option()->state = QStyle::State_MouseOver;
             if (d->currentHoveredItem != item) {
+                item->timeLine()->setDirection(QTimeLine::Forward);
                 item->timeLine()->start();
+                if (d->currentHoveredItem) {
+                    d->currentHoveredItem->timeLine()->setDirection(QTimeLine::Backward);
+                    d->currentHoveredItem->timeLine()->start();
+                }
                 d->currentHoveredItem = item;
             }
         }
     }
     update();
+}
+
+void RaptorGraphicsView::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+    if (d->currentHoveredItem) {
+        d->currentHoveredItem->timeLine()->setDirection(QTimeLine::Backward);
+        d->currentHoveredItem->timeLine()->start();
+    }
 }
 
 bool RaptorGraphicsView::eventFilter(QObject * watched, QEvent * event)
