@@ -151,10 +151,12 @@ void RaptorItemDelegate::drawNormalWay(QPainter *painter, const QStyleOptionView
     painter->drawPixmap(decorationRect, pixmapDecoration);
 
     if (d->optV4.state & QStyle::State_MouseOver && !(d->optV4.state & QStyle::State_Selected) ) {
-        painter->save();
-        painter->setOpacity(item->timeLine()->currentValue());
-        drawFavIcon(painter, decorationRect);
-        painter->restore();
+        if (!index.data(Qt::UserRole + 2).isNull()) { // we check whether it is an app or not
+            painter->save();
+            painter->setOpacity(item->timeLine()->currentValue());
+            drawFavIcon(painter, decorationRect);
+            painter->restore();
+        }
     }
 
     painter->setPen(d->optV4.palette.color(QPalette::Text));
