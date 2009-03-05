@@ -19,7 +19,7 @@
 
 #include <KDebug>
 
-const int DURATION = 250;
+const int DURATION = 150;
 const int FRAMES = 20;
 
 class RaptorMenuItem::Private
