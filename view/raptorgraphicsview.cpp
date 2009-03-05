@@ -153,6 +153,7 @@ void RaptorGraphicsView::getItems()
 {
 //     kDebug() << "Get items!" << d->model->rowCount(d->rootIndex);
     qDeleteAll(d->items);
+    d->currentHoveredItem = 0;
     d->items.clear();
     if (d->model->canFetchMore(d->rootIndex)) {
         d->model->fetchMore(d->rootIndex);
