@@ -126,7 +126,7 @@ void RaptorItemDelegate::drawNormalWay(QPainter *painter, const QStyleOptionView
             item->timeLine()->setFrameRange(0, FRAMES);
             item->timeLine()->start();
         }*/
-        kDebug() << "Current frame for" << item->modelIndex().data(Qt::DisplayRole) << "is:" << item->timeLine()->currentFrame();
+//         kDebug() << "Current frame for" << item->modelIndex().data(Qt::DisplayRole) << "is:" << item->timeLine()->currentFrame();
 
         generateBgPixmap(d->optV4.rect.size());
         painter->save();

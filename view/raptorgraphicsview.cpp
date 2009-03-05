@@ -151,7 +151,8 @@ void RaptorGraphicsView::paint(QPainter *painter, const QStyleOptionGraphicsItem
 
 void RaptorGraphicsView::getItems()
 {
-    kDebug() << "Get items!" << d->model->rowCount(d->rootIndex);
+//     kDebug() << "Get items!" << d->model->rowCount(d->rootIndex);
+    qDeleteAll(d->items);
     d->items.clear();
     if (d->model->canFetchMore(d->rootIndex)) {
         d->model->fetchMore(d->rootIndex);
