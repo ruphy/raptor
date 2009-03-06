@@ -201,8 +201,11 @@ void RaptorGraphicsView::setupItems()
         foreach (RaptorMenuItem *item, d->items) {
             item->setRect(QRectF(QPointF(sizesSum, 0), QSizeF(size, size)));
             sizesSum += size;
-            if ( (sizesSum - item->rect().width() > contentsRect().width()) || (sizesSum + item->rect().width() < contentsRect().x()) ) { // exits on the right || exits on the left
+            if (sizesSum + item->rect().width() < contentsRect().x()) {
                 continue;
+            }
+            if ( sizesSum - item->rect().width() > contentsRect().width() ) {
+                break;
             }
             d->shownItems << item;
             i++;
