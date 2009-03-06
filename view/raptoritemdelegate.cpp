@@ -49,6 +49,7 @@ class RaptorItemDelegate::Private
                     svg = new Plasma::Svg(q);
                     svg->setImagePath("widgets/overlay");
                     svg->setContainsMultipleImages(true);
+                    textHeight = Plasma::Theme::defaultTheme()->fontMetrics().height();
                 }
 
         ~Private()
@@ -67,6 +68,8 @@ class RaptorItemDelegate::Private
     RaptorItemDelegate::ViewMode mode;
 
     QRect favIconRect;
+
+    int textHeight;
 };
 
 RaptorItemDelegate::RaptorItemDelegate(RaptorGraphicsView *parent) : QStyledItemDelegate(parent),
@@ -101,7 +104,8 @@ void RaptorItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem & o
 void RaptorItemDelegate::drawNormalWay(QPainter *painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const
 {
     const qreal textMargin = 3;
-    const qreal iconSize = option.rect.height() / 1.7;
+    const qreal iconSize = option.rect.height() - textMargin - d->textHeight;
+    kDebug() << iconSize << d->textHeight << option.rect.height();
 
     d->optV4 = option;
     initStyleOption(&d->optV4, index);
@@ -143,7 +147,7 @@ void RaptorItemDelegate::drawNormalWay(QPainter *painter, const QStyleOptionView
 
     painter->save();
 
-    QPixmap pixmapDecoration = d->optV4.icon.pixmap(QSize(iconSize, iconSize));
+    QPixmap pixmapDecoration = d->optV4.icon.pixmap(QSize(iconSize / 1.4, iconSize / 1.4));//FIXME: 1.4 is a magic number so make it static int ;)
 
     QRect decorationRect = d->optV4.rect;
     decorationRect.translate( (decorationRect.width() - pixmapDecoration.width() ) / 2,

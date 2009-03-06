@@ -20,6 +20,8 @@
 #include <KLocale>
 #include <KGlobalSettings>
 
+#include <Plasma/Theme>
+
 BreadcrumbItem::BreadcrumbItem(const QModelIndex &index) : m_arrow(false), m_mainMenu(false), m_textWidth(-1), m_showingText(false)
 {
     if (!index.isValid()) {
@@ -92,8 +94,7 @@ QModelIndex BreadcrumbItem::index() const
 int BreadcrumbItem::textWidth()
 {
     if (m_textWidth == -1) {
-        QFontMetrics metrics(KGlobalSettings::menuFont());
-        m_textWidth = metrics.width(name());
+        m_textWidth = Plasma::Theme::defaultTheme()->fontMetrics().width(name());
     }
     return m_textWidth;
 }
