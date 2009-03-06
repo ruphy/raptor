@@ -28,6 +28,10 @@ public:
     Private(const QModelIndex &index, RaptorGraphicsView *p, RaptorMenuItem *q) : q(q), index(index), option(new QStyleOptionViewItem), view(p)
     {
     }
+    ~Private()
+    {
+        delete option;
+    }
 
     RaptorMenuItem *q;
     QModelIndex index;
