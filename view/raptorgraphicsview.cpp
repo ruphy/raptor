@@ -25,7 +25,7 @@
 class RaptorGraphicsView::Private
 {
 public:
-    Private(RaptorGraphicsView *q) : q(q), model(0), currentHoveredItem(0), scrollOffset(0)
+    Private(RaptorGraphicsView *q) : q(q), model(0), currentHoveredItem(0), xPress(0), scrollOffset(0)
     {
         delegate = new RaptorItemDelegate(q);
         delegate->setTextColor(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
@@ -46,6 +46,7 @@ public:
     
     RaptorMenuItem *currentHoveredItem;
 
+    qreal xPress;
     qreal scrollOffset;
 };
 
@@ -322,6 +323,7 @@ void RaptorGraphicsView::slotAddFavorite(const QModelIndex &index)
 
 void RaptorGraphicsView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+    d->xPress = event->pos().x();
     event->accept();
 }
 
@@ -338,4 +340,13 @@ void RaptorGraphicsView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 	    break;
 	}
     }
+}
+
+void RaptorGraphicsView::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
+    d->scrollOffset = event->pos().x() - d->xPress;
+    kDebug() << d->scrollOffset;
+
+    setupItems();
+    update();
 }
