@@ -105,7 +105,6 @@ void RaptorItemDelegate::drawNormalWay(QPainter *painter, const QStyleOptionView
 {
     const qreal textMargin = 3;
     const qreal iconSize = option.rect.height() - textMargin - d->textHeight;
-    kDebug() << iconSize << d->textHeight << option.rect.height();
 
     d->optV4 = option;
     initStyleOption(&d->optV4, index);
