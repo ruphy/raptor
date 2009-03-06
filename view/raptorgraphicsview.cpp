@@ -63,6 +63,13 @@ RaptorGraphicsView::~RaptorGraphicsView()
     delete d;
 }
 
+void RaptorGraphicsView::reset()
+{
+    getItems();
+    setupItems();
+    update();
+}
+
 QModelIndex RaptorGraphicsView::rootIndex() const
 {
     return d->rootIndex;
@@ -318,7 +325,7 @@ void RaptorGraphicsView::slotAddFavorite(const QModelIndex &index)
         return;
     }
 
-    emit favoriteAddRequested(url);
+    emit favoriteClicked(url);
 }
 
 void RaptorGraphicsView::mousePressEvent(QGraphicsSceneMouseEvent *event)

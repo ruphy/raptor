@@ -33,7 +33,7 @@ class RaptorGraphicsWidget : public QGraphicsWidget
 
     protected slots:
         void setFavoritesModel();
-        void addFavorite(const QString &);
+        void addOrRemoveFavorite(const QString &);
 
         void updateColors();
         void launchApplication(const KUrl &);

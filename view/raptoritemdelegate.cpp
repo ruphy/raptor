@@ -11,6 +11,7 @@
 */
 
 #include "raptoritemdelegate.h"
+#include "engine/kickoff/favoritesmodel.h"
 
 //Qt
 #include <QPainter>
@@ -155,7 +156,11 @@ void RaptorItemDelegate::drawNormalWay(QPainter *painter, const QStyleOptionView
     if (d->optV4.state & QStyle::State_MouseOver && !(d->optV4.state & QStyle::State_Selected) ) {
         if (!index.data(Qt::UserRole + 2).isNull()) { // we check whether it is an app or not
             painter->save();
-            painter->setOpacity(item->timeLine()->currentValue());
+            if (Kickoff::FavoritesModel::isFavorite(index.data(Qt::UserRole + 2).toString())) {
+                painter->setOpacity(item->timeLine()->currentValue());
+            } else {
+                painter->setOpacity(item->timeLine()->currentValue() < 0.5 ? item->timeLine()->currentValue() : 0.5);
+            }
             drawFavIcon(painter, decorationRect);
             painter->restore();
         }

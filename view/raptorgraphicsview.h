@@ -37,6 +37,8 @@ public:
     RaptorGraphicsView(QGraphicsItem *parent = 0);
     ~RaptorGraphicsView();
 
+    void reset();
+
     QModelIndex rootIndex() const;
 
     QList<RaptorMenuItem*> items() const;
@@ -61,7 +63,7 @@ protected slots:
 signals:
     void enteredItem(const QModelIndex &);
     void applicationClicked(const KUrl &);
-    void favoriteAddRequested(const QString &);
+    void favoriteClicked(const QString &);
 
 protected:
     void getItems();
