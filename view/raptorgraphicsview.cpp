@@ -51,6 +51,8 @@ RaptorGraphicsView::RaptorGraphicsView(QGraphicsItem *parent) : QGraphicsWidget(
 {
     setViewMode(RaptorGraphicsView::Normal);
     setAcceptHoverEvents(true);
+
+    connect (d->delegate, SIGNAL(favoriteAddRequested(const QModelIndex &)), this, SLOT(slotAddFavorite(const QModelIndex &)));
     installEventFilter(this);
 }
 
@@ -79,7 +81,7 @@ void RaptorGraphicsView::setRootIndex(const QModelIndex &index)
     if (index == d->rootIndex) {
         return;
     }
-    if (!index.data(Qt::UserRole +2).isNull()) {
+    if (!index.data(Qt::UserRole + 2).isNull()) {
         emit applicationClicked(KUrl(index.data(Qt::UserRole + 2).toString())); //Qt::UserRole + 2 is Kickoff::UrlRole
         return;
     }
@@ -303,13 +305,32 @@ void RaptorGraphicsView::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
     update();
 }
 
+void RaptorGraphicsView::slotAddFavorite(const QModelIndex &index)
+{
+    if (!index.isValid()) {
+        return;
+    }
+
+    QString url(index.data(Qt::UserRole + 2).toString());
+
+    if (url.isNull()) {
+        return;
+    }
+
+    emit favoriteAddRequested(url);
+}
+
 bool RaptorGraphicsView::eventFilter(QObject * watched, QEvent * event)
 {
     if (event->type() == QEvent::GraphicsSceneMousePress) {
         QGraphicsSceneMouseEvent * e = static_cast<QGraphicsSceneMouseEvent*>(event);
         foreach (RaptorMenuItem * item, d->shownItems) {
             if (item->rect().contains(e->pos())) {
-                kDebug() << item->modelIndex().data(Qt::DisplayRole);
+
+                if (d->delegate->editorEvent(event, d->model, *item->option(), item->modelIndex())) { // let's give priority to the editor event
+                    break;
+                }
+
                 setRootIndex(item->modelIndex());
                 break;
             }

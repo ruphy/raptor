@@ -55,9 +55,13 @@ public slots:
     void scrollRight();
     void scrollLeft();
 
+protected slots:
+    void slotAddFavorite(const QModelIndex &);
+
 signals:
     void enteredItem(const QModelIndex &);
     void applicationClicked(const KUrl &);
+    void favoriteAddRequested(const QString &);
 
 protected:
     void getItems();

@@ -215,15 +215,14 @@ bool RaptorItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, c
     Q_UNUSED(option)
     Q_UNUSED(index)
 
-    kDebug() << "editor event";
     if (event->type() != QEvent::GraphicsSceneMousePress) {
-        kDebug() << "not handled";
         return false;
     }
 
     QGraphicsSceneMouseEvent *clickEvent = static_cast<QGraphicsSceneMouseEvent*>(event);
     if (d->favIconRect.contains(clickEvent->pos().toPoint())) {
-        kDebug() << "star clicked";
+        //kDebug() << "star clicked";
+        emit favoriteAddRequested(index);
         return true;
     }
 

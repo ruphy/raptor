@@ -182,6 +182,7 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
             SLOT(matchesChanged(const QList<Plasma::QueryMatch>&)));
 
     connect(d->view, SIGNAL(enteredItem(const QModelIndex &)), d->breadCrumb, SLOT(setCurrentItem(const QModelIndex &)));
+    connect(d->view, SIGNAL(favoriteAddRequested(const QString &)), this, SLOT(addFavorite(const QString &)));
     connect(d->breadCrumb, SIGNAL(changedRootIndex(const QModelIndex&)), d->view, SLOT(setRootIndex(const QModelIndex &)));
     connect(d->breadCrumb, SIGNAL(rootMenuRequested()), SLOT(refineModel()));
     connect(d->favoritesIcon, SIGNAL(clicked()), SLOT(setFavoritesModel()));
@@ -285,6 +286,11 @@ void RaptorGraphicsWidget::matchesChanged(const QList<Plasma::QueryMatch> &match
             d->searchModel->addAppNode(service);
         }
     }
+}
+
+void RaptorGraphicsWidget::addFavorite(const QString &url)
+{
+    Kickoff::FavoritesModel::add(url);
 }
 
 // void RaptorGraphicsWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)

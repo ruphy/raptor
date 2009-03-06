@@ -46,6 +46,9 @@ public:
     void setViewMode(ViewMode);
     ViewMode viewMode();
 
+signals:
+    void favoriteAddRequested(const QModelIndex &);
+
 protected:
     void drawNormalWay(QPainter *painter, const QStyleOptionViewItem & option, const QModelIndex &index) const;
     void drawSingleAppWay(QPainter *painter, const QStyleOptionViewItem & option, const QModelIndex &index) const;
