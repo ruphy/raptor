@@ -201,8 +201,8 @@ void RaptorGraphicsView::setupItems()
         foreach (RaptorMenuItem *item, d->items) {
             item->setRect(QRectF(QPointF(sizesSum, 0), QSizeF(size, size)));
             sizesSum += size;
-            if (sizesSum - item->rect().width() > contentsRect().width()) {
-                break;
+            if ( (sizesSum - item->rect().width() > contentsRect().width()) || (sizesSum + item->rect().width() < contentsRect().x()) ) { // exits on the right || exits on the left
+                continue;
             }
             d->shownItems << item;
             i++;
@@ -354,7 +354,6 @@ void RaptorGraphicsView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 void RaptorGraphicsView::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     d->scrollOffset = event->pos().x() - d->xPress;
-    kDebug() << d->scrollOffset;
 
     setupItems();
     update();

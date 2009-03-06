@@ -62,7 +62,6 @@ QRectF RaptorMenuItem::rect() const
 
 void RaptorMenuItem::setRect(const QRectF &rect)
 {
-    kDebug() << "setting rect" << rect;
     d->rect = rect;
     d->option->rect = rect.toRect();
 
