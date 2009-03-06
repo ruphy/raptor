@@ -25,7 +25,7 @@
 class RaptorGraphicsView::Private
 {
 public:
-    Private(RaptorGraphicsView *q) : q(q), model(0), currentHoveredItem(0)
+    Private(RaptorGraphicsView *q) : q(q), model(0), currentHoveredItem(0), scrollOffset(0)
     {
         delegate = new RaptorItemDelegate(q);
         delegate->setTextColor(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
@@ -45,6 +45,8 @@ public:
     RaptorItemDelegate * delegate;
     
     RaptorMenuItem *currentHoveredItem;
+
+    qreal scrollOffset;
 };
 
 RaptorGraphicsView::RaptorGraphicsView(QGraphicsItem *parent) : QGraphicsWidget(parent), d(new Private(this))
@@ -53,7 +55,6 @@ RaptorGraphicsView::RaptorGraphicsView(QGraphicsItem *parent) : QGraphicsWidget(
     setAcceptHoverEvents(true);
 
     connect (d->delegate, SIGNAL(favoriteAddRequested(const QModelIndex &)), this, SLOT(slotAddFavorite(const QModelIndex &)));
-    installEventFilter(this);
 }
 
 RaptorGraphicsView::~RaptorGraphicsView()
@@ -152,11 +153,10 @@ void RaptorGraphicsView::paint(QPainter *painter, const QStyleOptionGraphicsItem
     Q_UNUSED(widget)
     Q_UNUSED(option)
 
+    painter->setClipRect(contentsRect());
 //     painter->fillRect(rect(), Qt::red);
 
-//     painter->setPen(Qt::green);
     foreach (RaptorMenuItem *item, d->shownItems) {
-//         painter->drawRect(item->rect());
         d->delegate->paint(painter, *item->option(), item->modelIndex());
     }
 }
@@ -187,7 +187,7 @@ void RaptorGraphicsView::setupItems()
     ViewMode mode = viewMode();
 
     if (mode == RaptorGraphicsView::Normal) {
-        qreal sizesSum = 0;
+        qreal sizesSum = d->scrollOffset;
         qreal size = contentsRect().height();
         foreach (RaptorMenuItem *item, d->items) {
             item->setRect(QRectF(QPointF(sizesSum, 0), QSizeF(size, size)));
@@ -320,21 +320,22 @@ void RaptorGraphicsView::slotAddFavorite(const QModelIndex &index)
     emit favoriteAddRequested(url);
 }
 
-bool RaptorGraphicsView::eventFilter(QObject * watched, QEvent * event)
+void RaptorGraphicsView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    if (event->type() == QEvent::GraphicsSceneMousePress) {
-        QGraphicsSceneMouseEvent * e = static_cast<QGraphicsSceneMouseEvent*>(event);
-        foreach (RaptorMenuItem * item, d->shownItems) {
-            if (item->rect().contains(e->pos())) {
+    event->accept();
+}
 
-                if (d->delegate->editorEvent(event, d->model, *item->option(), item->modelIndex())) { // let's give priority to the editor event
-                    break;
-                }
+void RaptorGraphicsView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    foreach (RaptorMenuItem * item, d->shownItems) {
+	if (item->rect().contains(event->pos())) {
 
-                setRootIndex(item->modelIndex());
-                break;
-            }
-        }
+	    if (d->delegate->editorEvent(event, d->model, *item->option(), item->modelIndex())) { // let's give priority to the editor event
+		break;
+	    }
+
+	    setRootIndex(item->modelIndex());
+	    break;
+	}
     }
-    return false;
 }

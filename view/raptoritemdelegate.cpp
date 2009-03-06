@@ -215,7 +215,7 @@ bool RaptorItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, c
     Q_UNUSED(option)
     Q_UNUSED(index)
 
-    if (event->type() != QEvent::GraphicsSceneMousePress) {
+    if (event->type() != QEvent::GraphicsSceneMouseRelease) {
         return false;
     }
 

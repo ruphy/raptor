@@ -68,11 +68,13 @@ protected:
     void setupItems();
 
     void resizeEvent(QGraphicsSceneResizeEvent *event);
+
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
     void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
 
-    bool eventFilter(QObject * watched, QEvent * event);
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
 private:
     class Private;
