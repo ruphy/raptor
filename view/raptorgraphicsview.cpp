@@ -197,13 +197,15 @@ void RaptorGraphicsView::setupItems()
     if (mode == RaptorGraphicsView::Normal) {
         qreal sizesSum = d->scrollOffset;
         qreal size = contentsRect().height();
+        int i = 0;
         foreach (RaptorMenuItem *item, d->items) {
             item->setRect(QRectF(QPointF(sizesSum, 0), QSizeF(size, size)));
             sizesSum += size;
-            if (sizesSum > contentsRect().width()) {
+            if (sizesSum - item->rect().width() > contentsRect().width()) {
                 break;
             }
             d->shownItems << item;
+            i++;
         }
     }
 
