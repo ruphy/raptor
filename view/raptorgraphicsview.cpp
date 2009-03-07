@@ -52,8 +52,8 @@ public:
 
 RaptorGraphicsView::RaptorGraphicsView(QGraphicsItem *parent) : QGraphicsWidget(parent), d(new Private(this))
 {
-    //setViewMode(RaptorGraphicsView::Normal);
-    setViewMode(RaptorGraphicsView::SingleApp);
+    setViewMode(RaptorGraphicsView::Normal);
+    //setViewMode(RaptorGraphicsView::SingleApp);
     setAcceptHoverEvents(true);
 
     connect (d->delegate, SIGNAL(favoriteAddRequested(const QModelIndex &)), this, SLOT(slotAddFavorite(const QModelIndex &)));
