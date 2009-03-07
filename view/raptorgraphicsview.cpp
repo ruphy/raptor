@@ -53,6 +53,7 @@ public:
 RaptorGraphicsView::RaptorGraphicsView(QGraphicsItem *parent) : QGraphicsWidget(parent), d(new Private(this))
 {
     setViewMode(RaptorGraphicsView::Normal);
+    //setViewMode(RaptorGraphicsView::SingleApp);
     setAcceptHoverEvents(true);
 
     connect (d->delegate, SIGNAL(favoriteAddRequested(const QModelIndex &)), this, SLOT(slotAddFavorite(const QModelIndex &)));
@@ -186,9 +187,11 @@ void RaptorGraphicsView::getItems()
 
 void RaptorGraphicsView::setupItems()
 {
+    if (d->items.isEmpty()) {
+        return;
+    }
     // NOTE: for each view mode we should setup items individually
     // WARNING: we suppose a horizontal view
-    // WARNING: we still don't take care of partial item showing
     // TODO: remove tabs
 
     d->shownItems.clear();
@@ -213,8 +216,9 @@ void RaptorGraphicsView::setupItems()
     }
 
     else if (mode == RaptorGraphicsView::SingleApp) {
-        RaptorMenuItem *item = d->items.first(); 
+        RaptorMenuItem *item = d->items.first();
         item->setRect(QRectF(QPointF(0, 0), contentsRect().size()));
+        d->shownItems << item;
     }
 
     else if (mode == RaptorGraphicsView::TwoApps) {
