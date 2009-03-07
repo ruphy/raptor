@@ -348,7 +348,9 @@ void RaptorGraphicsView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 		break;
 	    }
 
-	    setRootIndex(item->modelIndex());
+            if (d->xPress == event->pos().x()) {
+	        setRootIndex(item->modelIndex());
+            }
 	    break;
 	}
     }
