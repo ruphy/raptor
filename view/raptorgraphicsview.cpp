@@ -227,6 +227,7 @@ void RaptorGraphicsView::setupItems()
 	    RaptorMenuItem *item = d->items[i];
 	    item->setRect(QRectF(QPointF(x, 0), QSizeF(contentsRect().width() / 2.0, contentsRect().height())));
 	    x += contentsRect().width();
+            d->shownItems << item;
 	}
      }
 
