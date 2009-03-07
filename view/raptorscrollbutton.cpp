@@ -18,7 +18,7 @@
 
 #include <KDebug>
 
-const qreal BUTTON_SIZE = 32;
+const int FRAMES = 20;
 
 class RaptorScrollButton::Private
 {
@@ -31,7 +31,8 @@ class RaptorScrollButton::Private
             svg = new Plasma::Svg(q);
             svg->setImagePath("widgets/raptorarrows");
             svg->setContainsMultipleImages(true);
-            timeLine = new QTimeLine(250, button);
+            timeLine = new QTimeLine(150, button);
+            timeLine->setFrameRange(0, FRAMES);
         }
         ~Private()
         {}
@@ -48,6 +49,7 @@ RaptorScrollButton::RaptorScrollButton(Side side, QGraphicsWidget * parent)
 {
     setAttribute(Qt::WA_NoSystemBackground);
     setAcceptHoverEvents(true);
+    setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Expanding);
     update();
     installEventFilter(this);
     connect(d->timeLine, SIGNAL(frameChanged(int)), this, SLOT(animatePaint(int)));
@@ -61,6 +63,7 @@ void RaptorScrollButton::paint(QPainter * p, const QStyleOptionGraphicsItem * op
 {
     Q_UNUSED(option);
     Q_UNUSED(widget);
+    qreal buttonSize = size().width();
 
     //QPainter p(this);
     QRectF r(option->rect);
@@ -74,7 +77,7 @@ void RaptorScrollButton::paint(QPainter * p, const QStyleOptionGraphicsItem * op
 //     r.setSize(QSizeF(contentsRect().size().width() * buttonRatioWidth + d->frame, 
 //                      contentsRect().size().height() * buttonRatioHeight + d->frame));
 
-    r.setSize(QSizeF(BUTTON_SIZE + d->frame, BUTTON_SIZE + d->frame));
+    r.setSize(QSizeF(buttonSize - FRAMES+ d->frame, buttonSize - FRAMES + d->frame));
 
     d->svg->resize(r.size());
     r.moveCenter(contentsRect().center());
@@ -93,12 +96,14 @@ bool RaptorScrollButton::eventFilter(QObject * watched, QEvent * event)
     switch(event->type())
     {
         case QEvent::GraphicsSceneHoverEnter:
-            d->timeLine->setFrameRange(0, 20);
+            d->timeLine->stop();
+            d->timeLine->setDirection(QTimeLine::Forward);
             d->timeLine->start();
             break;
         case QEvent::GraphicsSceneHoverLeave:
             d->timeLine->stop();
-            d->frame = 0;
+            d->timeLine->setDirection(QTimeLine::Backward);
+            d->timeLine->start();
             update();
             break;
         case QEvent::GraphicsSceneMousePress:
