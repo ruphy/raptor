@@ -340,12 +340,20 @@ void RaptorGraphicsView::slotAddFavorite(const QModelIndex &index)
 
 void RaptorGraphicsView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+    kDebug() << "View mode is:" << viewMode() << RaptorGraphicsView::Normal;
+    if (event->button() == Qt::RightButton && viewMode() != RaptorGraphicsView::SingleApp) {
+        setViewMode(RaptorGraphicsView::SingleApp);//FIXME: Scroll to current item
+    } else if (viewMode() != RaptorGraphicsView::Normal) {
+        kDebug() << "Yeah do it!";
+        setViewMode(RaptorGraphicsView::Normal);//FIXME: Check whether we have a search entry for example...
+    }
     d->xPress = event->pos().x();
     event->accept();
 }
 
 void RaptorGraphicsView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
+    kDebug();
     foreach (RaptorMenuItem * item, d->shownItems) {
 	if (item->rect().contains(event->pos())) {
 
