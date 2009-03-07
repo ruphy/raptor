@@ -197,10 +197,10 @@ void RaptorItemDelegate::drawSingleAppWay(QPainter *painter, const QStyleOptionV
     //WARNING: we assume to have a wide rect to draw icon + description.
     //TODO: add the method setMode to the View in order to manage the description delegate
 
-    QPixmap pixmapDecoration = d->optV4.icon.pixmap(d->optV4.decorationSize);
+    QPixmap pixmapDecoration = d->optV4.icon.pixmap(d->optV4.rect.height());
 
     QRect iconRect = d->optV4.rect;
-    iconRect.setSize(d->optV4.decorationSize);
+    iconRect.setSize(QSize(d->optV4.rect.height(), d->optV4.rect.height()));
 
     painter->drawPixmap(iconRect, pixmapDecoration);
 
@@ -210,6 +210,7 @@ void RaptorItemDelegate::drawSingleAppWay(QPainter *painter, const QStyleOptionV
     QRect descriptionRect = d->optV4.rect;
     descriptionRect.translate( iconRect.width(), 0);
     descriptionRect.setSize(QSize(d->optV4.rect.width() - iconRect.width(), descriptionRect.height()));
+    descriptionRect.setY((d->optV4.rect.height() - painter->boundingRect(descriptionRect, Qt::AlignLeft, index.data(Qt::DisplayRole).toString()).height()) / 2);
 
     //TODO: use standard delegate roles
     painter->drawText(descriptionRect, Qt::AlignLeft, index.data(Qt::DisplayRole).toString());
