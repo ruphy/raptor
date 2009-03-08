@@ -24,7 +24,7 @@
 #include <Plasma/Theme>
 #include <Plasma/Svg>
 
-BreadcrumbItem::BreadcrumbItem(const QModelIndex &index) : m_arrow(false), m_mainMenu(false), m_textWidth(-1), m_showingText(false)
+BreadcrumbItem::BreadcrumbItem(const QModelIndex &index) : m_arrow(false), m_mainMenu(false), m_textWidth(-1), m_showingText(false), m_svg(0)
 {
     if (!index.isValid()) {
         m_arrow = true;
