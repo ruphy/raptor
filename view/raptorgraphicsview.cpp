@@ -226,6 +226,9 @@ void RaptorGraphicsView::setupItems()
     else if (mode == RaptorGraphicsView::TwoApps) {
 	qreal x = 0;
 	for (int i = 0; i < 2; i++) {
+            if (d->items.count() <= i) {
+                break;
+            }
 	    RaptorMenuItem *item = d->items[i];
 	    item->setRect(QRectF(QPointF(x, 0), QSizeF(contentsRect().width() / 2, contentsRect().height())));
 	    x += contentsRect().width() / 2;
