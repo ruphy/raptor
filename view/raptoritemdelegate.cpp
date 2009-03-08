@@ -222,6 +222,21 @@ void RaptorItemDelegate::drawTwoAppsWay(QPainter *painter, const QStyleOptionVie
     textRect.setWidth(decorationRect.width());
     painter->drawText(textRect, Qt::AlignHCenter, index.data().toString());
 
+    RaptorMenuItem * item = 0;//TODO: Do all properties we need from the item into the modelindex
+    foreach (RaptorMenuItem * i, d->view->shownItems()) {
+	if (i->modelIndex() == index) {
+	    item = i;
+	    break;
+	}
+    }
+    QRect lastUsedRect = d->optV4.rect;
+    lastUsedRect.setSize(item->lastUsedSize());
+    lastUsedRect.translate(d->optV4.rect.width() - lastUsedRect.width(), (d->optV4.rect.height() - painter->boundingRect(lastUsedRect, Qt::AlignLeft, item->lastUsed()).height()) / 2);
+
+    kDebug() << lastUsedRect << item->lastUsed() << item->lastUsedSize();
+
+    painter->drawText(lastUsedRect, Qt::AlignRight, item->lastUsed());
+
     painter->restore();
 }
 
