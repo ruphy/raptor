@@ -261,6 +261,21 @@ void RaptorItemDelegate::drawSingleAppWay(QPainter *painter, const QStyleOptionV
     //TODO: use standard delegate roles
     painter->drawText(descriptionRect, Qt::AlignLeft, index.data(Qt::DisplayRole).toString());
 
+    RaptorMenuItem * item = 0;//TODO: Do all properties we need from the item into the modelindex
+    foreach (RaptorMenuItem * i, d->view->shownItems()) {
+	if (i->modelIndex() == index) {
+	    item = i;
+	    break;
+	}
+    }
+    QRect lastUsedRect = d->optV4.rect;
+    lastUsedRect.setSize(item->lastUsedSize());
+    lastUsedRect.translate(d->optV4.rect.width() - lastUsedRect.width(), d->optV4.rect.height() - lastUsedRect.height());
+
+    kDebug() << lastUsedRect << item->lastUsed() << item->lastUsedSize();
+
+    painter->drawText(lastUsedRect, Qt::AlignRight, item->lastUsed());
+
     painter->restore();
 }
 

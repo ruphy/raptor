@@ -63,6 +63,16 @@ public:
      */
     QTimeLine * timeLine();
 
+    /**
+     * @returns the text which should be displayed for the time of last execution
+     */
+    QString lastUsed() const;
+
+    /**
+     * @returns the last used text's width
+     */
+    QSize lastUsedSize();
+
 private slots:
     void update();
 

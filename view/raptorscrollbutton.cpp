@@ -79,7 +79,7 @@ void RaptorScrollButton::paint(QPainter * p, const QStyleOptionGraphicsItem * op
 //     r.setSize(QSizeF(contentsRect().size().width() * buttonRatioWidth + d->frame, 
 //                      contentsRect().size().height() * buttonRatioHeight + d->frame));
 
-    r.setSize(QSizeF(buttonSize - FRAMES+ d->frame, buttonSize - FRAMES + d->frame));
+    r.setSize(QSizeF(buttonSize - FRAMES + d->frame, buttonSize - FRAMES + d->frame));
 
     d->svg->resize(r.size());
     r.moveCenter(contentsRect().center());

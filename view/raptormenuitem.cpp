@@ -18,6 +18,9 @@
 #include <QTimeLine>
 
 #include <KDebug>
+#include <KLocale>
+
+#include <Plasma/Theme>
 
 const int DURATION = 150;
 const int FRAMES = 20;
@@ -27,6 +30,8 @@ class RaptorMenuItem::Private
 public:
     Private(const QModelIndex &index, RaptorGraphicsView *p, RaptorMenuItem *q) : q(q), index(index), option(new QStyleOptionViewItem), view(p)
     {
+        lastUsed = i18n("Last used 20 Minutes ago");//FIXME: Replace with proper last used info :)
+        lastUsedSize = QSize(Plasma::Theme::defaultTheme()->fontMetrics().width(lastUsed), Plasma::Theme::defaultTheme()->fontMetrics().height());
     }
     ~Private()
     {
@@ -39,6 +44,8 @@ public:
     QStyleOptionViewItem *option;
     QTimeLine *timeLine;
     RaptorGraphicsView *view;
+    QString lastUsed;
+    QSize lastUsedSize;
 
     void calculateDecorationSize();
 };
@@ -114,4 +121,15 @@ QTimeLine * RaptorMenuItem::timeLine()
 void RaptorMenuItem::update()
 {
     d->view->update(d->rect);
+}
+
+QString RaptorMenuItem::lastUsed() const
+{
+    //TODO: Check whether the lastused text changed in the modelindex later and recalculate the size then...
+    return d->lastUsed;
+}
+
+QSize RaptorMenuItem::lastUsedSize()
+{
+    return d->lastUsedSize;
 }
