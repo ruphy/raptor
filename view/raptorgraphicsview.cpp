@@ -55,6 +55,7 @@ RaptorGraphicsView::RaptorGraphicsView(QGraphicsItem *parent) : QGraphicsWidget(
     setViewMode(RaptorGraphicsView::Normal);
     //setViewMode(RaptorGraphicsView::SingleApp);
     //setViewMode(RaptorGraphicsView::TwoApps);
+    //setViewMode(RaptorGraphicsView::Search);
     setAcceptHoverEvents(true);
 
     connect (d->delegate, SIGNAL(favoriteAddRequested(const QModelIndex &)), this, SLOT(slotAddFavorite(const QModelIndex &)));
@@ -241,6 +242,7 @@ void RaptorGraphicsView::setupItems()
 	      RaptorMenuItem *item = d->items[i];
 	      item->setRect(QRectF(QPointF(0, y), QSizeF(contentsRect().height() / 2, contentsRect().height() / 2)));
 	      y += contentsRect().height() / 2;
+              d->shownItems << item;
 	  }
 	  sizesSum += contentsRect().height() / 2;
 
@@ -267,6 +269,7 @@ void RaptorGraphicsView::setupItems()
 	      RaptorMenuItem *item = d->items[i];
 	      item->setRect(QRectF(QPointF(sizesSum, y), QSizeF(contentsRect().height() / 2, contentsRect().height() / 2)));
 	      y += contentsRect().height() / 2;
+              d->shownItems << item;
 	  }
     }
 
