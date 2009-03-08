@@ -89,13 +89,16 @@ void RaptorItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem & o
     }
 
     switch (d->mode) {
-        case RaptorItemDelegate::Normal :
+        case RaptorItemDelegate::Normal:
             drawNormalWay(painter, option, index);
             break;
-        case RaptorItemDelegate::SingleApp :
+        case RaptorItemDelegate::SingleApp:
             drawSingleAppWay(painter, option, index);
             break;
-        default :
+        case RaptorItemDelegate::TwoApps:
+            drawTwoAppsWay(painter, option, index);
+            break;
+        default:
             drawNormalWay(painter, option, index);
             break;
     }
@@ -174,6 +177,49 @@ void RaptorItemDelegate::drawNormalWay(QPainter *painter, const QStyleOptionView
     // FIXME store the QString instead of calling index.data() many times
     QRect textRect = d->optV4.rect;
     textRect.setY(decorationRect.y() + decorationRect.height() + textMargin);
+    painter->drawText(textRect, Qt::AlignHCenter, index.data().toString());
+
+    painter->restore();
+}
+
+void RaptorItemDelegate::drawTwoAppsWay(QPainter *painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const
+{
+    const qreal textMargin = 3;
+    const qreal iconSize = option.rect.height() - textMargin - d->textHeight;
+
+    d->optV4 = option;
+    initStyleOption(&d->optV4, index);
+
+    if (d->textColor != QColor()) {
+        d->optV4.palette.setColor(QPalette::Text, d->textColor);
+    }
+
+    painter->save();
+
+    painter->setRenderHint(QPainter::Antialiasing);
+    painter->setClipRect(d->optV4.rect);
+    painter->setPen(Qt::NoPen);
+
+    QPixmap pixmapDecoration = d->optV4.icon.pixmap(QSize(iconSize / 1.4, iconSize / 1.4));//FIXME: 1.4 is a magic number so make it static int ;)
+
+    QRect decorationRect = d->optV4.rect;
+
+    decorationRect.setY((d->optV4.rect.height() - pixmapDecoration.height()) / 2);
+
+    decorationRect.setSize(QSize(pixmapDecoration.width(), pixmapDecoration.height()));
+
+    //decorationRect.translate( (decorationRect.width() - pixmapDecoration.width() ) / 2,
+    //                          (decorationRect.height() - pixmapDecoration.height()) / 2);
+
+//     painter->fillRect(decorationRect, Qt::green);
+    painter->drawPixmap(decorationRect, pixmapDecoration);
+
+    painter->setPen(d->optV4.palette.color(QPalette::Text));
+
+    // FIXME store the QString instead of calling index.data() many times
+    QRect textRect = d->optV4.rect;
+    textRect.setY(decorationRect.y() + decorationRect.height() + textMargin);
+    textRect.setWidth(decorationRect.width());
     painter->drawText(textRect, Qt::AlignHCenter, index.data().toString());
 
     painter->restore();
