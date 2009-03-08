@@ -205,10 +205,44 @@ void RaptorItemDelegate::drawTwoAppsWay(QPainter *painter, const QStyleOptionVie
 
     QRect decorationRect = d->optV4.rect;
 
-    decorationRect.setY((d->optV4.rect.height() - pixmapDecoration.height()) / 2);
-    decorationRect.setX(decorationRect.x() + textMargin);
-
     decorationRect.setSize(QSize(pixmapDecoration.width(), pixmapDecoration.height()));
+    decorationRect.moveCenter(QRect(d->optV4.rect.x(), d->optV4.rect.y(), d->optV4.rect.height(), d->optV4.rect.height()).center());
+    //decorationRect.setY((d->optV4.rect.height() - decorationRect.height()) / 2);
+    //decorationRect.setX((d->optV4.rect.height() - pixmapDecoration.width() ) / 2);
+    /*decorationRect.setX((d->optV4.rect.height() - decorationRect.width()) / 2);
+    kDebug() << (d->optV4.rect.height() - decorationRect.width()) / 2;*/
+
+    RaptorMenuItem * item = 0;
+    foreach (RaptorMenuItem * i, d->view->shownItems()) {
+	if (i->modelIndex() == index) {
+	    item = i;
+	    break;
+	}
+    }
+
+    if (d->optV4.state & QStyle::State_MouseOver && !(d->optV4.state & QStyle::State_Selected) ) {
+        QRect overlayRect = d->optV4.rect;
+        overlayRect.setWidth(d->optV4.rect.height());
+        generateBgPixmap(overlayRect.size());
+        painter->save();
+        painter->setOpacity(item->timeLine()->currentValue());
+        painter->drawPixmap(overlayRect, *d->p);
+
+        painter->restore();
+    }
+
+    if (d->optV4.state & QStyle::State_Selected) {
+        QPoint topLeft(d->optV4.rect.x() + ((d->optV4.decorationSize.width() - d->p->width())/2),
+                       d->optV4.rect.y() + ((d->optV4.decorationSize.height() - d->p->height())/2));
+        QRect pixRect(topLeft, QSize(d->p->width(), d->p->height()));
+        painter->drawPixmap(pixRect, *d->p);
+    }
+
+    if (d->textColor != QColor()) {
+        d->optV4.palette.setColor(QPalette::Text, d->textColor);
+    }
+
+    painter->save();
 
     //decorationRect.translate( (decorationRect.width() - pixmapDecoration.width() ) / 2,
     //                          (decorationRect.height() - pixmapDecoration.height()) / 2);
@@ -222,15 +256,9 @@ void RaptorItemDelegate::drawTwoAppsWay(QPainter *painter, const QStyleOptionVie
     QRect textRect = d->optV4.rect;
     textRect.setY(decorationRect.y() + decorationRect.height() + textMargin);
     textRect.setWidth(decorationRect.width());
+    textRect.moveCenter(QPoint(d->optV4.rect.x() + d->optV4.rect.height() / 2, textRect.y()));
     painter->drawText(textRect, Qt::AlignHCenter, index.data().toString());
 
-    RaptorMenuItem * item = 0;//TODO: Do all properties we need from the item into the modelindex
-    foreach (RaptorMenuItem * i, d->view->shownItems()) {
-	if (i->modelIndex() == index) {
-	    item = i;
-	    break;
-	}
-    }
     QRect usedRect = d->optV4.rect;
     usedRect.setSize(QSize(USED_WIDTH, TEXT_HEIGHT));
     usedRect.translate(d->optV4.rect.width() - USED_WIDTH - textMargin, d->optV4.rect.height() / 2 - TEXT_HEIGHT - textMargin / 2);

@@ -286,7 +286,7 @@ void RaptorGraphicsView::resizeEvent(QGraphicsSceneResizeEvent *event)
 
 void RaptorGraphicsView::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
-    if (viewMode() == RaptorGraphicsView::SingleApp || viewMode() == RaptorGraphicsView::TwoApps) {
+    if (viewMode() == RaptorGraphicsView::SingleApp) {
         return;
     }
     foreach (RaptorMenuItem *item, d->shownItems) {
@@ -303,7 +303,7 @@ void RaptorGraphicsView::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 
 void RaptorGraphicsView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 {
-    if (viewMode() == RaptorGraphicsView::SingleApp || viewMode() == RaptorGraphicsView::TwoApps) {
+    if (viewMode() == RaptorGraphicsView::SingleApp) {
         return;
     }
     foreach (RaptorMenuItem *item, d->shownItems) {
@@ -326,7 +326,7 @@ void RaptorGraphicsView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 
 void RaptorGraphicsView::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
-    if (viewMode() == RaptorGraphicsView::SingleApp || viewMode() == RaptorGraphicsView::TwoApps) {
+    if (viewMode() == RaptorGraphicsView::SingleApp) {
         return;
     }
     if (d->currentHoveredItem) {
