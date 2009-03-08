@@ -214,10 +214,10 @@ void RaptorItemDelegate::drawTwoAppsWay(QPainter *painter, const QStyleOptionVie
 
     RaptorMenuItem * item = 0;
     foreach (RaptorMenuItem * i, d->view->shownItems()) {
-	if (i->modelIndex() == index) {
-	    item = i;
-	    break;
-	}
+        if (i->modelIndex() == index) {
+            item = i;
+            break;
+        }
     }
 
     if (d->optV4.state & QStyle::State_MouseOver && !(d->optV4.state & QStyle::State_Selected) ) {
@@ -256,7 +256,7 @@ void RaptorItemDelegate::drawTwoAppsWay(QPainter *painter, const QStyleOptionVie
     QRect textRect = d->optV4.rect;
     textRect.setY(decorationRect.y() + decorationRect.height() + textMargin);
     textRect.setWidth(decorationRect.width());
-    textRect.moveCenter(QPoint(d->optV4.rect.x() + d->optV4.rect.height() / 2, textRect.y()));
+    textRect.moveCenter(QPoint(d->optV4.rect.x() + d->optV4.rect.height() / 2, textRect.y() + textRect.height() / 2));
     painter->drawText(textRect, Qt::AlignHCenter, index.data().toString());
 
     QRect usedRect = d->optV4.rect;
