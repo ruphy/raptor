@@ -232,12 +232,12 @@ void RaptorItemDelegate::drawTwoAppsWay(QPainter *painter, const QStyleOptionVie
     }
     QRect usedRect = d->optV4.rect;
     usedRect.setSize(QSize(USED_WIDTH, TEXT_HEIGHT));
-    usedRect.translate(d->optV4.rect.width() - USED_WIDTH, d->optV4.rect.height() / 2 - TEXT_HEIGHT - textMargin / 2);
+    usedRect.translate(d->optV4.rect.width() - USED_WIDTH - textMargin, d->optV4.rect.height() / 2 - TEXT_HEIGHT - textMargin / 2);
     painter->drawText(usedRect, Qt::AlignRight, i18n("Used"));
 
     QRect lastUsedRect = d->optV4.rect;
     lastUsedRect.setSize(QSize(item->lastUsedWidth() + SPACE_WIDTH + AGO_WIDTH, TEXT_HEIGHT));
-    lastUsedRect.translate(d->optV4.rect.width() - lastUsedRect.width(), usedRect.y() + textMargin + TEXT_HEIGHT);
+    lastUsedRect.translate(d->optV4.rect.width() - lastUsedRect.width() - textMargin, usedRect.y() + textMargin + TEXT_HEIGHT);
 
     kDebug() << lastUsedRect << item->lastUsed() << item->lastUsedWidth();
 
