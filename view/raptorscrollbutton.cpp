@@ -15,6 +15,7 @@
 #include <QPainter>
 #include <QTimeLine>
 #include <QStyleOptionGraphicsItem>
+#include <QGraphicsSceneHoverEvent>
 
 #include <KDebug>
 
@@ -42,6 +43,7 @@ class RaptorScrollButton::Private
         Plasma::Svg * svg;
         QTimeLine * timeLine;
         int frame;
+        QRectF rect;
 };
 RaptorScrollButton::RaptorScrollButton(Side side, QGraphicsWidget * parent)
   : QGraphicsWidget(parent),
@@ -81,6 +83,7 @@ void RaptorScrollButton::paint(QPainter * p, const QStyleOptionGraphicsItem * op
 
     d->svg->resize(r.size());
     r.moveCenter(contentsRect().center());
+    d->rect = r;
 
     if (d->side == Right) {
        d->svg->paint(p, r, "rightarrow");
@@ -96,18 +99,25 @@ bool RaptorScrollButton::eventFilter(QObject * watched, QEvent * event)
     switch(event->type())
     {
         case QEvent::GraphicsSceneHoverEnter:
-            d->timeLine->stop();
-            d->timeLine->setDirection(QTimeLine::Forward);
-            d->timeLine->start();
-            break;
+        case QEvent::GraphicsSceneHoverMove:
+            if (d->frame != FRAMES && d->rect.contains(static_cast<QGraphicsSceneHoverEvent*>(event)->pos())) {
+                d->timeLine->stop();
+                d->timeLine->setDirection(QTimeLine::Forward);
+                d->timeLine->start();
+                break;
+            }
         case QEvent::GraphicsSceneHoverLeave:
-            d->timeLine->stop();
-            d->timeLine->setDirection(QTimeLine::Backward);
-            d->timeLine->start();
-            update();
+            if (d->frame == FRAMES && !d->rect.contains(static_cast<QGraphicsSceneHoverEvent*>(event)->pos())) {
+                d->timeLine->stop();
+                d->timeLine->setDirection(QTimeLine::Backward);
+                d->timeLine->start();
+                update();
+            }
             break;
         case QEvent::GraphicsSceneMousePress:
-            emit clicked();
+            if (d->frame) {
+                emit clicked();
+            }
             break;
         default:
             break;
