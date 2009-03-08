@@ -71,7 +71,7 @@ public:
     /**
      * @returns the last used text's width
      */
-    QSize lastUsedSize();
+    int lastUsedWidth();
 
 private slots:
     void update();

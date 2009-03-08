@@ -30,8 +30,8 @@ class RaptorMenuItem::Private
 public:
     Private(const QModelIndex &index, RaptorGraphicsView *p, RaptorMenuItem *q) : q(q), index(index), option(new QStyleOptionViewItem), view(p)
     {
-        lastUsed = i18n("Last used 20 Minutes ago");//FIXME: Replace with proper last used info :)
-        lastUsedSize = QSize(Plasma::Theme::defaultTheme()->fontMetrics().width(lastUsed), Plasma::Theme::defaultTheme()->fontMetrics().height());
+        lastUsed = i18n("20 Minutes");//FIXME: Replace with proper last used info :)
+        lastUsedWidth = Plasma::Theme::defaultTheme()->fontMetrics().width(lastUsed);
     }
     ~Private()
     {
@@ -45,7 +45,7 @@ public:
     QTimeLine *timeLine;
     RaptorGraphicsView *view;
     QString lastUsed;
-    QSize lastUsedSize;
+    int lastUsedWidth;
 
     void calculateDecorationSize();
 };
@@ -129,7 +129,7 @@ QString RaptorMenuItem::lastUsed() const
     return d->lastUsed;
 }
 
-QSize RaptorMenuItem::lastUsedSize()
+int RaptorMenuItem::lastUsedWidth()
 {
-    return d->lastUsedSize;
+    return d->lastUsedWidth;
 }

@@ -34,6 +34,10 @@
 // FIXME: use Animator, for a shared timer.
 /*const int ANIMATION_DURATION = 200; // will need to be made shorter once we have keyboard navigation.*/
 const int FAV_ICON_SIZE = 22;
+const int AGO_WIDTH = Plasma::Theme::defaultTheme()->fontMetrics().width(i18n("ago"));
+const int USED_WIDTH = Plasma::Theme::defaultTheme()->fontMetrics().width(i18n("Used"));
+const int SPACE_WIDTH = Plasma::Theme::defaultTheme()->fontMetrics().width(" ");
+const int TEXT_HEIGHT = Plasma::Theme::defaultTheme()->fontMetrics().height();
 
 class RaptorItemDelegate::Private
 {
@@ -49,7 +53,6 @@ class RaptorItemDelegate::Private
                     svg = new Plasma::Svg(q);
                     svg->setImagePath("widgets/overlay");
                     svg->setContainsMultipleImages(true);
-                    textHeight = Plasma::Theme::defaultTheme()->fontMetrics().height();
                 }
 
         ~Private()
@@ -68,8 +71,6 @@ class RaptorItemDelegate::Private
     RaptorItemDelegate::ViewMode mode;
 
     QRect favIconRect;
-
-    int textHeight;
 };
 
 RaptorItemDelegate::RaptorItemDelegate(RaptorGraphicsView *parent) : QStyledItemDelegate(parent),
@@ -107,7 +108,7 @@ void RaptorItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem & o
 void RaptorItemDelegate::drawNormalWay(QPainter *painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const
 {
     const qreal textMargin = 3;
-    const qreal iconSize = option.rect.height() - textMargin - d->textHeight;
+    const qreal iconSize = option.rect.height() - textMargin - TEXT_HEIGHT;
 
     d->optV4 = option;
     initStyleOption(&d->optV4, index);
@@ -185,7 +186,7 @@ void RaptorItemDelegate::drawNormalWay(QPainter *painter, const QStyleOptionView
 void RaptorItemDelegate::drawTwoAppsWay(QPainter *painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const
 {
     const qreal textMargin = 3;
-    const qreal iconSize = option.rect.height() - textMargin - d->textHeight;
+    const qreal iconSize = option.rect.height() - textMargin - TEXT_HEIGHT;
 
     d->optV4 = option;
     initStyleOption(&d->optV4, index);
@@ -229,13 +230,20 @@ void RaptorItemDelegate::drawTwoAppsWay(QPainter *painter, const QStyleOptionVie
 	    break;
 	}
     }
+    QRect usedRect = d->optV4.rect;
+    usedRect.setSize(QSize(USED_WIDTH, TEXT_HEIGHT));
+    usedRect.translate(d->optV4.rect.width() - USED_WIDTH, d->optV4.rect.height() / 2 - TEXT_HEIGHT - textMargin / 2);
+    painter->drawText(usedRect, Qt::AlignRight, i18n("Used"));
+
     QRect lastUsedRect = d->optV4.rect;
-    lastUsedRect.setSize(item->lastUsedSize());
-    lastUsedRect.translate(d->optV4.rect.width() - lastUsedRect.width(), (d->optV4.rect.height() - painter->boundingRect(lastUsedRect, Qt::AlignLeft, item->lastUsed()).height()) / 2);
+    lastUsedRect.setSize(QSize(item->lastUsedWidth() + SPACE_WIDTH + AGO_WIDTH, TEXT_HEIGHT));
+    lastUsedRect.translate(d->optV4.rect.width() - lastUsedRect.width(), usedRect.y() + textMargin + TEXT_HEIGHT);
 
-    kDebug() << lastUsedRect << item->lastUsed() << item->lastUsedSize();
+    kDebug() << lastUsedRect << item->lastUsed() << item->lastUsedWidth();
 
-    painter->drawText(lastUsedRect, Qt::AlignRight, item->lastUsed());
+    painter->drawText(lastUsedRect, Qt::AlignRight, i18n("%1 ago", item->lastUsed()));
+
+    //lastUsedRect.setY(lastUsedRect.y() + TEXT_HEIGHT());
 
     painter->restore();
 }
@@ -284,12 +292,12 @@ void RaptorItemDelegate::drawSingleAppWay(QPainter *painter, const QStyleOptionV
 	}
     }
     QRect lastUsedRect = d->optV4.rect;
-    lastUsedRect.setSize(item->lastUsedSize());
+    lastUsedRect.setSize(QSize(item->lastUsedWidth() + USED_WIDTH + SPACE_WIDTH * 2 + AGO_WIDTH, TEXT_HEIGHT));
     lastUsedRect.translate(d->optV4.rect.width() - lastUsedRect.width(), d->optV4.rect.height() - lastUsedRect.height());
 
-    kDebug() << lastUsedRect << item->lastUsed() << item->lastUsedSize();
+    kDebug() << lastUsedRect << item->lastUsed() << item->lastUsedWidth();
 
-    painter->drawText(lastUsedRect, Qt::AlignRight, item->lastUsed());
+    painter->drawText(lastUsedRect, Qt::AlignRight, i18n("Used %1 ago", item->lastUsed()));
 
     painter->restore();
 }
