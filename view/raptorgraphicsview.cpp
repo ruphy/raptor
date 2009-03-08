@@ -286,6 +286,9 @@ void RaptorGraphicsView::resizeEvent(QGraphicsSceneResizeEvent *event)
 
 void RaptorGraphicsView::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
+    if (viewMode() == RaptorGraphicsView::SingleApp || viewMode() == RaptorGraphicsView::TwoApps) {
+        return;
+    }
     foreach (RaptorMenuItem *item, d->shownItems) {
         item->option()->state = QStyle::State_None;
         if (item->rect().contains(event->pos())) {
@@ -300,6 +303,9 @@ void RaptorGraphicsView::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 
 void RaptorGraphicsView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 {
+    if (viewMode() == RaptorGraphicsView::SingleApp || viewMode() == RaptorGraphicsView::TwoApps) {
+        return;
+    }
     foreach (RaptorMenuItem *item, d->shownItems) {
         item->option()->state = QStyle::State_None;
         if (item->rect().contains(event->pos())) {
@@ -320,6 +326,9 @@ void RaptorGraphicsView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 
 void RaptorGraphicsView::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
+    if (viewMode() == RaptorGraphicsView::SingleApp || viewMode() == RaptorGraphicsView::TwoApps) {
+        return;
+    }
     if (d->currentHoveredItem) {
         d->currentHoveredItem->timeLine()->setDirection(QTimeLine::Backward);
         d->currentHoveredItem->timeLine()->start();
