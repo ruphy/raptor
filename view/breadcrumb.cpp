@@ -86,7 +86,7 @@ void Breadcrumb::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     Q_UNUSED(option)
 
     foreach (BreadcrumbItem *item, m_items) {
-        item->icon().paint(painter, item->rect().toRect());
+        painter->drawPixmap(item->rect().toRect(), item->icon(item->rect().width()));
         painter->save();
         painter->setClipRect(item->textRect());
         painter->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));

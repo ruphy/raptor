@@ -15,17 +15,22 @@
 #include <QRectF>
 #include <QFontMetrics>
 #include <QTimeLine>
+#include <QPainter>
 
 #include <KIcon>
 #include <KLocale>
 #include <KGlobalSettings>
 
 #include <Plasma/Theme>
+#include <Plasma/Svg>
 
 BreadcrumbItem::BreadcrumbItem(const QModelIndex &index) : m_arrow(false), m_mainMenu(false), m_textWidth(-1), m_showingText(false)
 {
     if (!index.isValid()) {
         m_arrow = true;
+        m_svg = new Plasma::Svg;
+        m_svg->setImagePath("widgets/raptorarrows");
+        m_svg->setContainsMultipleImages(true);
         return;
     }
 
@@ -33,7 +38,9 @@ BreadcrumbItem::BreadcrumbItem(const QModelIndex &index) : m_arrow(false), m_mai
 }
 
 BreadcrumbItem::~BreadcrumbItem()
-{}
+{
+    delete m_svg;
+}
 
 QString BreadcrumbItem::name() const
 {
@@ -48,16 +55,25 @@ QString BreadcrumbItem::name() const
     return m_index.data().toString();
 }
 
-QIcon BreadcrumbItem::icon() const
+QPixmap BreadcrumbItem::icon(int size) const
 {
     if (m_arrow) {
-        return KIcon("arrow-right");
+        QPixmap pixmap(size, size);
+        pixmap.fill(Qt::transparent);
+
+        m_svg->resize(size, size);
+
+        QPainter p(&pixmap);
+        m_svg->paint(&p, size / 4, size / 4, "rightarrow");
+        p.end();
+
+        return pixmap;
     }
     if (m_mainMenu) {
-        return KIcon("go-home");
+        return KIcon("go-home").pixmap(size, size);
     }
 
-    return m_index.data(Qt::DecorationRole).value<QIcon>();
+    return m_index.data(Qt::DecorationRole).value<QIcon>().pixmap(size, size);
 }
 
 void BreadcrumbItem::setRect(const QRectF &rect)

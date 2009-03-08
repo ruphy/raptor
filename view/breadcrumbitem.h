@@ -18,6 +18,10 @@ class Breadcrumb;
 class QString;
 class QTimeLine;
 
+namespace Plasma {
+    class Svg;
+};
+
 class BreadcrumbItem
 {
 public:
@@ -36,7 +40,8 @@ public:
      * @Returns the icon of the item or an arrow icon if the
      * item is an arrow.
      */
-    QIcon icon() const;
+    QPixmap icon(int size) const;
+
     QString name() const;
 
     void setRect(const QRectF &);
@@ -62,6 +67,8 @@ private:
 
     int m_textWidth;
     bool m_showingText;
+
+    Plasma::Svg *m_svg;
 };
 
 #endif
