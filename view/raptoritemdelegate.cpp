@@ -206,6 +206,7 @@ void RaptorItemDelegate::drawTwoAppsWay(QPainter *painter, const QStyleOptionVie
     QRect decorationRect = d->optV4.rect;
 
     decorationRect.setY((d->optV4.rect.height() - pixmapDecoration.height()) / 2);
+    decorationRect.setX(decorationRect.x() + textMargin);
 
     decorationRect.setSize(QSize(pixmapDecoration.width(), pixmapDecoration.height()));
 
