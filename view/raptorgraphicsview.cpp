@@ -399,7 +399,7 @@ void RaptorGraphicsView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
 void RaptorGraphicsView::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    d->scrollOffset = event->pos().x() - d->xPress;
+    d->scrollOffset = event->pos().x() - event->lastPos().x();
 
     scrollItems();
     update();
