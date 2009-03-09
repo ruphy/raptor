@@ -217,6 +217,10 @@ void RaptorItemDelegate::drawTwoAppsWay(QPainter *painter, const QStyleOptionVie
 
     painter->drawPixmap(decorationRect, pixmapDecoration);
 
+    if (d->optV4.state & QStyle::State_MouseOver && !(d->optV4.state & QStyle::State_Selected) ) {
+        drawFavIcon(painter, decorationRect, index);
+    }
+
     painter->setPen(d->optV4.palette.color(QPalette::Text));
 
     // FIXME store the QString instead of calling index.data() many times
@@ -260,21 +264,19 @@ void RaptorItemDelegate::drawSingleAppWay(QPainter *painter, const QStyleOptionV
     painter->setPen(Qt::NoPen);
 
     //WARNING: we assume to have a wide rect to draw icon + description.
-    //TODO: add the method setMode to the View in order to manage the description delegate
 
     QPixmap pixmapDecoration = d->optV4.icon.pixmap(d->optV4.rect.height());
 
-    QRect iconRect = d->optV4.rect;
-    iconRect.setSize(QSize(d->optV4.rect.height(), d->optV4.rect.height()));
+    QRect decorationRect = d->optV4.rect;
+    decorationRect.setSize(QSize(d->optV4.rect.height(), d->optV4.rect.height()));
 
-    painter->drawPixmap(iconRect, pixmapDecoration);
-
+    painter->drawPixmap(decorationRect, pixmapDecoration);
 
     painter->setPen(d->optV4.palette.color(QPalette::Text));
 
     QRect descriptionRect = d->optV4.rect;
-    descriptionRect.translate( iconRect.width(), 0);
-    descriptionRect.setSize(QSize(d->optV4.rect.width() - iconRect.width(), descriptionRect.height()));
+    descriptionRect.translate(decorationRect.width(), 0);
+    descriptionRect.setSize(QSize(d->optV4.rect.width() - decorationRect.width(), descriptionRect.height()));
     descriptionRect.setY((d->optV4.rect.height() - painter->boundingRect(descriptionRect, Qt::AlignLeft, index.data(Qt::DisplayRole).toString()).height()) / 2);
 
     //TODO: use standard delegate roles
