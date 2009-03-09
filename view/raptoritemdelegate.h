@@ -54,7 +54,7 @@ protected:
     void drawTwoAppsWay(QPainter *painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const;
     void drawSingleAppWay(QPainter *painter, const QStyleOptionViewItem & option, const QModelIndex &index) const;
 
-    void drawFavIcon(QPainter *painter, const QRect &) const;
+    void drawFavIcon(QPainter *painter, const QRect &rect, const QModelIndex &index) const;
     void drawOverlay(QPainter *painter, const QRect &rect) const;
 
 private:

@@ -48,7 +48,8 @@ class RaptorItemDelegate::Private
                 textColor(QColor()),
                 p(0),
                 svg(0),
-                mode(RaptorItemDelegate::Normal)
+                mode(RaptorItemDelegate::Normal),
+                item(0)
                 {
                     svg = new Plasma::Svg(q);
                     svg->setImagePath("widgets/overlay");
@@ -71,6 +72,8 @@ class RaptorItemDelegate::Private
     RaptorItemDelegate::ViewMode mode;
 
     QRect favIconRect;
+
+    RaptorMenuItem *item;
 };
 
 RaptorItemDelegate::RaptorItemDelegate(RaptorGraphicsView *parent) : QStyledItemDelegate(parent),
@@ -87,6 +90,12 @@ void RaptorItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem & o
 {    
     if (!index.isValid()) {
         return;
+    }
+
+    foreach (RaptorMenuItem *current, d->view->shownItems()) {
+        if (current->modelIndex() == index) {
+            d->item = current;
+        }
     }
 
     switch (d->mode) {
@@ -116,17 +125,9 @@ void RaptorItemDelegate::drawNormalWay(QPainter *painter, const QStyleOptionView
     painter->setRenderHint(QPainter::Antialiasing);
     painter->setPen(Qt::NoPen);
 
-    RaptorMenuItem * item = 0;
-    foreach (RaptorMenuItem * i, d->view->shownItems()) {
-	if (i->modelIndex() == index) {
-	    item = i;
-	    break;
-	}
-    }
-
     if (d->optV4.state & QStyle::State_MouseOver && !(d->optV4.state & QStyle::State_Selected) ) {
         painter->save();
-        painter->setOpacity(item->timeLine()->currentValue());
+        painter->setOpacity(d->item->timeLine()->currentValue());
         drawOverlay(painter, d->optV4.rect);
         painter->restore();
     }
@@ -155,16 +156,7 @@ void RaptorItemDelegate::drawNormalWay(QPainter *painter, const QStyleOptionView
     painter->drawPixmap(decorationRect, pixmapDecoration);
 
     if (d->optV4.state & QStyle::State_MouseOver && !(d->optV4.state & QStyle::State_Selected) ) {
-        if (!index.data(Qt::UserRole + 2).isNull()) { // we check whether it is an app or not
-            painter->save();
-            if (Kickoff::FavoritesModel::isFavorite(index.data(Qt::UserRole + 2).toString())) {
-                painter->setOpacity(item->timeLine()->currentValue());
-            } else {
-                painter->setOpacity(item->timeLine()->currentValue() < 0.5 ? item->timeLine()->currentValue() : 0.5);
-            }
-            drawFavIcon(painter, decorationRect);
-            painter->restore();
-        }
+        drawFavIcon(painter, decorationRect, index);
     }
 
     painter->setPen(d->optV4.palette.color(QPalette::Text));
@@ -193,19 +185,11 @@ void RaptorItemDelegate::drawTwoAppsWay(QPainter *painter, const QStyleOptionVie
     painter->setClipRect(d->optV4.rect);
     painter->setPen(Qt::NoPen);
 
-    RaptorMenuItem * item = 0;
-    foreach (RaptorMenuItem * i, d->view->shownItems()) {
-        if (i->modelIndex() == index) {
-            item = i;
-            break;
-        }
-    }
-
     if (d->optV4.state & QStyle::State_MouseOver && !(d->optV4.state & QStyle::State_Selected) ) {
         QRect overlayRect = d->optV4.rect;
         overlayRect.setWidth(d->optV4.rect.height());
         painter->save();
-        painter->setOpacity(item->timeLine()->currentValue());
+        painter->setOpacity(d->item->timeLine()->currentValue());
         drawOverlay(painter, overlayRect);
         painter->restore();
     }
@@ -248,12 +232,12 @@ void RaptorItemDelegate::drawTwoAppsWay(QPainter *painter, const QStyleOptionVie
     painter->drawText(usedRect, Qt::AlignRight, i18n("Used"));
 
     QRect lastUsedRect = d->optV4.rect;
-    lastUsedRect.setSize(QSize(item->lastUsedWidth() + SPACE_WIDTH + AGO_WIDTH, TEXT_HEIGHT));
+    lastUsedRect.setSize(QSize(d->item->lastUsedWidth() + SPACE_WIDTH + AGO_WIDTH, TEXT_HEIGHT));
     lastUsedRect.translate(d->optV4.rect.width() - lastUsedRect.width() - textMargin, usedRect.y() + textMargin + TEXT_HEIGHT);
 
     //kDebug() << lastUsedRect << item->lastUsed() << item->lastUsedWidth();
 
-    painter->drawText(lastUsedRect, Qt::AlignRight, i18n("%1 ago", item->lastUsed()));
+    painter->drawText(lastUsedRect, Qt::AlignRight, i18n("%1 ago", d->item->lastUsed()));
 
     //lastUsedRect.setY(lastUsedRect.y() + TEXT_HEIGHT());
 
@@ -296,20 +280,13 @@ void RaptorItemDelegate::drawSingleAppWay(QPainter *painter, const QStyleOptionV
     //TODO: use standard delegate roles
     painter->drawText(descriptionRect, Qt::AlignLeft, index.data(Qt::DisplayRole).toString());
 
-    RaptorMenuItem * item = 0;//TODO: Do all properties we need from the item into the modelindex
-    foreach (RaptorMenuItem * i, d->view->shownItems()) {
-	if (i->modelIndex() == index) {
-	    item = i;
-	    break;
-	}
-    }
     QRect lastUsedRect = d->optV4.rect;
-    lastUsedRect.setSize(QSize(item->lastUsedWidth() + USED_WIDTH + SPACE_WIDTH * 2 + AGO_WIDTH, TEXT_HEIGHT));
+    lastUsedRect.setSize(QSize(d->item->lastUsedWidth() + USED_WIDTH + SPACE_WIDTH * 2 + AGO_WIDTH, TEXT_HEIGHT));
     lastUsedRect.translate(d->optV4.rect.width() - lastUsedRect.width(), d->optV4.rect.height() - lastUsedRect.height());
 
-    kDebug() << lastUsedRect << item->lastUsed() << item->lastUsedWidth();
+    kDebug() << lastUsedRect << d->item->lastUsed() << d->item->lastUsedWidth();
 
-    painter->drawText(lastUsedRect, Qt::AlignRight, i18n("Used %1 ago", item->lastUsed()));
+    painter->drawText(lastUsedRect, Qt::AlignRight, i18n("Used %1 ago", d->item->lastUsed()));
 
     painter->restore();
 }
@@ -334,16 +311,28 @@ bool RaptorItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, c
     return false;
 }
 
-void RaptorItemDelegate::drawFavIcon(QPainter *painter, const QRect &rect) const
+void RaptorItemDelegate::drawFavIcon(QPainter *painter, const QRect &rect, const QModelIndex &index) const
 {
-    KIcon icon("favorites");
-    QRect favRect = rect;
-    favRect.setSize(QSize(FAV_ICON_SIZE, FAV_ICON_SIZE));
-    favRect.translate(rect.width() - FAV_ICON_SIZE, 0);
+    if (!index.data(Qt::UserRole + 2).isNull()) { // we check whether it is an app or not
+        painter->save();
 
-    d->favIconRect = favRect;
+        if (Kickoff::FavoritesModel::isFavorite(index.data(Qt::UserRole + 2).toString())) {
+            painter->setOpacity(d->item->timeLine()->currentValue());
+        } else {
+            painter->setOpacity(d->item->timeLine()->currentValue() < 0.5 ? d->item->timeLine()->currentValue() : 0.5);
+        }
 
-    icon.paint(painter, favRect);
+        KIcon icon("favorites");
+        QRect favRect = rect;
+        favRect.setSize(QSize(FAV_ICON_SIZE, FAV_ICON_SIZE));
+        favRect.translate(rect.width() - FAV_ICON_SIZE, 0);
+
+        d->favIconRect = favRect;
+
+        icon.paint(painter, favRect);
+
+        painter->restore();
+    }
 }
 
 void RaptorItemDelegate::drawOverlay(QPainter *painter, const QRect &rect) const
