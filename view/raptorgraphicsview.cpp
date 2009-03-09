@@ -408,6 +408,6 @@ RaptorGraphicsView::ViewMode RaptorGraphicsView::viewModeFromItemCount()
         case 5:
             return RaptorGraphicsView::Normal;
         default:
-            return RaptorGraphicsView::Normal;//TODO: Switch to search once it's done
+            return RaptorGraphicsView::Search;
     }
 }
