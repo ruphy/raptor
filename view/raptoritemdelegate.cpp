@@ -116,8 +116,6 @@ void RaptorItemDelegate::drawNormalWay(QPainter *painter, const QStyleOptionView
     painter->setRenderHint(QPainter::Antialiasing);
     painter->setPen(Qt::NoPen);
 
-    //d->optV4.decorationSize = QSize(64, 64);
-
     RaptorMenuItem * item = 0;
     foreach (RaptorMenuItem * i, d->view->shownItems()) {
 	if (i->modelIndex() == index) {
@@ -191,21 +189,9 @@ void RaptorItemDelegate::drawTwoAppsWay(QPainter *painter, const QStyleOptionVie
         d->optV4.palette.setColor(QPalette::Text, d->textColor);
     }
 
-
     painter->setRenderHint(QPainter::Antialiasing);
     painter->setClipRect(d->optV4.rect);
     painter->setPen(Qt::NoPen);
-
-    QPixmap pixmapDecoration = d->optV4.icon.pixmap(QSize(iconSize / 1.4, iconSize / 1.4));//FIXME: 1.4 is a magic number so make it static int ;)
-
-    QRect decorationRect = d->optV4.rect;
-
-    decorationRect.setSize(QSize(pixmapDecoration.width(), pixmapDecoration.height()));
-    decorationRect.moveCenter(QRect(d->optV4.rect.x(), d->optV4.rect.y(), d->optV4.rect.height(), d->optV4.rect.height()).center());
-    //decorationRect.setY((d->optV4.rect.height() - decorationRect.height()) / 2);
-    //decorationRect.setX((d->optV4.rect.height() - pixmapDecoration.width() ) / 2);
-    /*decorationRect.setX((d->optV4.rect.height() - decorationRect.width()) / 2);
-    kDebug() << (d->optV4.rect.height() - decorationRect.width()) / 2;*/
 
     RaptorMenuItem * item = 0;
     foreach (RaptorMenuItem * i, d->view->shownItems()) {
@@ -231,16 +217,20 @@ void RaptorItemDelegate::drawTwoAppsWay(QPainter *painter, const QStyleOptionVie
         drawOverlay(painter, pixRect);
     }
 
-    if (d->textColor != QColor()) {
-        d->optV4.palette.setColor(QPalette::Text, d->textColor);
-    }
-
     painter->save();
+
+    QPixmap pixmapDecoration = d->optV4.icon.pixmap(QSize(iconSize / 1.4, iconSize / 1.4));//FIXME: 1.4 is a magic number so make it static int ;)
+
+    QRect decorationRect = d->optV4.rect;
+
+    decorationRect.setSize(QSize(pixmapDecoration.width(), pixmapDecoration.height()));
+    decorationRect.moveCenter(QRect(d->optV4.rect.x(), d->optV4.rect.y(), d->optV4.rect.height(), d->optV4.rect.height()).center());
 
     //decorationRect.translate( (decorationRect.width() - pixmapDecoration.width() ) / 2,
     //                          (decorationRect.height() - pixmapDecoration.height()) / 2);
 
 //     painter->fillRect(decorationRect, Qt::green);
+
     painter->drawPixmap(decorationRect, pixmapDecoration);
 
     painter->setPen(d->optV4.palette.color(QPalette::Text));

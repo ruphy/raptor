@@ -52,9 +52,9 @@ public:
 
 RaptorGraphicsView::RaptorGraphicsView(QGraphicsItem *parent) : QGraphicsWidget(parent), d(new Private(this))
 {
-    setViewMode(RaptorGraphicsView::Normal);
+    //setViewMode(RaptorGraphicsView::Normal);
     //setViewMode(RaptorGraphicsView::SingleApp);
-    //setViewMode(RaptorGraphicsView::TwoApps);
+    setViewMode(RaptorGraphicsView::TwoApps);
     //setViewMode(RaptorGraphicsView::Search);
     setAcceptHoverEvents(true);
 
