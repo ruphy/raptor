@@ -79,6 +79,8 @@ protected:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
 
+    ViewMode viewModeFromItemCount();
+
 private:
     class Private;
     Private *d;

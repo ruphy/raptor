@@ -193,6 +193,8 @@ void RaptorGraphicsView::setupItems()
         d->shownItems.clear();
         return;
     }
+    kDebug() << "blub";
+    d->delegate->setViewMode((RaptorItemDelegate::ViewMode)viewModeFromItemCount());
     // NOTE: for each view mode we should setup items individually
     // WARNING: we suppose a horizontal view
     // TODO: remove tabs
@@ -392,4 +394,20 @@ void RaptorGraphicsView::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
     setupItems();
     update();
+}
+
+RaptorGraphicsView::ViewMode RaptorGraphicsView::viewModeFromItemCount()
+{
+    switch (d->items.count()) {
+        case 1:
+            return RaptorGraphicsView::SingleApp;
+        case 2:
+            return RaptorGraphicsView::TwoApps;
+        case 3:
+        case 4:
+        case 5:
+            return RaptorGraphicsView::Normal;
+        default:
+            return RaptorGraphicsView::Normal;//TODO: Switch to search once it's done
+    }
 }
