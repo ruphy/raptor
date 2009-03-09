@@ -125,22 +125,15 @@ void RaptorItemDelegate::drawNormalWay(QPainter *painter, const QStyleOptionView
     painter->setRenderHint(QPainter::Antialiasing);
     painter->setPen(Qt::NoPen);
 
+    if (d->textColor != QColor()) {
+        d->optV4.palette.setColor(QPalette::Text, d->textColor);
+    }
+
     if (d->optV4.state & QStyle::State_MouseOver && !(d->optV4.state & QStyle::State_Selected) ) {
         painter->save();
         painter->setOpacity(d->item->timeLine()->currentValue());
         drawOverlay(painter, d->optV4.rect);
         painter->restore();
-    }
-
-    if (d->optV4.state & QStyle::State_Selected) {
-        QPoint topLeft(d->optV4.rect.x()+((d->optV4.decorationSize.width()-d->p->width())/2),
-                       d->optV4.rect.y()+((d->optV4.decorationSize.height()-d->p->height())/2));
-        QRect pixRect(topLeft, QSize(d->p->width(), d->p->height()));
-        drawOverlay(painter, pixRect);
-    }
-
-    if (d->textColor != QColor()) {
-        d->optV4.palette.setColor(QPalette::Text, d->textColor);
     }
 
     painter->save();
@@ -192,13 +185,6 @@ void RaptorItemDelegate::drawTwoAppsWay(QPainter *painter, const QStyleOptionVie
         painter->setOpacity(d->item->timeLine()->currentValue());
         drawOverlay(painter, overlayRect);
         painter->restore();
-    }
-
-    if (d->optV4.state & QStyle::State_Selected) {
-        QPoint topLeft(d->optV4.rect.x() + ((d->optV4.decorationSize.width() - d->p->width())/2),
-                       d->optV4.rect.y() + ((d->optV4.decorationSize.height() - d->p->height())/2));
-        QRect pixRect(topLeft, QSize(d->p->width(), d->p->height()));
-        drawOverlay(painter, pixRect);
     }
 
     painter->save();
