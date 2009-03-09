@@ -55,6 +55,7 @@ protected:
     void drawSingleAppWay(QPainter *painter, const QStyleOptionViewItem & option, const QModelIndex &index) const;
 
     void drawFavIcon(QPainter *painter, const QRect &) const;
+    void drawOverlay(QPainter *painter, const QRect &rect) const;
 
 private:
     void generateBgPixmap(const QSize &s) const;

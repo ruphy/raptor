@@ -127,13 +127,9 @@ void RaptorItemDelegate::drawNormalWay(QPainter *painter, const QStyleOptionView
     }
 
     if (d->optV4.state & QStyle::State_MouseOver && !(d->optV4.state & QStyle::State_Selected) ) {
-
-        generateBgPixmap(d->optV4.rect.size());
         painter->save();
         painter->setOpacity(item->timeLine()->currentValue());
-        painter->drawPixmap(d->optV4.rect, *d->p);
-
-
+        drawOverlay(painter, d->optV4.rect);
         painter->restore();
     }
 
@@ -141,7 +137,7 @@ void RaptorItemDelegate::drawNormalWay(QPainter *painter, const QStyleOptionView
         QPoint topLeft(d->optV4.rect.x()+((d->optV4.decorationSize.width()-d->p->width())/2),
                        d->optV4.rect.y()+((d->optV4.decorationSize.height()-d->p->height())/2));
         QRect pixRect(topLeft, QSize(d->p->width(), d->p->height()));
-        painter->drawPixmap(pixRect, *d->p);
+        drawOverlay(painter, pixRect);
     }
 
     if (d->textColor != QColor()) {
@@ -222,11 +218,9 @@ void RaptorItemDelegate::drawTwoAppsWay(QPainter *painter, const QStyleOptionVie
     if (d->optV4.state & QStyle::State_MouseOver && !(d->optV4.state & QStyle::State_Selected) ) {
         QRect overlayRect = d->optV4.rect;
         overlayRect.setWidth(d->optV4.rect.height());
-        generateBgPixmap(overlayRect.size());
         painter->save();
         painter->setOpacity(item->timeLine()->currentValue());
-        painter->drawPixmap(overlayRect, *d->p);
-
+        drawOverlay(painter, overlayRect);
         painter->restore();
     }
 
@@ -234,7 +228,7 @@ void RaptorItemDelegate::drawTwoAppsWay(QPainter *painter, const QStyleOptionVie
         QPoint topLeft(d->optV4.rect.x() + ((d->optV4.decorationSize.width() - d->p->width())/2),
                        d->optV4.rect.y() + ((d->optV4.decorationSize.height() - d->p->height())/2));
         QRect pixRect(topLeft, QSize(d->p->width(), d->p->height()));
-        painter->drawPixmap(pixRect, *d->p);
+        drawOverlay(painter, pixRect);
     }
 
     if (d->textColor != QColor()) {
@@ -360,6 +354,13 @@ void RaptorItemDelegate::drawFavIcon(QPainter *painter, const QRect &rect) const
     d->favIconRect = favRect;
 
     icon.paint(painter, favRect);
+}
+
+void RaptorItemDelegate::drawOverlay(QPainter *painter, const QRect &rect) const
+{
+    generateBgPixmap(rect.size());
+
+    painter->drawPixmap(rect, *d->p);
 }
 
 void RaptorItemDelegate::generateBgPixmap(const QSize &s) const // TODO find a way to make this themable, preferrably via SVG.

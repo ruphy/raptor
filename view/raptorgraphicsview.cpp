@@ -43,7 +43,7 @@ public:
     QList<RaptorMenuItem*> shownItems;
 
     RaptorItemDelegate * delegate;
-    
+
     RaptorMenuItem *currentHoveredItem;
 
     qreal xPress;
@@ -52,9 +52,9 @@ public:
 
 RaptorGraphicsView::RaptorGraphicsView(QGraphicsItem *parent) : QGraphicsWidget(parent), d(new Private(this))
 {
-    //setViewMode(RaptorGraphicsView::Normal);
+    setViewMode(RaptorGraphicsView::Normal);
     //setViewMode(RaptorGraphicsView::SingleApp);
-    setViewMode(RaptorGraphicsView::TwoApps);
+    //setViewMode(RaptorGraphicsView::TwoApps);
     //setViewMode(RaptorGraphicsView::Search);
     setAcceptHoverEvents(true);
 
@@ -190,6 +190,7 @@ void RaptorGraphicsView::getItems()
 void RaptorGraphicsView::setupItems()
 {
     if (d->items.isEmpty()) {
+        d->shownItems.clear();
         return;
     }
     // NOTE: for each view mode we should setup items individually
