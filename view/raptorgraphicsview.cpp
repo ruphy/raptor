@@ -193,6 +193,8 @@ void RaptorGraphicsView::setupItems()
         d->shownItems.clear();
         return;
     }
+    kDebug() << "blub";
+    d->delegate->setViewMode((RaptorItemDelegate::ViewMode)viewModeFromItemCount());
     // NOTE: for each view mode we should setup items individually
     // WARNING: we suppose a horizontal view
     // TODO: remove tabs
@@ -244,15 +246,15 @@ void RaptorGraphicsView::setupItems()
 
 	  for (; i < 2; i++) { // we place the first two items half sized and in column
 	      RaptorMenuItem *item = d->items[i];
-	      item->setRect(QRectF(QPointF(0, y), QSizeF(contentsRect().height() / 2, contentsRect().height() / 2)));
+	      item->setRect(QRectF(QPointF(contentsRect().height() / 4, y), QSizeF(contentsRect().height() / 2, contentsRect().height() / 2)));
 	      y += contentsRect().height() / 2;
               d->shownItems << item;
 	  }
-	  sizesSum += contentsRect().height() / 2;
+	  sizesSum += contentsRect().height();
 
 	  for (; i < d->items.count(); i++) { // now we take care of left items
-	      if (sizesSum > contentsRect().width() - (contentsRect().height() / 2)) {
-		  sizesSum = contentsRect().width() - (contentsRect().height() / 2);
+	      if (sizesSum > contentsRect().width() - (contentsRect().height())) {
+		  sizesSum = contentsRect().width() - (contentsRect().height());
 		  break;
 	      }
 
@@ -271,7 +273,7 @@ void RaptorGraphicsView::setupItems()
 	  y = 0;
 	  for (; i < max; i++) { // here we handle the last two items
 	      RaptorMenuItem *item = d->items[i];
-	      item->setRect(QRectF(QPointF(sizesSum, y), QSizeF(contentsRect().height() / 2, contentsRect().height() / 2)));
+	      item->setRect(QRectF(QPointF(sizesSum + contentsRect().height() / 4, y), QSizeF(contentsRect().height() / 2, contentsRect().height() / 2)));
 	      y += contentsRect().height() / 2;
               d->shownItems << item;
 	  }
@@ -401,4 +403,20 @@ void RaptorGraphicsView::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
     scrollItems();
     update();
+}
+
+RaptorGraphicsView::ViewMode RaptorGraphicsView::viewModeFromItemCount()
+{
+    switch (d->items.count()) {
+        case 1:
+            return RaptorGraphicsView::SingleApp;
+        case 2:
+            return RaptorGraphicsView::TwoApps;
+        case 3:
+        case 4:
+        case 5:
+            return RaptorGraphicsView::Normal;
+        default:
+            return RaptorGraphicsView::Search;
+    }
 }
