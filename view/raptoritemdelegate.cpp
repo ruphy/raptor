@@ -251,7 +251,7 @@ void RaptorItemDelegate::drawTwoAppsWay(QPainter *painter, const QStyleOptionVie
     lastUsedRect.setSize(QSize(item->lastUsedWidth() + SPACE_WIDTH + AGO_WIDTH, TEXT_HEIGHT));
     lastUsedRect.translate(d->optV4.rect.width() - lastUsedRect.width() - textMargin, usedRect.y() + textMargin + TEXT_HEIGHT);
 
-    kDebug() << lastUsedRect << item->lastUsed() << item->lastUsedWidth();
+    //kDebug() << lastUsedRect << item->lastUsed() << item->lastUsedWidth();
 
     painter->drawText(lastUsedRect, Qt::AlignRight, i18n("%1 ago", item->lastUsed()));
 
