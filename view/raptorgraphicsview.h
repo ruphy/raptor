@@ -68,6 +68,7 @@ signals:
 protected:
     void getItems();
     void setupItems();
+    void scrollItems();
 
     void resizeEvent(QGraphicsSceneResizeEvent *event);
 
