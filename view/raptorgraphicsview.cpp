@@ -283,11 +283,25 @@ void RaptorGraphicsView::setupItems()
 
 void RaptorGraphicsView::scrollItems()
 {
+    if (viewMode() == RaptorGraphicsView::Search) {
+        if (abs(d->scrollOffset) < 10) {
+            return;
+        }
+        if (d->scrollOffset > 0) {
+            scrollLeft();
+        } else {
+            scrollRight();
+        }
+        return;
+    }
+
     foreach (RaptorMenuItem *item, d->shownItems) {
         QRectF rect = item->rect();
         rect.translate(d->scrollOffset, 0);
         item->setRect(rect);
     }
+
+    update();
 }
 
 void RaptorGraphicsView::resizeEvent(QGraphicsSceneResizeEvent *event)
@@ -402,7 +416,6 @@ void RaptorGraphicsView::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     d->scrollOffset = event->pos().x() - event->lastPos().x();
 
     scrollItems();
-    update();
 }
 
 RaptorGraphicsView::ViewMode RaptorGraphicsView::viewModeFromItemCount()
