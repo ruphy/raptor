@@ -104,7 +104,7 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
     d->favoritesIcon = new Plasma::IconWidget(this);
     d->favoritesIcon->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
     d->favoritesIcon->setIcon(KIcon("rating"));
-    d->searchLine->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
+    //d->searchLine->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
     d->rightScrollButton = new RaptorScrollButton(RaptorScrollButton::Right, this);
     d->appletConfig = appletconfig;
 
@@ -112,7 +112,7 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
 
     QGraphicsLinearLayout *horizontalLayout = new QGraphicsLinearLayout();
     horizontalLayout->addItem(d->breadCrumb);
-    //horizontalLayout->addStretch();
+    horizontalLayout->addStretch();
     horizontalLayout->addItem(d->favoritesIcon);
     horizontalLayout->addItem(d->searchLine);
 
