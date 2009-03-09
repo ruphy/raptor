@@ -246,15 +246,15 @@ void RaptorGraphicsView::setupItems()
 
 	  for (; i < 2; i++) { // we place the first two items half sized and in column
 	      RaptorMenuItem *item = d->items[i];
-	      item->setRect(QRectF(QPointF(0, y), QSizeF(contentsRect().height() / 2, contentsRect().height() / 2)));
+	      item->setRect(QRectF(QPointF(contentsRect().height() / 4, y), QSizeF(contentsRect().height() / 2, contentsRect().height() / 2)));
 	      y += contentsRect().height() / 2;
               d->shownItems << item;
 	  }
-	  sizesSum += contentsRect().height() / 2;
+	  sizesSum += contentsRect().height();
 
 	  for (; i < d->items.count(); i++) { // now we take care of left items
-	      if (sizesSum > contentsRect().width() - (contentsRect().height() / 2)) {
-		  sizesSum = contentsRect().width() - (contentsRect().height() / 2);
+	      if (sizesSum > contentsRect().width() - (contentsRect().height())) {
+		  sizesSum = contentsRect().width() - (contentsRect().height());
 		  break;
 	      }
 
@@ -273,7 +273,7 @@ void RaptorGraphicsView::setupItems()
 	  y = 0;
 	  for (; i < max; i++) { // here we handle the last two items
 	      RaptorMenuItem *item = d->items[i];
-	      item->setRect(QRectF(QPointF(sizesSum, y), QSizeF(contentsRect().height() / 2, contentsRect().height() / 2)));
+	      item->setRect(QRectF(QPointF(sizesSum + contentsRect().height() / 4, y), QSizeF(contentsRect().height() / 2, contentsRect().height() / 2)));
 	      y += contentsRect().height() / 2;
               d->shownItems << item;
 	  }
