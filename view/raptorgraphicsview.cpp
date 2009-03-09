@@ -203,7 +203,7 @@ void RaptorGraphicsView::setupItems()
     ViewMode mode = viewMode();
 
     if (mode == RaptorGraphicsView::Normal) {
-        qreal sizesSum = d->scrollOffset;
+        qreal sizesSum = 0;
         qreal size = contentsRect().height();
         int i = 0;
         foreach (RaptorMenuItem *item, d->items) {
@@ -279,6 +279,15 @@ void RaptorGraphicsView::setupItems()
 	  }
     }
 
+}
+
+void RaptorGraphicsView::scrollItems()
+{
+    foreach (RaptorMenuItem *item, d->shownItems) {
+        QRectF rect = item->rect();
+        rect.translate(d->scrollOffset, 0);
+        item->setRect(rect);
+    }
 }
 
 void RaptorGraphicsView::resizeEvent(QGraphicsSceneResizeEvent *event)
@@ -392,7 +401,7 @@ void RaptorGraphicsView::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     d->scrollOffset = event->pos().x() - d->xPress;
 
-    setupItems();
+    scrollItems();
     update();
 }
 
