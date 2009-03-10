@@ -183,7 +183,8 @@ void RaptorGraphicsView::paint(QPainter *painter, const QStyleOptionGraphicsItem
 
         painter->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
         painter->drawText(contentsRect(), Qt::AlignRight, item->modelIndex().data(Qt::DisplayRole).toString());
-        //painter->fillRect(contentsRect(), Qt::green);
+        painter->fillRect(contentsRect(), Qt::green);
+        kDebug() << contentsRect() << geometry();
 
         painter->restore();
     }
@@ -440,16 +441,17 @@ void RaptorGraphicsView::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 RaptorGraphicsView::ViewMode RaptorGraphicsView::viewModeFromItemCount()
 {
-    switch (d->items.count()) {
-        case 1:
-            return RaptorGraphicsView::SingleApp;
-        case 2:
-            return RaptorGraphicsView::TwoApps;
-        case 3:
-        case 4:
-        case 5:
-            return RaptorGraphicsView::Normal;
-        default:
-            return RaptorGraphicsView::Search;
-    }
+    return RaptorGraphicsView::TwoApps;
+//     switch (d->items.count()) {
+//         case 1:
+//             return RaptorGraphicsView::SingleApp;
+//         case 2:
+//             return RaptorGraphicsView::TwoApps;
+//         case 3:
+//         case 4:
+//         case 5:
+//             return RaptorGraphicsView::Normal;
+//         default:
+//             return RaptorGraphicsView::Search;
+//     }
 }
