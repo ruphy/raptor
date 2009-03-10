@@ -1,1 +1,4 @@
- 
+In order to avoid a bad user experience due to the highly work in progress state of raptor, you, packagers, are asked to avoid packaging raptor as stable-state application. Of course testing or dev packages are welcome in order to receive feedback from those users who don't expect raptor to be correctly working atm but we'd prefer you to wait for an alpha state.
+
+Best regards.
+The Raptor Team
