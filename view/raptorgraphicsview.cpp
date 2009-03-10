@@ -17,6 +17,7 @@
 #include <QPainter>
 #include <QGraphicsSceneMouseEvent>
 #include <QTimeLine>
+#include <QStyleOptionViewItemV4>
 
 #include <KDebug>
 
@@ -169,6 +170,18 @@ void RaptorGraphicsView::paint(QPainter *painter, const QStyleOptionGraphicsItem
 
     foreach (RaptorMenuItem *item, d->shownItems) {
         d->delegate->paint(painter, *item->option(), item->modelIndex());
+    }
+
+    //Paint description, FIXME: Change DataRole
+    if ((d->currentHoveredItem || viewMode() == RaptorGraphicsView::SingleApp) && !d->shownItems.isEmpty()) {
+        RaptorMenuItem * item = viewMode() == RaptorGraphicsView::SingleApp ? d->shownItems.first() : d->currentHoveredItem;
+
+        painter->save();
+
+        painter->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
+        painter->drawText(contentsRect(), Qt::AlignRight, item->modelIndex().data(Qt::DisplayRole).toString());
+
+        painter->restore();
     }
 }
 
