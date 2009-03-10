@@ -58,7 +58,7 @@ RaptorGraphicsView::RaptorGraphicsView(QGraphicsItem *parent) : QGraphicsWidget(
 {
     //setViewMode(RaptorGraphicsView::Normal);
     //setViewMode(RaptorGraphicsView::SingleApp);
-    setViewMode(RaptorGraphicsView::TwoApps);
+    //setViewMode(RaptorGraphicsView::TwoApps);
     //setViewMode(RaptorGraphicsView::Search);
     setAcceptHoverEvents(true);
 
@@ -183,6 +183,7 @@ void RaptorGraphicsView::paint(QPainter *painter, const QStyleOptionGraphicsItem
 
         painter->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
         painter->drawText(contentsRect(), Qt::AlignRight, item->modelIndex().data(Qt::DisplayRole).toString());
+        //painter->fillRect(contentsRect(), Qt::green);
 
         painter->restore();
     }
