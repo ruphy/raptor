@@ -211,6 +211,7 @@ void RaptorGraphicsView::setupItems()
     // NOTE: for each view mode we should setup items individually
     // WARNING: we suppose a horizontal view
     // TODO: remove tabs
+    // FIXME: Add some margin to the top for the description! do some availableRect var instead of using contentsRect() everywhere, calculate the margins on that var
 
     d->shownItems.clear();
     ViewMode mode = viewMode();
