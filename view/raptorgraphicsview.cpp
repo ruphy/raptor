@@ -183,8 +183,7 @@ void RaptorGraphicsView::paint(QPainter *painter, const QStyleOptionGraphicsItem
 
         painter->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
         painter->drawText(contentsRect(), Qt::AlignRight, item->modelIndex().data(Qt::DisplayRole).toString());
-        painter->fillRect(contentsRect(), Qt::green);
-        kDebug() << contentsRect() << geometry();
+        //painter->fillRect(contentsRect(), Qt::green);
 
         painter->restore();
     }
