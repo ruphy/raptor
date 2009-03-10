@@ -30,6 +30,7 @@ public:
     {
         delegate = new RaptorItemDelegate(q);
         delegate->setTextColor(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
+        topMargin = Plasma::Theme::defaultTheme()->fontMetrics().height();
     }
 
     ~Private()
@@ -49,6 +50,8 @@ public:
 
     qreal xPress;
     qreal scrollOffset;
+
+    int topMargin;
 };
 
 RaptorGraphicsView::RaptorGraphicsView(QGraphicsItem *parent) : QGraphicsWidget(parent), d(new Private(this))
@@ -206,27 +209,29 @@ void RaptorGraphicsView::setupItems()
         d->shownItems.clear();
         return;
     }
-    kDebug() << "blub";
     d->delegate->setViewMode((RaptorItemDelegate::ViewMode)viewModeFromItemCount());
     // NOTE: for each view mode we should setup items individually
     // WARNING: we suppose a horizontal view
     // TODO: remove tabs
-    // FIXME: Add some margin to the top for the description! do some availableRect var instead of using contentsRect() everywhere, calculate the margins on that var
 
     d->shownItems.clear();
     ViewMode mode = viewMode();
 
+    QRectF rect = contentsRect();
+    rect.setSize(QSizeF(rect.width(), rect.height() - d->topMargin));
+    rect.moveBottom(d->topMargin);
+
     if (mode == RaptorGraphicsView::Normal) {
         qreal sizesSum = 0;
-        qreal size = contentsRect().height();
+        qreal size = rect.height();
         int i = 0;
         foreach (RaptorMenuItem *item, d->items) {
-            item->setRect(QRectF(QPointF(sizesSum, 0), QSizeF(size, size)));
+            item->setRect(QRectF(QPointF(sizesSum, d->topMargin), QSizeF(size, size)));
             sizesSum += size;
-            if (sizesSum + item->rect().width() < contentsRect().x()) {
+            if (sizesSum + item->rect().width() < rect.x()) {
                 continue;
             }
-            if ( sizesSum - item->rect().width() > contentsRect().width() ) {
+            if ( sizesSum - item->rect().width() > rect.width() ) {
                 break;
             }
             d->shownItems << item;
@@ -236,7 +241,7 @@ void RaptorGraphicsView::setupItems()
 
     else if (mode == RaptorGraphicsView::SingleApp) {
         RaptorMenuItem *item = d->items.first();
-        item->setRect(QRectF(QPointF(0, 0), contentsRect().size()));
+        item->setRect(QRectF(QPointF(0, 0), contentsRect().size()));//Don't use rect for single-app, we don't need a margin here
         d->shownItems << item;
     }
 
@@ -247,8 +252,8 @@ void RaptorGraphicsView::setupItems()
                 break;
             }
 	    RaptorMenuItem *item = d->items[i];
-	    item->setRect(QRectF(QPointF(x, 0), QSizeF(contentsRect().width() / 2, contentsRect().height())));
-	    x += contentsRect().width() / 2;
+	    item->setRect(QRectF(QPointF(x, d->topMargin), QSizeF(rect.width() / 2, rect.height())));
+	    x += rect.width() / 2;
             d->shownItems << item;
 	}
      }
@@ -256,19 +261,19 @@ void RaptorGraphicsView::setupItems()
      else if (mode == RaptorGraphicsView::Search) {
 	  qreal sizesSum = 0;
 	  int i = 0;
-	  qreal y = 0;
+	  qreal y = d->topMargin;
 
 	  for (; i < 2; i++) { // we place the first two items half sized and in column
 	      RaptorMenuItem *item = d->items[i];
-	      item->setRect(QRectF(QPointF(contentsRect().height() / 4, y), QSizeF(contentsRect().height() / 2, contentsRect().height() / 2)));
-	      y += contentsRect().height() / 2;
+	      item->setRect(QRectF(QPointF(rect.height() / 4, y), QSizeF(rect.height() / 2, rect.height() / 2)));
+	      y += rect.height() / 2;
               d->shownItems << item;
 	  }
 	  sizesSum += contentsRect().height();
 
 	  for (; i < d->items.count(); i++) { // now we take care of left items
-	      if (sizesSum > contentsRect().width() - (contentsRect().height())) {
-		  sizesSum = contentsRect().width() - (contentsRect().height());
+	      if (sizesSum > rect.width() - (rect.height())) {
+		  sizesSum = rect.width() - (rect.height());
 		  break;
 	      }
 
@@ -277,18 +282,18 @@ void RaptorGraphicsView::setupItems()
 	      }
 
 	      RaptorMenuItem *item = d->items[i]; 
-	      item->setRect(QRectF(QPointF(sizesSum, 0), QSizeF(contentsRect().height(), contentsRect().height())));
+	      item->setRect(QRectF(QPointF(sizesSum, d->topMargin), QSizeF(rect.height(), rect.height())));
 	      d->shownItems << item;
 
-	      sizesSum += contentsRect().height();
+	      sizesSum += rect.height();
 	  }
 
 	  int max = i + 2;
-	  y = 0;
+	  y = d->topMargin;
 	  for (; i < max; i++) { // here we handle the last two items
 	      RaptorMenuItem *item = d->items[i];
-	      item->setRect(QRectF(QPointF(sizesSum + contentsRect().height() / 4, y), QSizeF(contentsRect().height() / 2, contentsRect().height() / 2)));
-	      y += contentsRect().height() / 2;
+	      item->setRect(QRectF(QPointF(sizesSum + rect.height() / 4, y), QSizeF(rect.height() / 2, rect.height() / 2)));
+	      y += rect.height() / 2;
               d->shownItems << item;
 	  }
     }
