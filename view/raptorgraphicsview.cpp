@@ -266,7 +266,7 @@ void RaptorGraphicsView::setupItems()
 
 	  for (; i < 2; i++) { // we place the first two items half sized and in column
 	      RaptorMenuItem *item = d->items[i];
-	      item->setRect(QRectF(QPointF(rect.height() / 4, y), QSizeF(rect.height() / 2, rect.height() / 2)));
+	      item->setRect(QRectF(QPointF(0, y), QSizeF(rect.height(), rect.height() / 2)));
 	      y += rect.height() / 2;
               d->shownItems << item;
 	  }
@@ -293,7 +293,7 @@ void RaptorGraphicsView::setupItems()
 	  y = d->topMargin;
 	  for (; i < max; i++) { // here we handle the last two items
 	      RaptorMenuItem *item = d->items[i];
-	      item->setRect(QRectF(QPointF(sizesSum + rect.height() / 4, y), QSizeF(rect.height() / 2, rect.height() / 2)));
+	      item->setRect(QRectF(QPointF(sizesSum, y), QSizeF(rect.height(), rect.height() / 2)));
 	      y += rect.height() / 2;
               d->shownItems << item;
 	  }

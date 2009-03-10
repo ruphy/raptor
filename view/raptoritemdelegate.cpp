@@ -131,8 +131,11 @@ void RaptorItemDelegate::drawNormalWay(QPainter *painter, const QStyleOptionView
 
     if (d->optV4.state & QStyle::State_MouseOver && !(d->optV4.state & QStyle::State_Selected) ) {
         painter->save();
+        QRect overlayRect = d->optV4.rect;
+        overlayRect.setSize(QSize(overlayRect.height(), overlayRect.height()));
+        overlayRect.moveCenter(d->optV4.rect.center());
         painter->setOpacity(d->item->timeLine()->currentValue());
-        drawOverlay(painter, d->optV4.rect);
+        drawOverlay(painter, overlayRect);
         painter->restore();
     }
 
