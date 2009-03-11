@@ -105,7 +105,6 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
     d->view->setModel(d->model);
 
     d->leftScrollButton = new RaptorScrollButton(RaptorScrollButton::Left, this);
-    d->leftScrollButton->setZValue(1000);
 //     d->view = new RaptorItemsView();
 //     RaptorItemDelegate *delegate = new RaptorItemDelegate();
 
@@ -116,7 +115,7 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
     d->favoritesIcon->setIcon(KIcon("rating"));
     //d->searchLine->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
     d->rightScrollButton = new RaptorScrollButton(RaptorScrollButton::Right, this);
-    d->rightScrollButton->setZValue(1000);
+
 
     d->appletConfig = appletconfig;
 
@@ -202,6 +201,8 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
 
     setContentsMargins(CONTENTS_RECT_HORIZONTAL_MARGIN, CONTENTS_RECT_VERTICAL_MARGIN, CONTENTS_RECT_HORIZONTAL_MARGIN, CONTENTS_RECT_VERTICAL_MARGIN);
 
+    d->rightScrollButton->resize(32, 32);
+    d->leftScrollButton->resize(32, 32);
 }
 
 RaptorGraphicsWidget::~RaptorGraphicsWidget()
@@ -235,9 +236,8 @@ void RaptorGraphicsWidget::updateColors()
 
 void RaptorGraphicsWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
 {
-    d->rightScrollButton->moveBy(1, 0);
-    kDebug() << d->rightScrollButton->pos();
-    d->leftScrollButton->setPos(contentsRect().left(), rect().height() / 2);
+    d->rightScrollButton->setPos(contentsRect().right() - d->rightScrollButton->size().width() / 2, rect().height() / 2 - d->rightScrollButton->rect().height() / 2);
+    d->leftScrollButton->setPos(contentsRect().x() - d->leftScrollButton->size().width() / 2, rect().height() / 2 - d->leftScrollButton->rect().height() / 2);
 }
 
 void RaptorGraphicsWidget::refineModel()
@@ -290,7 +290,7 @@ void RaptorGraphicsWidget::paint(QPainter *painter, const QStyleOptionGraphicsIt
     Q_UNUSED(option)
     Q_UNUSED(widget)
 
-    painter->fillRect(option->rect, Qt::red);
+//     painter->fillRect(option->rect, Qt::red);
 
     QRectF frameRect(option->rect);
     frameRect.setX(FRAME_RECT_HORIZONTAL_MARGIN);
