@@ -43,21 +43,28 @@
 #include <Plasma/LineEdit>
 #include <Plasma/IconWidget>
 #include <Plasma/Applet>
+#include <Plasma/FrameSvg>
 #include <plasma/runnermanager.h>
+
+const int CONTENTS_RECT_HORIZONTAL_MARGIN = 32;
+const int CONTENTS_RECT_VERTICAL_MARGIN = 10;
+const int FRAME_RECT_HORIZONTAL_MARGIN = 22;
+const int FRAME_RECT_VERTICAL_MARGIN = 8;
 
 class RaptorGraphicsWidget::Private
 {
 public:
     Private(RaptorGraphicsWidget *q) : q(q),
                                        view(0),
-                                       proxy(0),
                                        model(0),
                                        searchModel(0),
                                        rightScrollButton(0),
-                                       rightScrollButtonProxy(0),
-                                       leftScrollButton(0),
-                                       leftScrollButtonProxy(0)
-    {}
+                                       leftScrollButton(0)
+    {
+        frame = new Plasma::FrameSvg(q);
+        frame->setImagePath("dialogs/background");
+        frame->setEnabledBorders(Plasma::FrameSvg::AllBorders);
+    }
     ~Private()
     {
         delete searchModel;
@@ -65,18 +72,20 @@ public:
 
     RaptorGraphicsWidget *q;
     RaptorGraphicsView *view;
-    QGraphicsProxyWidget *proxy;
+
     Kickoff::ApplicationModel *model;
     Kickoff::SearchModel * searchModel;
     Kickoff::FavoritesModel * favoritesModel;
+
     RaptorScrollButton *rightScrollButton;
-    QGraphicsProxyWidget *rightScrollButtonProxy;
     RaptorScrollButton *leftScrollButton;
-    QGraphicsProxyWidget *leftScrollButtonProxy;
-    Plasma::LineEdit *searchLine;
     Breadcrumb * breadCrumb;
+
+    Plasma::LineEdit *searchLine;
     Plasma::IconWidget * favoritesIcon;
     Plasma::RunnerManager * manager;
+    Plasma::FrameSvg *frame;
+
     KConfigGroup appletConfig;
 };
 
@@ -96,6 +105,7 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
     d->view->setModel(d->model);
 
     d->leftScrollButton = new RaptorScrollButton(RaptorScrollButton::Left, this);
+    d->leftScrollButton->setZValue(1000);
 //     d->view = new RaptorItemsView();
 //     RaptorItemDelegate *delegate = new RaptorItemDelegate();
 
@@ -106,6 +116,8 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
     d->favoritesIcon->setIcon(KIcon("rating"));
     //d->searchLine->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
     d->rightScrollButton = new RaptorScrollButton(RaptorScrollButton::Right, this);
+    d->rightScrollButton->setZValue(1000);
+
     d->appletConfig = appletconfig;
 
     QGraphicsLinearLayout *verticalLayout = new QGraphicsLinearLayout(Qt::Vertical);
@@ -121,12 +133,12 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
     layout->setOrientation(Qt::Horizontal);
 
     connect(d->leftScrollButton, SIGNAL(clicked()), d->view, SLOT(scrollLeft()));
-    layout->addItem(d->leftScrollButton);
+//     layout->addItem(d->leftScrollButton);
 
     layout->addItem(d->view);
 
     connect(d->rightScrollButton, SIGNAL(clicked()), d->view, SLOT(scrollRight()));
-    layout->addItem(d->rightScrollButton);
+//     layout->addItem(d->rightScrollButton);
 
     verticalLayout->addItem(layout);
 
@@ -146,8 +158,6 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
 // 
 //     d->view->hideScrollBars();
 // 
-//     d->proxy = new QGraphicsProxyWidget(this);
-//    d->proxy->setWidget(d->view);
 
     KConfigGroup config(&d->appletConfig, "PlasmaRunnerManager");
     KConfigGroup conf(&config, "Plugins");
@@ -190,6 +200,8 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
 // 
 //     d->view->focusCentralItem();
 
+    setContentsMargins(CONTENTS_RECT_HORIZONTAL_MARGIN, CONTENTS_RECT_VERTICAL_MARGIN, CONTENTS_RECT_HORIZONTAL_MARGIN, CONTENTS_RECT_VERTICAL_MARGIN);
+
 }
 
 RaptorGraphicsWidget::~RaptorGraphicsWidget()
@@ -221,38 +233,11 @@ void RaptorGraphicsWidget::updateColors()
     //static_cast<RaptorItemDelegate*>(d->view->itemDelegate())->setTextColor(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
 }
 
-// QSizeF RaptorGraphicsWidget::sizeHint(Qt::SizeHint which, const QSizeF & constraint ) const
-// {
-//     QSizeF size;
-//
-//     kDebug()<<"minimum"<<d->view->minimumSize();
-//     kDebug()<<"hint"<<d->view->sizeHint();
-//     kDebug()<<"maximum"<<d->view->maximumSize();
-//     kDebug()<<"current"<<this->size().toSize();
-//
-//     switch (which) {
-//     case Qt::MinimumSize :
-//         size = QSizeF(200,100);
-//         break;
-// //     default :
-//     case Qt::PreferredSize :
-//         size = QSizeF(d->view->sizeHint());
-//         break;
-//     case Qt::MaximumSize :
-//         size = QSizeF(d->view->maximumSize());
-//         break;
-//     }
-//
-//     return size;
-// }
-
 void RaptorGraphicsWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
 {
-    kDebug()<<"preferredSize"<<preferredSize();
-    kDebug()<<"maximumSize"<<maximumSize();
-    kDebug()<<"minimumSize"<<minimumSize();
-
-    QGraphicsWidget::resizeEvent(event);
+    d->rightScrollButton->moveBy(1, 0);
+    kDebug() << d->rightScrollButton->pos();
+    d->leftScrollButton->setPos(contentsRect().left(), rect().height() / 2);
 }
 
 void RaptorGraphicsWidget::refineModel()
@@ -300,12 +285,22 @@ void RaptorGraphicsWidget::addOrRemoveFavorite(const QString &url)
     }
 }
 
-// void RaptorGraphicsWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
-// {
-// //     Q_UNUSED(option)
-// //     Q_UNUSED(widget)
-// //     painter->fillRect(rect(), Qt::red);
-//     QGraphicsWidget::paint(painter, option, widget);
-// }
+void RaptorGraphicsWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+    Q_UNUSED(option)
+    Q_UNUSED(widget)
 
-#include "raptorgraphicswidget.moc"
+    painter->fillRect(option->rect, Qt::red);
+
+    QRectF frameRect(option->rect);
+    frameRect.setX(FRAME_RECT_HORIZONTAL_MARGIN);
+    frameRect.setY(contentsRect().y());
+    frameRect.setWidth(option->rect.width() - (2*FRAME_RECT_HORIZONTAL_MARGIN) );
+    frameRect.setHeight(option->rect.height() - (2*FRAME_RECT_VERTICAL_MARGIN));
+
+//     painter->fillRect(contentsRect(), Qt::green);
+//     painter->drawRect(frameRect);
+
+    d->frame->resizeFrame(frameRect.size());
+    d->frame->paintFrame(painter, frameRect.topLeft());
+}

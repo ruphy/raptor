@@ -169,7 +169,7 @@ void RaptorGraphicsView::paint(QPainter *painter, const QStyleOptionGraphicsItem
     Q_UNUSED(option)
 
     painter->setClipRect(contentsRect());
-//     painter->fillRect(rect(), Qt::red);
+    painter->fillRect(rect(), Qt::green);
 
     foreach (RaptorMenuItem *item, d->shownItems) {
         d->delegate->paint(painter, *item->option(), item->modelIndex());
