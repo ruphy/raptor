@@ -177,6 +177,7 @@ void RaptorItemDelegate::drawTwoAppsWay(QPainter *painter, const QStyleOptionVie
         d->optV4.palette.setColor(QPalette::Text, d->textColor);
     }
 
+    painter->save();
     painter->setRenderHint(QPainter::Antialiasing);
     painter->setClipRect(d->optV4.rect);
     painter->setPen(Qt::NoPen);
@@ -233,6 +234,8 @@ void RaptorItemDelegate::drawTwoAppsWay(QPainter *painter, const QStyleOptionVie
     painter->drawText(lastUsedRect, Qt::AlignRight, i18n("%1 ago", d->item->lastUsed()));
 
     //lastUsedRect.setY(lastUsedRect.y() + TEXT_HEIGHT());
+
+    painter->restore();
 
     painter->restore();
 }
