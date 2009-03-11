@@ -294,9 +294,9 @@ void RaptorGraphicsWidget::paint(QPainter *painter, const QStyleOptionGraphicsIt
 
     QRectF frameRect(option->rect);
     frameRect.setX(FRAME_RECT_HORIZONTAL_MARGIN);
-    frameRect.setY(contentsRect().y());
+    //frameRect.setY(contentsRect().y());
     frameRect.setWidth(option->rect.width() - (2*FRAME_RECT_HORIZONTAL_MARGIN) );
-    frameRect.setHeight(option->rect.height() - (2*FRAME_RECT_VERTICAL_MARGIN));
+    //frameRect.setHeight(option->rect.height() - (2*FRAME_RECT_VERTICAL_MARGIN));
 
 //     painter->fillRect(contentsRect(), Qt::green);
 //     painter->drawRect(frameRect);
