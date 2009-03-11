@@ -5,6 +5,6 @@ libplasma-dev
 INSTALL:
 $mkdir build
 $cd build
-$cmake ../
+$cmake ../ -DCMAKE_INSTALL_PREFIX=`kde4-config --prefix`
 $make
 $make install
