@@ -37,8 +37,6 @@ public:
     RaptorGraphicsView(QGraphicsItem *parent = 0);
     ~RaptorGraphicsView();
 
-    void reset();
-
     QModelIndex rootIndex() const;
 
     QList<RaptorMenuItem*> items() const;
@@ -53,12 +51,15 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
 
 public slots:
+    void reset();
     void setRootIndex(const QModelIndex &);
     void scrollRight();
     void scrollLeft();
 
 protected slots:
     void slotAddFavorite(const QModelIndex &);
+    void addRows(const QModelIndex &, int, int);
+    void removeRows(const QModelIndex &, int, int);
 
 signals:
     void enteredItem(const QModelIndex &);

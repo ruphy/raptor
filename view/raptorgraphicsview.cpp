@@ -142,7 +142,15 @@ QAbstractItemModel* RaptorGraphicsView::model()
 
 void RaptorGraphicsView::setModel(QAbstractItemModel *model)
 {
+    if (d->model) {
+        disconnect(d->model, SIGNAL(rowsInserted(QModelIndex, int, int)), 0, 0);
+        disconnect(d->model, SIGNAL(rowsRemoved(QModelIndex, int, int)), 0, 0);
+        disconnect(d->model, SIGNAL(modelReset()), 0, 0);
+    }
     d->model = model;
+    connect(d->model, SIGNAL(rowsInserted(QModelIndex, int, int)), SLOT(addRows(QModelIndex, int, int)));
+    connect(d->model, SIGNAL(rowsRemoved(QModelIndex, int, int)), SLOT(removeRows(QModelIndex, int, int)));
+    connect(d->model, SIGNAL(modelReset()), SLOT(reset()));
     d->rootIndex = QModelIndex();
 
     getItems();
@@ -161,6 +169,30 @@ void RaptorGraphicsView::setViewMode(ViewMode viewMode)
 RaptorGraphicsView::ViewMode RaptorGraphicsView::viewMode()
 {
     return (RaptorGraphicsView::ViewMode)d->delegate->viewMode();
+}
+
+void RaptorGraphicsView::addRows(const QModelIndex &parent, int start, int end)
+{
+    kDebug();
+    for (int i = start; i != end; i++) {
+        d->items.append(new RaptorMenuItem(parent.child(i, 0)));
+    }
+    setupItems();
+    update();
+}
+
+void RaptorGraphicsView::removeRows(const QModelIndex &parent, int start, int end)
+{
+    kDebug();
+    QList<RaptorMenuItem*> toRemove;
+    for (int i = start; i != end; i++) {
+        toRemove.append(d->items.at(i));
+    }
+    foreach (RaptorMenuItem * item, toRemove) {
+        d->items.removeAll(item);
+    }
+    setupItems();
+    update();
 }
 
 void RaptorGraphicsView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
