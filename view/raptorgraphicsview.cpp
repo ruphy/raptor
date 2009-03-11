@@ -336,13 +336,18 @@ void RaptorGraphicsView::setupItems()
 void RaptorGraphicsView::scrollItems()
 {
     if (viewMode() == RaptorGraphicsView::Search) {
-        if (abs(d->scrollOffset) < 10) {
+        RaptorMenuItem *item = d->items.first();
+        int scrollDelta = item->rect().width() / 2; // Smaller is faster scroll
+        if (abs(d->scrollOffset) < scrollDelta) {
             return;
         }
-        if (d->scrollOffset > 0) {
+        while (d->scrollOffset > scrollDelta) {
             scrollLeft();
-        } else {
+	    d->scrollOffset -= scrollDelta;
+	}
+        while (d->scrollOffset < -scrollDelta) {
             scrollRight();
+            d->scrollOffset += scrollDelta;
         }
         return;
     }
@@ -465,7 +470,7 @@ void RaptorGraphicsView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
 void RaptorGraphicsView::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    d->scrollOffset = event->pos().x() - event->lastPos().x();
+    d->scrollOffset += event->pos().x() - event->lastPos().x();
 
     scrollItems();
 }
