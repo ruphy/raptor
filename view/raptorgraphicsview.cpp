@@ -343,8 +343,8 @@ void RaptorGraphicsView::scrollItems()
         }
         while (d->scrollOffset > scrollDelta) {
             scrollLeft();
-	    d->scrollOffset -= scrollDelta;
-	}
+            d->scrollOffset -= scrollDelta;
+        }
         while (d->scrollOffset < -scrollDelta) {
             scrollRight();
             d->scrollOffset += scrollDelta;
