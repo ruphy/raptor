@@ -19,7 +19,7 @@
 
 #include <KDebug>
 
-const int FRAMES = 20;
+const int FRAMES = 5;
 
 class RaptorScrollButton::Private
 {

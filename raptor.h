@@ -29,12 +29,8 @@ class Raptor : public Plasma::PopupApplet
         Raptor(QObject *parent, const QVariantList &args);
         ~Raptor();
 
-        // The paintInterface procedure paints the applet to screen
-        void paintInterface(QPainter *painter,
-                const QStyleOptionGraphicsItem *option,
-                const QRect& contentsRect);
-
         void init();
+        void constraintsEvent(Plasma::Constraints constraints);
 
         QGraphicsWidget *graphicsWidget();
 
