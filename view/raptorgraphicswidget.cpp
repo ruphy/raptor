@@ -49,7 +49,6 @@
 const int CONTENTS_RECT_HORIZONTAL_MARGIN = 32;
 const int CONTENTS_RECT_VERTICAL_MARGIN = 10;
 const int FRAME_RECT_HORIZONTAL_MARGIN = 22;
-const int FRAME_RECT_VERTICAL_MARGIN = 8;
 
 class RaptorGraphicsWidget::Private
 {
@@ -236,8 +235,8 @@ void RaptorGraphicsWidget::updateColors()
 
 void RaptorGraphicsWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
 {
-    d->rightScrollButton->setPos(contentsRect().right() - d->rightScrollButton->size().width() / 2, rect().height() / 2 - d->rightScrollButton->rect().height() / 2);
-    d->leftScrollButton->setPos(contentsRect().x() - d->leftScrollButton->size().width() / 2, rect().height() / 2 - d->leftScrollButton->rect().height() / 2);
+    d->rightScrollButton->setPos(rect().width() - FRAME_RECT_HORIZONTAL_MARGIN - d->rightScrollButton->size().width() / 2, rect().height() / 2 - d->rightScrollButton->rect().height() / 2);
+    d->leftScrollButton->setPos(FRAME_RECT_HORIZONTAL_MARGIN - d->leftScrollButton->size().width() / 2, rect().height() / 2 - d->leftScrollButton->rect().height() / 2);
 }
 
 void RaptorGraphicsWidget::refineModel()
@@ -294,9 +293,7 @@ void RaptorGraphicsWidget::paint(QPainter *painter, const QStyleOptionGraphicsIt
 
     QRectF frameRect(option->rect);
     frameRect.setX(FRAME_RECT_HORIZONTAL_MARGIN);
-    //frameRect.setY(contentsRect().y());
     frameRect.setWidth(option->rect.width() - (2*FRAME_RECT_HORIZONTAL_MARGIN) );
-    //frameRect.setHeight(option->rect.height() - (2*FRAME_RECT_VERTICAL_MARGIN));
 
 //     painter->fillRect(contentsRect(), Qt::green);
 //     painter->drawRect(frameRect);
