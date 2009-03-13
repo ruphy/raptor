@@ -287,6 +287,9 @@ void RaptorGraphicsView::setupItems()
             d->shownItems << item;
             i++;
         }
+        if (d->scrollTimeLine->state() == QTimeLine::Running) {
+            d->scrollTimeLine->stop();
+        }
         d->scrollTimeLine->start();
     }
 

@@ -72,6 +72,10 @@ QRectF RaptorMenuItem::rect() const
 
 void RaptorMenuItem::setRect(const QRectF &rect)
 {
+    kDebug() << "SET OUR RECT TO" << rect;
+    if (d->rect == rect) {
+        return;
+    }
     if (d->rect.isNull()) {
         kDebug() << "RECT IS NULL" << rect;;
         d->rect = rect;
@@ -106,6 +110,7 @@ QStyleOptionViewItem* RaptorMenuItem::option()
 
 void RaptorMenuItem::Private::calculateRect()
 {
+    kDebug() << "FINAL RECT IS" << finalRect << "WE'RE AT" << option->rect;
     if (option->rect == finalRect) {
         kDebug() << "WE'RE AT FINAL RECT";
         rect = option->rect;
