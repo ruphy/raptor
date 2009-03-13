@@ -110,15 +110,15 @@ QStyleOptionViewItem* RaptorMenuItem::option()
 
 void RaptorMenuItem::Private::calculateRect()
 {
-    kDebug() << "ITEM IS" << q->modelIndex().data(Qt::DisplayRole) << "FINAL RECT IS" << finalRect << "WE'RE AT" << option->rect;
+    //kDebug() << "ITEM IS" << q->modelIndex().data(Qt::DisplayRole) << "FINAL RECT IS" << finalRect << "WE'RE AT" << option->rect;
     if (option->rect == finalRect) {
         kDebug() << "WE'RE AT FINAL RECT";
         rect = option->rect;
         return;
     }
+    kDebug() << "*************************************************+Original rect is:" << rect;
     QRectF rect(QPoint(rect.x() + (finalRect.x() - rect.x()) / FRAMES * frame, option->rect.y()), finalRect.size());
     option->rect = rect.toRect();
-    kDebug() << rect;
 }
 
 void RaptorMenuItem::Private::calculateDecorationSize()

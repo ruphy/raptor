@@ -219,7 +219,7 @@ void RaptorGraphicsView::paint(QPainter *painter, const QStyleOptionGraphicsItem
 //     painter->fillRect(rect(), Qt::green);
 
     foreach (RaptorMenuItem *item, d->shownItems) {
-        kDebug() << "Paint" << item->modelIndex().data(Qt::DisplayRole) << "at" << item->option()->rect;
+        //kDebug() << "Paint" << item->modelIndex().data(Qt::DisplayRole) << "at" << item->option()->rect;
         d->delegate->paint(painter, *item->option(), item->modelIndex());
     }
 
