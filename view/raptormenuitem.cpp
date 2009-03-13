@@ -72,7 +72,7 @@ QRectF RaptorMenuItem::rect() const
 
 void RaptorMenuItem::setRect(const QRectF &rect)
 {
-    kDebug() << "SET OUR RECT TO" << rect;
+    kDebug() << "SET OUR RECT TO" << rect << "THE ORIGINAL WAS:" << d->rect;
     if (d->rect == rect) {
         return;
     }
@@ -116,9 +116,12 @@ void RaptorMenuItem::Private::calculateRect()
         rect = option->rect;
         return;
     }
-    kDebug() << "*************************************************+Original rect is:" << rect;
-    QRectF rect(QPoint(rect.x() + (finalRect.x() - rect.x()) / FRAMES * frame, option->rect.y()), finalRect.size());
-    option->rect = rect.toRect();
+    kDebug() << "Item:" << index.data(Qt::DisplayRole) << "Original rect is:" << rect << "Add that shit:" << rect.x() + (finalRect.x() - rect.x()) / FRAMES * frame << "Current rect is:" << option->rect;
+    QRect rect = option->rect;
+    rect.setSize(finalRect.size().toSize());
+    rect.setX(rect.x() + (finalRect.x() - rect.x()) / FRAMES * frame);
+    //QRectF rect(QPoint(rect.x() + (finalRect.x() - rect.x()) / FRAMES * frame, option->rect.y()), finalRect.size());
+    option->rect = rect;
 }
 
 void RaptorMenuItem::Private::calculateDecorationSize()
