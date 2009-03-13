@@ -43,6 +43,8 @@ public:
      */
     QRectF rect() const;
 
+    void setFrame(int frame);
+
     /**
      * This is a convenience function and it is the same as calling:
      * setRect ( rect().translated(dx, dy) );

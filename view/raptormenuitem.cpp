@@ -28,7 +28,7 @@ const int FRAMES = 20;
 class RaptorMenuItem::Private
 {
 public:
-    Private(const QModelIndex &index, RaptorGraphicsView *p, RaptorMenuItem *q) : q(q), index(index), option(new QStyleOptionViewItem), view(p)
+    Private(const QModelIndex &index, RaptorGraphicsView *p, RaptorMenuItem *q) : q(q), index(index), option(new QStyleOptionViewItem), view(p), frame(0)
     {
         lastUsed = i18n("20 Minutes");//FIXME: Replace with proper last used info :)
         lastUsedWidth = Plasma::Theme::defaultTheme()->fontMetrics().width(lastUsed);
@@ -41,13 +41,16 @@ public:
     RaptorMenuItem *q;
     QModelIndex index;
     QRectF rect;
+    QRectF finalRect;
     QStyleOptionViewItem *option;
     QTimeLine *timeLine;
     RaptorGraphicsView *view;
     QString lastUsed;
     int lastUsedWidth;
+    int frame;
 
     void calculateDecorationSize();
+    void calculateRect();
 };
 
 RaptorMenuItem::RaptorMenuItem(const QModelIndex &index, RaptorGraphicsView *parent) : QObject(parent) , d(new Private(index, parent, this))
@@ -69,10 +72,21 @@ QRectF RaptorMenuItem::rect() const
 
 void RaptorMenuItem::setRect(const QRectF &rect)
 {
-    d->rect = rect;
-    d->option->rect = rect.toRect();
+    if (d->rect.isNull()) {
+        kDebug() << "RECT IS NULL" << rect;;
+        d->rect = rect;
+        d->option->rect = rect.toRect();
+        d->calculateDecorationSize();
+        return;
+    }
+    d->finalRect = rect;
+}
 
-    d->calculateDecorationSize();
+void RaptorMenuItem::setFrame(int frame)
+{
+    kDebug() << frame;
+    d->frame = frame;
+    d->calculateRect();
 }
 
 void RaptorMenuItem::moveBy(float dx, float dy)
@@ -88,6 +102,18 @@ QModelIndex RaptorMenuItem::modelIndex() const
 QStyleOptionViewItem* RaptorMenuItem::option()
 {
     return d->option;
+}
+
+void RaptorMenuItem::Private::calculateRect()
+{
+    if (option->rect == finalRect) {
+        kDebug() << "WE'RE AT FINAL RECT";
+        rect = option->rect;
+        return;
+    }
+    QRectF rect(QPoint(rect.x() + (finalRect.width() - rect.width()) / FRAMES * frame, option->rect.y()), finalRect.size());
+    option->rect = rect.toRect();
+    kDebug() << rect;
 }
 
 void RaptorMenuItem::Private::calculateDecorationSize()

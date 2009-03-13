@@ -60,6 +60,7 @@ protected slots:
     void slotAddFavorite(const QModelIndex &);
     void addRows(const QModelIndex &, int, int);
     void removeRows(const QModelIndex &, int, int);
+    void setScrollingFrame();
 
 signals:
     void enteredItem(const QModelIndex &);

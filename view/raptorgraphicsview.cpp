@@ -23,6 +23,8 @@
 
 #include <Plasma/Theme>
 
+const int DURATION = 250;
+
 class RaptorGraphicsView::Private
 {
 public:
@@ -31,6 +33,8 @@ public:
         delegate = new RaptorItemDelegate(q);
         delegate->setTextColor(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
         topMargin = Plasma::Theme::defaultTheme()->fontMetrics().height();
+        scrollTimeLine = new QTimeLine(DURATION, q);
+        scrollTimeLine->setFrameRange(0, 20);
     }
 
     ~Private()
@@ -52,6 +56,8 @@ public:
     qreal scrollOffset;
 
     int topMargin;
+
+    QTimeLine * scrollTimeLine;
 };
 
 RaptorGraphicsView::RaptorGraphicsView(QGraphicsItem *parent) : QGraphicsWidget(parent), d(new Private(this))
@@ -63,6 +69,7 @@ RaptorGraphicsView::RaptorGraphicsView(QGraphicsItem *parent) : QGraphicsWidget(
     setAcceptHoverEvents(true);
 
     connect (d->delegate, SIGNAL(favoriteAddRequested(const QModelIndex &)), this, SLOT(slotAddFavorite(const QModelIndex &)));
+    connect (d->scrollTimeLine, SIGNAL(frameChanged(int)), SLOT(setScrollingFrame()));
 }
 
 RaptorGraphicsView::~RaptorGraphicsView()
@@ -132,6 +139,14 @@ void RaptorGraphicsView::scrollLeft()
     d->items.prepend(item);
 
     setupItems();
+    update();
+}
+
+void RaptorGraphicsView::setScrollingFrame()
+{
+    foreach (RaptorMenuItem * item, d->shownItems) {
+        item->setFrame(d->scrollTimeLine->currentFrame());
+    }
     update();
 }
 
@@ -255,10 +270,12 @@ void RaptorGraphicsView::setupItems()
     rect.moveBottom(d->topMargin);
 
     if (mode == RaptorGraphicsView::Normal) {
+        kDebug() << "YAY";
         qreal sizesSum = 0;
         qreal size = rect.height();
         int i = 0;
         foreach (RaptorMenuItem *item, d->items) {
+            kDebug() << "Set item rect" << QRectF(QPointF(sizesSum, d->topMargin), QSizeF(size, size));
             item->setRect(QRectF(QPointF(sizesSum, d->topMargin), QSizeF(size, size)));
             sizesSum += size;
             if (sizesSum + item->rect().width() < rect.x()) {
@@ -270,6 +287,7 @@ void RaptorGraphicsView::setupItems()
             d->shownItems << item;
             i++;
         }
+        d->scrollTimeLine->start();
     }
 
     else if (mode == RaptorGraphicsView::SingleApp) {
@@ -472,16 +490,16 @@ void RaptorGraphicsView::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 RaptorGraphicsView::ViewMode RaptorGraphicsView::viewModeFromItemCount()
 {
-    switch (d->items.count()) {
+    /*switch (d->items.count()) {
         case 1:
             return RaptorGraphicsView::SingleApp;
         case 2:
             return RaptorGraphicsView::TwoApps;
         case 3:
         case 4:
-        case 5:
+        case 5:*/
             return RaptorGraphicsView::Normal;
-        default:
+        /*default:
             return RaptorGraphicsView::Search;
-    }
+    }*/
 }
