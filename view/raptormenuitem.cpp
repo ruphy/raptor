@@ -23,12 +23,11 @@
 #include <Plasma/Theme>
 
 const int DURATION = 150;
-const int FRAMES = 20;
 
 class RaptorMenuItem::Private
 {
 public:
-    Private(const QModelIndex &index, RaptorGraphicsView *p, RaptorMenuItem *q) : q(q), index(index), option(new QStyleOptionViewItem), view(p), frame(0)
+    Private(const QModelIndex &index, RaptorGraphicsView *p, RaptorMenuItem *q) : q(q), index(index), option(new QStyleOptionViewItem), view(p), value(0)
     {
         lastUsed = i18n("20 Minutes");//FIXME: Replace with proper last used info :)
         lastUsedWidth = Plasma::Theme::defaultTheme()->fontMetrics().width(lastUsed);
@@ -40,14 +39,17 @@ public:
 
     RaptorMenuItem *q;
     QModelIndex index;
+
     QRectF rect;
+    QRectF initialRect;
     QRectF finalRect;
+
     QStyleOptionViewItem *option;
     QTimeLine *timeLine;
     RaptorGraphicsView *view;
     QString lastUsed;
     int lastUsedWidth;
-    int frame;
+    qreal value;
 
     void calculateDecorationSize();
     void calculateRect();
@@ -83,13 +85,15 @@ void RaptorMenuItem::setRect(const QRectF &rect)
         d->calculateDecorationSize();
         return;
     }
+
+    d->initialRect = d->rect;
     d->finalRect = rect;
 }
 
-void RaptorMenuItem::setFrame(int frame)
+void RaptorMenuItem::setAnimationValue(qreal value)
 {
-    kDebug() << frame;
-    d->frame = frame;
+    kDebug() << value;
+    d->value = value;
     d->calculateRect();
 }
 
@@ -110,18 +114,16 @@ QStyleOptionViewItem* RaptorMenuItem::option()
 
 void RaptorMenuItem::Private::calculateRect()
 {
-    //kDebug() << "ITEM IS" << q->modelIndex().data(Qt::DisplayRole) << "FINAL RECT IS" << finalRect << "WE'RE AT" << option->rect;
-    if (option->rect == finalRect) {
-        kDebug() << "WE'RE AT FINAL RECT";
-        rect = option->rect;
+    if (value == 1) {
+        rect = finalRect;
+        option->rect = rect.toRect();
         return;
     }
-    kDebug() << "Item:" << index.data(Qt::DisplayRole) << "Original rect is:" << rect << "Add that shit:" << rect.x() + (finalRect.x() - rect.x()) / FRAMES * frame << "Current rect is:" << option->rect;
-    QRect rect = option->rect;
-    rect.setSize(finalRect.size().toSize());
-    rect.setX(rect.x() + (finalRect.x() - rect.x()) / FRAMES * frame);
-    //QRectF rect(QPoint(rect.x() + (finalRect.x() - rect.x()) / FRAMES * frame, option->rect.y()), finalRect.size());
-    option->rect = rect;
+
+    qreal xTranslation = (finalRect.x() - initialRect.x()) * value;
+    kDebug() << initialRect.x() << initialRect.x() + xTranslation << finalRect.x();
+    rect = initialRect.translated(xTranslation, 0);
+    option->rect = rect.toRect();
 }
 
 void RaptorMenuItem::Private::calculateDecorationSize()

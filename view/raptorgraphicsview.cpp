@@ -145,7 +145,7 @@ void RaptorGraphicsView::scrollLeft()
 void RaptorGraphicsView::setScrollingFrame()
 {
     foreach (RaptorMenuItem * item, d->shownItems) {
-        item->setFrame(d->scrollTimeLine->currentFrame());
+        item->setAnimationValue(d->scrollTimeLine->currentValue());
     }
     update();
 }

@@ -43,7 +43,7 @@ public:
      */
     QRectF rect() const;
 
-    void setFrame(int frame);
+    void setAnimationValue(qreal value);
 
     /**
      * This is a convenience function and it is the same as calling:
