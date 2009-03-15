@@ -47,6 +47,7 @@ public:
 
     QList<RaptorMenuItem*> items;
     QList<RaptorMenuItem*> shownItems;
+    QList<RaptorMenuItem*> needsAnimation;
 
     RaptorItemDelegate * delegate;
 
@@ -147,6 +148,9 @@ void RaptorGraphicsView::setScrollingFrame()
     foreach (RaptorMenuItem * item, d->shownItems) {
         item->setAnimationValue(d->scrollTimeLine->currentValue());
     }
+    foreach (RaptorMenuItem * item, d->needsAnimation) {
+        item->setAnimationValue(d->scrollTimeLine->currentValue());
+    }
     update();
 }
 
@@ -222,6 +226,11 @@ void RaptorGraphicsView::paint(QPainter *painter, const QStyleOptionGraphicsItem
         //kDebug() << "Paint" << item->modelIndex().data(Qt::DisplayRole) << "at" << item->option()->rect;
         d->delegate->paint(painter, *item->option(), item->modelIndex());
     }
+    if (d->scrollTimeLine->currentFrame() != 20) {
+        foreach (RaptorMenuItem *item, d->needsAnimation) {
+            d->delegate->paint(painter, *item->option(), item->modelIndex());
+        }
+    }
 
     //Paint description, FIXME: Change DataRole
     if ((d->currentHoveredItem || viewMode() == RaptorGraphicsView::SingleApp) && !d->shownItems.isEmpty()) {
@@ -262,8 +271,12 @@ void RaptorGraphicsView::setupItems()
     // NOTE: for each view mode we should setup items individually
     // WARNING: we suppose a horizontal view
     // TODO: remove tabs
-
+    RaptorMenuItem * oldFirst = 0;
+    if (!d->shownItems.isEmpty()) {
+        oldFirst = d->shownItems.first();
+    }
     d->shownItems.clear();
+    d->needsAnimation.clear();
     ViewMode mode = viewMode();
 
     QRectF rect = contentsRect();
@@ -287,6 +300,11 @@ void RaptorGraphicsView::setupItems()
         }
         if (!d->shownItems.contains(d->items.last())) {
             d->items.last()->setRect(QRectF(QPointF(-1 * size,d->topMargin), QSizeF(size, size)));
+        }
+        if (oldFirst && !d->shownItems.contains(oldFirst)) {
+            kDebug() << "Move the old first outside";
+            oldFirst->moveTo(QRectF(QPointF(!size, d->topMargin), QSizeF(size, size)));
+            d->needsAnimation << oldFirst;
         }
 
         if (d->scrollTimeLine->state() == QTimeLine::Running) {
