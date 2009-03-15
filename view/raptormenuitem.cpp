@@ -74,12 +74,11 @@ QRectF RaptorMenuItem::rect() const
 
 void RaptorMenuItem::setRect(const QRectF &rect)
 {
-    kDebug() << "SET OUR RECT TO" << rect << "THE ORIGINAL WAS:" << d->rect;
     if (d->rect == rect) {
         return;
     }
+
     if (d->rect.isNull()) {
-        kDebug() << "RECT IS NULL" << rect;;
         d->rect = rect;
         d->option->rect = rect.toRect();
         d->calculateDecorationSize();
@@ -121,7 +120,7 @@ void RaptorMenuItem::Private::calculateRect()
     }
 
     qreal xTranslation = (finalRect.x() - initialRect.x()) * value;
-    kDebug() << initialRect.x() << initialRect.x() + xTranslation << finalRect.x();
+    kDebug() << index.data().toString() << initialRect.x() << initialRect.x() + xTranslation << finalRect.x();
     rect = initialRect.translated(xTranslation, 0);
     option->rect = rect.toRect();
 }
