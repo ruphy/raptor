@@ -277,7 +277,7 @@ void RaptorGraphicsView::setupItems()
         foreach (RaptorMenuItem *item, d->items) {
             kDebug() << "Set item rect" << QRectF(QPointF(sizesSum, d->topMargin), QSizeF(size, size));
 
-            item->setRect(QRectF(QPointF(sizesSum, d->topMargin), QSizeF(size, size)));
+            item->moveTo(QRectF(QPointF(sizesSum, d->topMargin), QSizeF(size, size)));
             sizesSum += size;
 
             if ( sizesSum - item->rect().width() > rect.width() ) {
@@ -285,6 +285,10 @@ void RaptorGraphicsView::setupItems()
             }
             d->shownItems << item;
         }
+        if (!d->shownItems.contains(d->items.last())) {
+            d->items.last()->setRect(QRectF(QPointF(-1 * size,d->topMargin), QSizeF(size, size)));
+        }
+
         if (d->scrollTimeLine->state() == QTimeLine::Running) {
             d->scrollTimeLine->stop();
         }

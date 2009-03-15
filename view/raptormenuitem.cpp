@@ -78,6 +78,17 @@ void RaptorMenuItem::setRect(const QRectF &rect)
         return;
     }
 
+    d->rect = rect;
+    d->option->rect = rect.toRect();
+    d->calculateDecorationSize();
+}
+
+void RaptorMenuItem::moveTo(const QRectF &rect)
+{
+    if (d->rect == rect) {
+        return;
+    }
+
     if (d->rect.isNull()) {
         d->rect = rect;
         d->option->rect = rect.toRect();

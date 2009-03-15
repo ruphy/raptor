@@ -36,6 +36,14 @@ public:
     void setRect(const QRectF &);
 
     /**
+     * Call this method in order to set the geometry of the item.
+     * This setting will override the rect passed with
+     * option in the paint() method.
+     * This animates the move.
+     */
+    void moveTo(const QRectF &);
+
+    /**
      * @returns the rect used to paint the item. If no
      * setRect has been called previously it will return the rect
      * used to paint the item with the first paint() call.
