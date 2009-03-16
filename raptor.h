@@ -13,15 +13,16 @@
 // We need the Plasma Applet headers
 #include <KIcon>
 
-#include <Plasma/PopupApplet>
-#include <Plasma/Svg>
+#include <Plasma/Applet>
+#include <Plasma/IconWidget>
+#include <Plasma/Dialog>
 
 class RaptorGraphicsWidget;
 
 class QSizeF;
 
 // Define our plasma Applet
-class Raptor : public Plasma::PopupApplet
+class Raptor : public Plasma::Applet
 {
     Q_OBJECT
     public:
@@ -34,13 +35,12 @@ class Raptor : public Plasma::PopupApplet
 
         QGraphicsWidget *graphicsWidget();
 
-    protected:
-        void setupView();
-
+    private slots:
+        void popup();
 
     private:
-        Plasma::Svg m_svg;
-        KIcon m_icon;
+        Plasma::IconWidget *m_icon;
+        Plasma::Dialog *m_dialog;
         RaptorGraphicsWidget *m_gwidget;
 };
 

@@ -14,29 +14,23 @@
 #include <QPainter>
 #include <QFontMetrics>
 #include <QSizeF>
+#include <QGraphicsLinearLayout>
 
-#include <plasma/svg.h>
 #include <plasma/theme.h>
+#include <Plasma/Corona>
 
 Raptor::Raptor(QObject *parent, const QVariantList &args)
-    : Plasma::PopupApplet(parent, args),
-    m_svg(this),
-    m_icon("start-here-kde"),
-    m_gwidget(0)
+    : Plasma::Applet(parent, args),
+      m_icon(0),
+      m_dialog(0),
+      m_gwidget(0)
 {
-    // this will get us the standard applet background, for free!
-    setAspectRatioMode(Plasma::IgnoreAspectRatio);
-    resize(200, 200);
+    //setAspectRatioMode(Plasma::IgnoreAspectRatio);
+    //resize(200, 200);
 }
-
 
 Raptor::~Raptor()
 {
-    if (hasFailedToLaunch()) {
-        // Do some cleanup here
-    } else {
-        // Save settings
-    }
 }
 
 void Raptor::constraintsEvent(Plasma::Constraints constraints)
@@ -47,23 +41,34 @@ void Raptor::constraintsEvent(Plasma::Constraints constraints)
 
 void Raptor::init()
 {
-    // A small demonstration of the setFailedToLaunch function
-    if (m_icon.isNull()) {
-        setFailedToLaunch(true, "No world to say hello");
-    }
+    QGraphicsLinearLayout * layout = new QGraphicsLinearLayout(this);
+    m_icon = new Plasma::IconWidget(KIcon("start-here"), QString(), this);
+    layout->addItem(m_icon);
+    setLayout(layout);
 
-    setupView();
-    setPopupIcon("start-here");
+    connect (m_icon, SIGNAL(clicked()), SLOT(popup()));
 }
 
-
-void Raptor::setupView()
+void Raptor::popup()
 {
-    m_gwidget = new RaptorGraphicsWidget(this, globalConfig());
+    if (!m_dialog) {
+        qobject_cast<Plasma::Corona*>(graphicsWidget()->scene())->addOffscreenWidget(graphicsWidget());
+        m_dialog = new Plasma::Dialog();
+        m_dialog->setResizeHandleCorners(Plasma::Dialog::All);
+        m_dialog->setGraphicsWidget(graphicsWidget());
+    }
+    if (m_dialog->isVisible()) {
+        m_dialog->hide();
+    } else {
+        m_dialog->show();
+    }
 }
 
 QGraphicsWidget* Raptor::graphicsWidget()
 {
+    if (!m_gwidget) {
+        m_gwidget = new RaptorGraphicsWidget(this, globalConfig());
+    }
     return m_gwidget;
 }
 
