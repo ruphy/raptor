@@ -172,6 +172,8 @@ void RaptorGraphicsView::setModel(QAbstractItemModel *model)
     connect(d->model, SIGNAL(modelReset()), SLOT(reset()));
     d->rootIndex = QModelIndex();
 
+    setViewMode(viewModeFromItemCount());
+
     getItems();
     setupItems();
     update();
@@ -267,7 +269,6 @@ void RaptorGraphicsView::setupItems()
         d->shownItems.clear();
         return;
     }
-    d->delegate->setViewMode((RaptorItemDelegate::ViewMode)viewModeFromItemCount());
     // NOTE: for each view mode we should setup items individually
     // WARNING: we suppose a horizontal view
     // TODO: remove tabs
