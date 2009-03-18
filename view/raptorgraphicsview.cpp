@@ -116,7 +116,8 @@ void RaptorGraphicsView::setRootIndex(const QModelIndex &index)
     d->rootIndex = index;
 
     getItems();
-    setupItems();
+    d->layout->setMenuItems(d->items);
+//     setupItems();
     update();
     emit enteredItem(d->rootIndex);
 }
@@ -130,7 +131,8 @@ void RaptorGraphicsView::scrollRight()
     d->items.removeAll(item);
     d->items.append(item);
 
-    setupItems();
+    d->layout->setMenuItems(d->items);
+//     setupItems();
     update();
 }
 
@@ -143,7 +145,8 @@ void RaptorGraphicsView::scrollLeft()
     d->items.removeAll(item);
     d->items.prepend(item);
 
-    setupItems();
+    d->layout->setMenuItems(d->items);
+//     setupItems();
     update();
 }
 
@@ -179,7 +182,9 @@ void RaptorGraphicsView::setModel(QAbstractItemModel *model)
     setViewMode(viewModeFromItemCount());
 
     getItems();
-    setupItems();
+
+    d->layout->setMenuItems(d->items);
+//     setupItems();
     update();
 }
 
@@ -187,7 +192,8 @@ void RaptorGraphicsView::setViewMode(ViewMode viewMode)
 {
     d->delegate->setViewMode((RaptorItemDelegate::ViewMode)viewMode);
 
-    setupItems();
+    d->layout->invalidate();
+//     setupItems();
     update();
 }
 
@@ -202,7 +208,9 @@ void RaptorGraphicsView::addRows(const QModelIndex &parent, int start, int end)
     for (int i = start; i != end; i++) {
         d->items.append(new RaptorMenuItem(parent.child(i, 0)));
     }
-    setupItems();
+
+    d->layout->setMenuItems(d->items);
+//     setupItems();
     update();
 }
 
@@ -216,7 +224,9 @@ void RaptorGraphicsView::removeRows(const QModelIndex &parent, int start, int en
     foreach (RaptorMenuItem * item, toRemove) {
         d->items.removeAll(item);
     }
-    setupItems();
+
+    d->layout->setMenuItems(d->items);
+//     setupItems();
     update();
 }
 
@@ -228,19 +238,19 @@ void RaptorGraphicsView::paint(QPainter *painter, const QStyleOptionGraphicsItem
     painter->setClipRect(contentsRect());
 //     painter->fillRect(rect(), Qt::green);
 
-    foreach (RaptorMenuItem *item, d->shownItems) {
+    foreach (RaptorMenuItem *item, d->layout->visibleItems()) {
         //kDebug() << "Paint" << item->modelIndex().data(Qt::DisplayRole) << "at" << item->option()->rect;
         d->delegate->paint(painter, *item->option(), item->modelIndex());
     }
-    if (d->scrollTimeLine->currentFrame() != 20) {
-        foreach (RaptorMenuItem *item, d->needsAnimation) {
-            d->delegate->paint(painter, *item->option(), item->modelIndex());
-        }
-    }
+//     if (d->scrollTimeLine->currentFrame() != 20) {
+//         foreach (RaptorMenuItem *item, d->needsAnimation) {
+//             d->delegate->paint(painter, *item->option(), item->modelIndex());
+//         }
+//     }
 
     //Paint description, FIXME: Change DataRole
-    if ((d->currentHoveredItem || viewMode() == RaptorGraphicsView::SingleApp) && !d->shownItems.isEmpty()) {
-        RaptorMenuItem * item = viewMode() == RaptorGraphicsView::SingleApp ? d->shownItems.first() : d->currentHoveredItem;
+    if ((d->currentHoveredItem || viewMode() == RaptorGraphicsView::SingleApp) && !d->layout->visibleItems().isEmpty()) {
+        RaptorMenuItem * item = viewMode() == RaptorGraphicsView::SingleApp ? d->layout->visibleItems().first() : d->currentHoveredItem;
 
         painter->save();
 
