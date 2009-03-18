@@ -30,6 +30,7 @@ set(raptor_SRCS
     view/breadcrumbitem.cpp
     view/raptormenuitem.cpp
     view/raptorgraphicsview.cpp
+    view/raptorgraphicslayout.cpp
     view/blur.cpp
     engine/kickoff/applicationmodel.cpp
     engine/kickoff/kickoffabstractmodel.cpp

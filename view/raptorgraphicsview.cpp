@@ -10,6 +10,7 @@
 */
 #include "raptorgraphicsview.h"
 #include "raptoritemdelegate.h"
+#include "raptorgraphicslayout.h"
 
 #include <QAbstractItemModel>
 #include <QModelIndex>
@@ -41,6 +42,7 @@ public:
     { qDeleteAll(items); items.clear(); shownItems.clear(); }
 
     RaptorGraphicsView *q;
+    RaptorGraphicsLayout *layout;
 
     QAbstractItemModel *model;
     QModelIndex rootIndex;
@@ -67,6 +69,8 @@ RaptorGraphicsView::RaptorGraphicsView(QGraphicsItem *parent) : QGraphicsWidget(
     //setViewMode(RaptorGraphicsView::SingleApp);
     //setViewMode(RaptorGraphicsView::TwoApps);
     //setViewMode(RaptorGraphicsView::Search);
+
+    d->layout = new RaptorGraphicsLayout(this);
     setAcceptHoverEvents(true);
 
     connect (d->delegate, SIGNAL(favoriteAddRequested(const QModelIndex &)), this, SLOT(slotAddFavorite(const QModelIndex &)));
