@@ -1,6 +1,6 @@
 /* This file is part of the KDE project
 
-   Copyright (C) 2008 Lukas Appelhans <l.appelhans@gmx.de>
+   Copyright (C) 2008 - 2009 Lukas Appelhans <l.appelhans@gmx.de>
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
@@ -18,6 +18,7 @@
 #include <Plasma/Dialog>
 
 class RaptorGraphicsWidget;
+class RaptorDialog;
 
 class QSizeF;
 
@@ -40,7 +41,7 @@ class Raptor : public Plasma::Applet
 
     private:
         Plasma::IconWidget *m_icon;
-        Plasma::Dialog *m_dialog;
+        RaptorDialog *m_dialog;
         RaptorGraphicsWidget *m_gwidget;
 };
 

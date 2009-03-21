@@ -1,6 +1,6 @@
  /* This file is part of the KDE project
 
-   Copyright (C) 2008 Lukas Appelhans <l.appelhans@gmx.de>
+   Copyright (C) 2008 - 2009 Lukas Appelhans <l.appelhans@gmx.de>
    Copyright (C) 2008 Dario Freddi <drf54321@gmail.com>
 
    This program is free software; you can redistribute it and/or
@@ -10,6 +10,7 @@
 */
 #include "raptor.h"
 #include "view/raptorgraphicswidget.h"
+#include "raptordialog.h"
 
 #include <QPainter>
 #include <QFontMetrics>
@@ -53,7 +54,7 @@ void Raptor::popup()
 {
     if (!m_dialog) {
         qobject_cast<Plasma::Corona*>(graphicsWidget()->scene())->addOffscreenWidget(graphicsWidget());
-        m_dialog = new Plasma::Dialog();
+        m_dialog = new RaptorDialog();
         m_dialog->setResizeHandleCorners(Plasma::Dialog::All);
         m_dialog->setGraphicsWidget(graphicsWidget());
     }
