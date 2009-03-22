@@ -40,6 +40,7 @@ public:
 RaptorGraphicsLayout::RaptorGraphicsLayout(RaptorGraphicsView *parent) : QObject(parent), d(new Private(this))
 {
     d->view = parent;
+    d->view->installEventFilter(this);
 }
 
 RaptorGraphicsLayout::~RaptorGraphicsLayout()
@@ -69,12 +70,16 @@ void RaptorGraphicsLayout::setContentMargins(qreal left, qreal top, qreal right,
 
 bool RaptorGraphicsLayout::eventFilter(QObject *obj, QEvent *event)
 {
+    kDebug() << "";
     if (obj != d->view) {
         return false;
     }
 
-    if (event->type() == QEvent::Resize) {
+    if (event->type() == QEvent::GraphicsSceneResize) {
+        kDebug() << "re-layouting items";
         d->layoutItems();
+        kDebug() << d->visibleItems;
+        d->view->update();
         return true;
     }
 
@@ -114,7 +119,8 @@ void RaptorGraphicsLayout::Private::layoutItems()
         foreach (RaptorMenuItem *item, items) {
             kDebug() << "Set item rect" << QRectF(QPointF(sizesSum, topMargin), QSizeF(size, size));
 
-            item->moveTo(QRectF(QPointF(sizesSum, topMargin), QSizeF(size, size)));
+            item->setRect(QRectF(QPointF(sizesSum, topMargin), QSizeF(size, size)));
+            //item->moveTo(QRectF(QPointF(sizesSum, topMargin), QSizeF(size, size)));
             sizesSum += size;
 
             if (sizesSum - item->rect().width() > rect.width()) {
@@ -125,11 +131,11 @@ void RaptorGraphicsLayout::Private::layoutItems()
         if (!visibleItems.contains(items.last())) {
             items.last()->setRect(QRectF(QPointF(-1 * size,topMargin), QSizeF(size, size)));
         }
-        if (oldFirst && !visibleItems.contains(oldFirst)) {
-            kDebug() << "Move the old first outside";
-            oldFirst->moveTo(QRectF(QPointF(!size, topMargin), QSizeF(size, size)));
-//             needsAnimation << oldFirst;
-        }
+//         if (oldFirst && !visibleItems.contains(oldFirst)) {
+//             kDebug() << "Move the old first outside";
+//             oldFirst->moveTo(QRectF(QPointF(!size, topMargin), QSizeF(size, size)));
+// //             needsAnimation << oldFirst;
+//         }
 
 //         if (scrollTimeLine->state() == QTimeLine::Running) {
 //             scrollTimeLine->stop();

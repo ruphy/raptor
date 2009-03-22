@@ -72,7 +72,7 @@ protected:
     void setupItems();
     void scrollItems();
 
-    void resizeEvent(QGraphicsSceneResizeEvent *event);
+//     void resizeEvent(QGraphicsSceneResizeEvent *event);
 
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
     void hoverMoveEvent(QGraphicsSceneHoverEvent *event);

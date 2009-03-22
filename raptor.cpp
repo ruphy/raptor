@@ -69,6 +69,7 @@ QGraphicsWidget* Raptor::graphicsWidget()
 {
     if (!m_gwidget) {
         m_gwidget = new RaptorGraphicsWidget(this, globalConfig());
+        m_gwidget->setMinimumSize(64, 32);
     }
     return m_gwidget;
 }

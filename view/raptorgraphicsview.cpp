@@ -85,7 +85,7 @@ RaptorGraphicsView::~RaptorGraphicsView()
 void RaptorGraphicsView::reset()
 {
     getItems();
-    setupItems();
+//     setupItems();
     update();
 }
 
@@ -240,6 +240,7 @@ void RaptorGraphicsView::paint(QPainter *painter, const QStyleOptionGraphicsItem
 
     foreach (RaptorMenuItem *item, d->layout->visibleItems()) {
         //kDebug() << "Paint" << item->modelIndex().data(Qt::DisplayRole) << "at" << item->option()->rect;
+        kDebug() << item->rect();
         d->delegate->paint(painter, *item->option(), item->modelIndex());
     }
 //     if (d->scrollTimeLine->currentFrame() != 20) {
@@ -412,14 +413,14 @@ void RaptorGraphicsView::scrollItems()
     update();
 }
 
-void RaptorGraphicsView::resizeEvent(QGraphicsSceneResizeEvent *event)
-{
-    Q_UNUSED(event)
-    setupItems();
-    update();
-
-    kDebug() << contentsRect();
-}
+// void RaptorGraphicsView::resizeEvent(QGraphicsSceneResizeEvent *event)
+// {
+//     Q_UNUSED(event)
+// //     setupItems();
+//     update();
+// 
+//     kDebug() << contentsRect();
+// }
 
 void RaptorGraphicsView::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
