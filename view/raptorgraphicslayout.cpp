@@ -70,15 +70,12 @@ void RaptorGraphicsLayout::setContentMargins(qreal left, qreal top, qreal right,
 
 bool RaptorGraphicsLayout::eventFilter(QObject *obj, QEvent *event)
 {
-    kDebug() << "";
     if (obj != d->view) {
         return false;
     }
 
     if (event->type() == QEvent::GraphicsSceneResize) {
-        kDebug() << "re-layouting items";
         d->layoutItems();
-        kDebug() << d->visibleItems;
         d->view->update();
         return true;
     }
