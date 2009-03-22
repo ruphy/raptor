@@ -9,9 +9,12 @@
 */
 #include "raptordialog.h"
 
+#include <KWindowSystem>
+
 RaptorDialog::RaptorDialog(QWidget *parent, Qt::WindowFlags f)
   : Plasma::Dialog(parent, f)
 {
+    KWindowSystem::setState(winId(), NET::SkipTaskbar | NET::SkipPager);
 }
 
 RaptorDialog::~RaptorDialog()
@@ -20,4 +23,5 @@ RaptorDialog::~RaptorDialog()
 
 void RaptorDialog::paintEvent(QPaintEvent *e)
 {
+    Q_UNUSED(e)
 }

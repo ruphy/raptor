@@ -17,6 +17,8 @@
 #include <QSizeF>
 #include <QGraphicsLinearLayout>
 
+#include <KDebug>
+
 #include <plasma/theme.h>
 #include <Plasma/Corona>
 
@@ -32,6 +34,7 @@ Raptor::Raptor(QObject *parent, const QVariantList &args)
 
 Raptor::~Raptor()
 {
+    delete m_dialog;
 }
 
 void Raptor::constraintsEvent(Plasma::Constraints constraints)
@@ -61,6 +64,7 @@ void Raptor::popup()
     if (m_dialog->isVisible()) {
         m_dialog->hide();
     } else {
+        updateDialog();
         m_dialog->show();
     }
 }
@@ -70,8 +74,17 @@ QGraphicsWidget* Raptor::graphicsWidget()
     if (!m_gwidget) {
         m_gwidget = new RaptorGraphicsWidget(this, globalConfig());
         m_gwidget->setMinimumSize(64, 32);
+        m_gwidget->setPreferredSize(300, 128);
     }
     return m_gwidget;
+}
+
+void Raptor::updateDialog()
+{
+//     kDebug() << m_gwidget->preferredSize().toSize();
+    m_dialog->resize(m_gwidget->preferredSize().toSize()); // WARNING: this does not work!!
+    m_dialog->move(qobject_cast<Plasma::Corona*>(graphicsWidget()->scene())->popupPosition(graphicsWidget(), m_dialog->size())); // WARNING: pretty random
+//     kDebug() << m_dialog->size();
 }
 
 #include "raptor.moc"

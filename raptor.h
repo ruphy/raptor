@@ -43,6 +43,8 @@ class Raptor : public Plasma::Applet
         Plasma::IconWidget *m_icon;
         RaptorDialog *m_dialog;
         RaptorGraphicsWidget *m_gwidget;
+
+        void updateDialog();
 };
 
 // This is the command that links your applet to the .desktop file
