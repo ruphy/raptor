@@ -102,7 +102,7 @@ void RaptorMenuItem::moveTo(const QRectF &rect)
 
 void RaptorMenuItem::setAnimationValue(qreal value)
 {
-    kDebug() << value;
+    //kDebug() << value;
     d->value = value;
     d->calculateRect();
 }
@@ -131,7 +131,7 @@ void RaptorMenuItem::Private::calculateRect()
     }
 
     qreal xTranslation = (finalRect.x() - initialRect.x()) * value;
-    kDebug() << index.data().toString() << initialRect.x() << initialRect.x() + xTranslation << finalRect.x();
+    //kDebug() << index.data().toString() << initialRect.x() << initialRect.x() + xTranslation << finalRect.x();
     rect = initialRect.translated(xTranslation, 0);
     option->rect = rect.toRect();
 }

@@ -218,7 +218,7 @@ void RaptorGraphicsView::paint(QPainter *painter, const QStyleOptionGraphicsItem
 
     foreach (RaptorMenuItem *item, d->layout->visibleItems()) {
         //kDebug() << "Paint" << item->modelIndex().data(Qt::DisplayRole) << "at" << item->option()->rect;
-        kDebug() << "Paint" << item->modelIndex().data(Qt::DisplayRole) << "to" << item->rect();
+        //kDebug() << "Paint" << item->modelIndex().data(Qt::DisplayRole) << "to" << item->rect();
         d->delegate->paint(painter, *item->option(), item->modelIndex());
     }
 //     if (d->scrollTimeLine->currentFrame() != 20) {

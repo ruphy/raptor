@@ -59,7 +59,7 @@ RaptorGraphicsLayout::~RaptorGraphicsLayout()
 void RaptorGraphicsLayout::setMenuItems(const QList<RaptorMenuItem*> &items)
 {
     d->items.clear();
-    d->visibleItems.clear();
+    //d->visibleItems.clear();
     d->items << items;
 }
 
@@ -116,9 +116,12 @@ void RaptorGraphicsLayout::Private::layoutItems()
     // NOTE: for each view mode we should setup items individually
     // WARNING: we suppose a horizontal view
     // TODO: remove tabs
+    QList<RaptorMenuItem*> oldVisibleItems = visibleItems;
     RaptorMenuItem * oldFirst = 0;
+    RaptorMenuItem * oldLast = 0;
     if (!visibleItems.isEmpty()) {
         oldFirst = visibleItems.first();
+        oldLast = visibleItems.last();
     }
     visibleItems.clear();
 //     needsAnimation.clear();
@@ -133,20 +136,36 @@ void RaptorGraphicsLayout::Private::layoutItems()
         qreal sizesSum = 0;
         const qreal size = rect.height();
         foreach (RaptorMenuItem *item, items) {
+            if (item->rect() != item->rect().normalized()) { //HACK FOR OUR TIME WHICH IS MOVING OUT
+                oldVisibleItems.removeAll(item);
+            }
             kDebug() << "Set item rect" << QRectF(QPointF(sizesSum, topMargin), QSizeF(size, size));
 
+            if (sizesSum - item->rect().width() > rect.width()) {
+                item->setRect(QRectF(QPointF(sizesSum +  size, topMargin), QSizeF(size, size)));
+                item->moveTo(QRectF(QPointF(sizesSum, topMargin), QSizeF(size, size)));
+                sizesSum += size;
+                break;
+            }
+
+            if (item == items.first() && !oldVisibleItems.contains(item)) {
+                kDebug() << "SET FUCKIN NEGATIVE RECT" << item->modelIndex().data(Qt::DisplayRole) << oldVisibleItems.contains(item);
+                item->setRect(QRectF(QPointF(-1 * size, topMargin), QSizeF(size, size)));
+            }
             //item->setRect(QRectF(QPointF(sizesSum, topMargin), QSizeF(size, size)));
             item->moveTo(QRectF(QPointF(sizesSum, topMargin), QSizeF(size, size)));
             sizesSum += size;
 
-            if (sizesSum - item->rect().width() > rect.width()) {
-                break;
-            }
             visibleItems << item;
         }
-        //if (!visibleItems.contains(items.last())) {
-        //    items.last()->setRect(QRectF(QPointF(-1 * size,topMargin), QSizeF(size, size)));
+        if (!visibleItems.contains(items.last()) && !items.last()->rect().left()) {
+            items.last()->moveTo(QRectF(QPointF(-1 * size, topMargin), QSizeF(size, size)));
+            visibleItems << items.last();
+        }
+        //if (oldLast && !visibleItems.contains(oldLast)) {
+        //    visibleItems << oldLast;
         //}
+        //visibleItems << items.last();
 //         if (oldFirst && !visibleItems.contains(oldFirst)) {
 //             kDebug() << "Move the old first outside";
 //             oldFirst->moveTo(QRectF(QPointF(!size, topMargin), QSizeF(size, size)));
