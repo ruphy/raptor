@@ -59,7 +59,6 @@ RaptorGraphicsLayout::~RaptorGraphicsLayout()
 void RaptorGraphicsLayout::setMenuItems(const QList<RaptorMenuItem*> &items)
 {
     d->items.clear();
-    //d->visibleItems.clear();
     d->items << items;
 }
 
@@ -133,9 +132,8 @@ void RaptorGraphicsLayout::Private::layoutItems()
             if (item->rect() != item->rect().normalized()) { //HACK FOR OUR TIME WHICH IS MOVING OUT
                 oldVisibleItems.removeAll(item);
             }
-            kDebug() << "Set item rect" << QRectF(QPointF(sizesSum, topMargin), QSizeF(size, size));
 
-            if (sizesSum - item->rect().width() > rect.width()) {
+            if (sizesSum - size > rect.width()) {
                 item->setRect(QRectF(QPointF(sizesSum +  size, topMargin), QSizeF(size, size)));
                 item->moveTo(QRectF(QPointF(sizesSum, topMargin), QSizeF(size, size)));
                 sizesSum += size;
@@ -146,6 +144,7 @@ void RaptorGraphicsLayout::Private::layoutItems()
                 kDebug() << "SET FUCKIN NEGATIVE RECT" << item->modelIndex().data(Qt::DisplayRole) << oldVisibleItems.contains(item);
                 item->setRect(QRectF(QPointF(-1 * size, topMargin), QSizeF(size, size)));
             }
+            kDebug() << "Set item rect" << QRectF(QPointF(sizesSum, topMargin), QSizeF(size, size));
             //item->setRect(QRectF(QPointF(sizesSum, topMargin), QSizeF(size, size)));
             item->moveTo(QRectF(QPointF(sizesSum, topMargin), QSizeF(size, size)));
             sizesSum += size;

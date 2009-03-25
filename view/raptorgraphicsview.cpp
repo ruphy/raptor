@@ -76,6 +76,8 @@ RaptorGraphicsView::~RaptorGraphicsView()
 void RaptorGraphicsView::reset()
 {
     getItems();
+    d->layout->setMenuItems(d->items);
+    d->layout->invalidate();
     update();
 }
 
@@ -163,6 +165,7 @@ void RaptorGraphicsView::setModel(QAbstractItemModel *model)
     getItems();
 
     d->layout->setMenuItems(d->items);
+    d->layout->invalidate();
     update();
 }
 
