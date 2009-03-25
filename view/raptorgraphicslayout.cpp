@@ -117,12 +117,6 @@ void RaptorGraphicsLayout::Private::layoutItems()
     // WARNING: we suppose a horizontal view
     // TODO: remove tabs
     QList<RaptorMenuItem*> oldVisibleItems = visibleItems;
-    RaptorMenuItem * oldFirst = 0;
-    RaptorMenuItem * oldLast = 0;
-    if (!visibleItems.isEmpty()) {
-        oldFirst = visibleItems.first();
-        oldLast = visibleItems.last();
-    }
     visibleItems.clear();
 //     needsAnimation.clear();
     RaptorGraphicsView::ViewMode mode = view->viewMode();
@@ -162,15 +156,6 @@ void RaptorGraphicsLayout::Private::layoutItems()
             items.last()->moveTo(QRectF(QPointF(-1 * size, topMargin), QSizeF(size, size)));
             visibleItems << items.last();
         }
-        //if (oldLast && !visibleItems.contains(oldLast)) {
-        //    visibleItems << oldLast;
-        //}
-        //visibleItems << items.last();
-//         if (oldFirst && !visibleItems.contains(oldFirst)) {
-//             kDebug() << "Move the old first outside";
-//             oldFirst->moveTo(QRectF(QPointF(!size, topMargin), QSizeF(size, size)));
-// //             needsAnimation << oldFirst;
-//         }
 
          if (scrollTimeLine->state() == QTimeLine::Running) {
              scrollTimeLine->stop();
