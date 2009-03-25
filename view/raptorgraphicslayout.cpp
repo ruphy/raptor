@@ -164,9 +164,35 @@ void RaptorGraphicsLayout::Private::layoutItems()
     }
 
     else if (mode == RaptorGraphicsView::SingleApp) {
+        kDebug() << "SINGLE APP";
         RaptorMenuItem *item = items.first();
-        item->setRect(QRectF(QPointF(0, 0), rect.size()));//Don't use rect for single-app, we don't need a margin here
+        foreach (RaptorMenuItem *item, items) {
+            if (item->rect() != item->rect().normalized()) { //HACK FOR OUR ITEM WHICH IS MOVING OUT
+                oldVisibleItems.removeAll(item);
+            }
+        }
+        if (oldVisibleItems.count() == 1) {
+            if (oldVisibleItems.first() == items.last()) {
+                oldVisibleItems.first()->moveTo(QRectF(QPointF(-rect.width(), 0), rect.size()));
+                visibleItems << oldVisibleItems.first();
+                item->setRect(QRectF(QPointF(rect.width(), 0), rect.size()));
+                item->moveTo(QRectF(QPointF(0, 0), rect.size()));
+            } else {
+                oldVisibleItems.first()->moveTo(QRectF(QPointF(rect.width(), 0), rect.size()));
+                visibleItems << oldVisibleItems.first();
+                item->setRect(QRectF(QPointF(-rect.width(), 0), rect.size()));
+                item->moveTo(QRectF(QPointF(0, 0), rect.size()));
+            }
+        } else {
+            item->setRect(QRectF(QPointF(0, 0), rect.size()));//Don't use rect for single-app, we don't need a margin here
+        }
         visibleItems << item;
+
+
+         if (scrollTimeLine->state() == QTimeLine::Running) {
+             scrollTimeLine->stop();
+         }
+         scrollTimeLine->start();
     }
 
     else if (mode == RaptorGraphicsView::TwoApps) {

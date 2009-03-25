@@ -35,7 +35,7 @@ public:
     }
 
     ~Private()
-    { qDeleteAll(items); items.clear(); shownItems.clear(); }
+    { qDeleteAll(items); items.clear(); }
 
     RaptorGraphicsView *q;
     RaptorGraphicsLayout *layout;
@@ -44,8 +44,6 @@ public:
     QModelIndex rootIndex;
 
     QList<RaptorMenuItem*> items;
-    QList<RaptorMenuItem*> shownItems;
-    QList<RaptorMenuItem*> needsAnimation;
 
     RaptorItemDelegate * delegate;
 
@@ -93,7 +91,7 @@ QList<RaptorMenuItem*> RaptorGraphicsView::items() const
 
 QList<RaptorMenuItem*> RaptorGraphicsView::shownItems() const
 {
-    return d->shownItems;
+    return d->layout->visibleItems();
 }
 
 void RaptorGraphicsView::setRootIndex(const QModelIndex &index)
@@ -109,13 +107,14 @@ void RaptorGraphicsView::setRootIndex(const QModelIndex &index)
 
     getItems();
     d->layout->setMenuItems(d->items);
+    d->layout->invalidate();
     update();
     emit enteredItem(d->rootIndex);
 }
 
 void RaptorGraphicsView::scrollRight()
 {
-    if (d->items == d->shownItems)
+    if (d->items == shownItems())
         return;
 
     RaptorMenuItem *item = d->items.first();
@@ -129,7 +128,7 @@ void RaptorGraphicsView::scrollRight()
 
 void RaptorGraphicsView::scrollLeft()
 {
-    if (d->items == d->shownItems)
+    if (d->items == shownItems())
         return;
 
     RaptorMenuItem *item = d->items.last();
@@ -270,7 +269,7 @@ void RaptorGraphicsView::scrollItems()
         return;
     }
 
-    foreach (RaptorMenuItem *item, d->shownItems) {
+    foreach (RaptorMenuItem *item, shownItems()) {
         QRectF rect = item->rect();
         rect.translate(d->scrollOffset, 0);
         item->setRect(rect);
@@ -284,7 +283,7 @@ void RaptorGraphicsView::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
     if (viewMode() == RaptorGraphicsView::SingleApp) {
         return;
     }
-    foreach (RaptorMenuItem *item, d->shownItems) {
+    foreach (RaptorMenuItem *item, shownItems()) {
         item->option()->state = QStyle::State_None;
         if (item->rect().contains(event->pos())) {
             item->option()->state = QStyle::State_MouseOver;
@@ -301,7 +300,7 @@ void RaptorGraphicsView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
     if (viewMode() == RaptorGraphicsView::SingleApp) {
         return;
     }
-    foreach (RaptorMenuItem *item, d->shownItems) {
+    foreach (RaptorMenuItem *item, shownItems()) {
         item->option()->state = QStyle::State_None;
         if (item->rect().contains(event->pos())) {
             item->option()->state = QStyle::State_MouseOver;
@@ -362,7 +361,7 @@ void RaptorGraphicsView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void RaptorGraphicsView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     kDebug();
-    foreach (RaptorMenuItem * item, d->shownItems) {
+    foreach (RaptorMenuItem * item, shownItems()) {
 	if (item->rect().contains(event->pos())) {
 
 	    if (d->delegate->editorEvent(event, d->model, *item->option(), item->modelIndex())) { // let's give priority to the editor event
