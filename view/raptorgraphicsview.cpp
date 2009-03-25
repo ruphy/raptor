@@ -24,8 +24,6 @@
 
 #include <Plasma/Theme>
 
-const int DURATION = 250;
-
 class RaptorGraphicsView::Private
 {
 public:
@@ -34,8 +32,6 @@ public:
         delegate = new RaptorItemDelegate(q);
         delegate->setTextColor(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
         topMargin = Plasma::Theme::defaultTheme()->fontMetrics().height();
-        scrollTimeLine = new QTimeLine(DURATION, q);
-        scrollTimeLine->setFrameRange(0, 20);
     }
 
     ~Private()
@@ -59,8 +55,6 @@ public:
     qreal scrollOffset;
 
     int topMargin;
-
-    QTimeLine * scrollTimeLine;
 };
 
 RaptorGraphicsView::RaptorGraphicsView(QGraphicsItem *parent) : QGraphicsWidget(parent), d(new Private(this))
@@ -74,7 +68,6 @@ RaptorGraphicsView::RaptorGraphicsView(QGraphicsItem *parent) : QGraphicsWidget(
     setAcceptHoverEvents(true);
 
     connect (d->delegate, SIGNAL(favoriteAddRequested(const QModelIndex &)), this, SLOT(slotAddFavorite(const QModelIndex &)));
-    connect (d->scrollTimeLine, SIGNAL(frameChanged(int)), SLOT(setScrollingFrame()));
 }
 
 RaptorGraphicsView::~RaptorGraphicsView()
@@ -143,17 +136,6 @@ void RaptorGraphicsView::scrollLeft()
     d->items.prepend(item);
 
     d->layout->setMenuItems(d->items);
-    update();
-}
-
-void RaptorGraphicsView::setScrollingFrame()
-{
-    foreach (RaptorMenuItem * item, d->shownItems) {
-        item->setAnimationValue(d->scrollTimeLine->currentValue());
-    }
-    foreach (RaptorMenuItem * item, d->needsAnimation) {
-        item->setAnimationValue(d->scrollTimeLine->currentValue());
-    }
     update();
 }
 

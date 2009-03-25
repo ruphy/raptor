@@ -13,14 +13,20 @@
 #include "raptormenuitem.h"
 
 #include <QEvent>
+#include <QTimeLine>
 
 #include <KDebug>
+
+const int DURATION = 250;
 
 class RaptorGraphicsLayout::Private
 {
 public:
     Private(RaptorGraphicsLayout *q) : q(q), view(0), topMargin(0), leftMargin(0), rightMargin(0), bottomMargin(0)
-    {}
+    {
+        scrollTimeLine = new QTimeLine(DURATION, q);
+        scrollTimeLine->setFrameRange(0, 20);
+    }
     ~Private()
     {}
 
@@ -28,6 +34,7 @@ public:
     RaptorGraphicsView *view;
     QList<RaptorMenuItem*> items;
     QList<RaptorMenuItem*> visibleItems;
+    QTimeLine * scrollTimeLine;
 
     qreal topMargin;
     qreal leftMargin;
@@ -41,6 +48,7 @@ RaptorGraphicsLayout::RaptorGraphicsLayout(RaptorGraphicsView *parent) : QObject
 {
     d->view = parent;
     d->view->installEventFilter(this);
+    connect (d->scrollTimeLine, SIGNAL(frameChanged(int)), SLOT(setScrollingFrame()));
 }
 
 RaptorGraphicsLayout::~RaptorGraphicsLayout()
@@ -86,6 +94,17 @@ bool RaptorGraphicsLayout::eventFilter(QObject *obj, QEvent *event)
 void RaptorGraphicsLayout::invalidate()
 {
     d->layoutItems();
+}
+
+void RaptorGraphicsLayout::setScrollingFrame()
+{
+    foreach (RaptorMenuItem * item, d->visibleItems) {
+        item->setAnimationValue(d->scrollTimeLine->currentValue());
+    }
+    /*foreach (RaptorMenuItem * item, d->needsAnimation) {
+        item->setAnimationValue(d->scrollTimeLine->currentValue());
+    }*/
+    d->view->update();
 }
 
 void RaptorGraphicsLayout::Private::layoutItems()
@@ -134,10 +153,10 @@ void RaptorGraphicsLayout::Private::layoutItems()
 // //             needsAnimation << oldFirst;
 //         }
 
-//         if (scrollTimeLine->state() == QTimeLine::Running) {
-//             scrollTimeLine->stop();
-//         }
-//         scrollTimeLine->start();
+         if (scrollTimeLine->state() == QTimeLine::Running) {
+             scrollTimeLine->stop();
+         }
+         scrollTimeLine->start();
     }
 
     else if (mode == RaptorGraphicsView::SingleApp) {

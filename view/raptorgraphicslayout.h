@@ -31,6 +31,9 @@ public:
 
     bool eventFilter(QObject *, QEvent *);
 
+private slots:
+    void setScrollingFrame();//TODO: Make it a Q_PRIVATE_SLOT
+
 private:
     class Private;
     Private *d;
