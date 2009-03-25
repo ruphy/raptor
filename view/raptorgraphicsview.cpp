@@ -123,7 +123,8 @@ void RaptorGraphicsView::scrollRight()
     d->items.append(item);
 
     d->layout->setMenuItems(d->items);
-    update();
+    d->layout->invalidate();
+    //update();
 }
 
 void RaptorGraphicsView::scrollLeft()
@@ -136,7 +137,8 @@ void RaptorGraphicsView::scrollLeft()
     d->items.prepend(item);
 
     d->layout->setMenuItems(d->items);
-    update();
+    d->layout->invalidate();
+    //update();
 }
 
 QAbstractItemModel* RaptorGraphicsView::model()
@@ -186,7 +188,8 @@ void RaptorGraphicsView::addRows(const QModelIndex &parent, int start, int end)
     }
 
     d->layout->setMenuItems(d->items);
-    update();
+    d->layout->invalidate();
+    //update();
 }
 
 void RaptorGraphicsView::removeRows(const QModelIndex &parent, int start, int end)
@@ -201,7 +204,8 @@ void RaptorGraphicsView::removeRows(const QModelIndex &parent, int start, int en
     }
 
     d->layout->setMenuItems(d->items);
-    update();
+    d->layout->invalidate();
+    //update();
 }
 
 void RaptorGraphicsView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -214,7 +218,7 @@ void RaptorGraphicsView::paint(QPainter *painter, const QStyleOptionGraphicsItem
 
     foreach (RaptorMenuItem *item, d->layout->visibleItems()) {
         //kDebug() << "Paint" << item->modelIndex().data(Qt::DisplayRole) << "at" << item->option()->rect;
-        kDebug() << item->rect();
+        kDebug() << "Paint" << item->modelIndex().data(Qt::DisplayRole) << "to" << item->rect();
         d->delegate->paint(painter, *item->option(), item->modelIndex());
     }
 //     if (d->scrollTimeLine->currentFrame() != 20) {

@@ -135,8 +135,8 @@ void RaptorGraphicsLayout::Private::layoutItems()
         foreach (RaptorMenuItem *item, items) {
             kDebug() << "Set item rect" << QRectF(QPointF(sizesSum, topMargin), QSizeF(size, size));
 
-            item->setRect(QRectF(QPointF(sizesSum, topMargin), QSizeF(size, size)));
-            //item->moveTo(QRectF(QPointF(sizesSum, topMargin), QSizeF(size, size)));
+            //item->setRect(QRectF(QPointF(sizesSum, topMargin), QSizeF(size, size)));
+            item->moveTo(QRectF(QPointF(sizesSum, topMargin), QSizeF(size, size)));
             sizesSum += size;
 
             if (sizesSum - item->rect().width() > rect.width()) {
@@ -144,9 +144,9 @@ void RaptorGraphicsLayout::Private::layoutItems()
             }
             visibleItems << item;
         }
-        if (!visibleItems.contains(items.last())) {
-            items.last()->setRect(QRectF(QPointF(-1 * size,topMargin), QSizeF(size, size)));
-        }
+        //if (!visibleItems.contains(items.last())) {
+        //    items.last()->setRect(QRectF(QPointF(-1 * size,topMargin), QSizeF(size, size)));
+        //}
 //         if (oldFirst && !visibleItems.contains(oldFirst)) {
 //             kDebug() << "Move the old first outside";
 //             oldFirst->moveTo(QRectF(QPointF(!size, topMargin), QSizeF(size, size)));
