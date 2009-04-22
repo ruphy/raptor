@@ -154,6 +154,8 @@ void Breadcrumb::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 
 void Breadcrumb::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
+    Q_UNUSED(event);
+
     if (!m_currentShowing) {
         return;
     }

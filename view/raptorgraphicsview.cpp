@@ -183,6 +183,8 @@ void RaptorGraphicsView::addRows(const QModelIndex &parent, int start, int end)
 
 void RaptorGraphicsView::removeRows(const QModelIndex &parent, int start, int end)
 {
+    Q_UNUSED(parent);
+
     kDebug();
     QList<RaptorMenuItem*> toRemove;
     for (int i = start; i != end; i++) {
@@ -412,6 +414,8 @@ void RaptorGraphicsView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 
 void RaptorGraphicsView::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
+    Q_UNUSED(event);
+
     if (viewMode() == RaptorGraphicsView::SingleApp) {
         return;
     }

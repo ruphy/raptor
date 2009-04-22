@@ -235,6 +235,8 @@ void RaptorGraphicsWidget::updateColors()
 
 void RaptorGraphicsWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
 {
+    Q_UNUSED(event);
+
     d->rightScrollButton->setPos(rect().width() - FRAME_RECT_HORIZONTAL_MARGIN - d->rightScrollButton->size().width() / 2, d->view->y() + d->view->rect().height() / 2 - d->rightScrollButton->rect().height() / 2);
     d->leftScrollButton->setPos(FRAME_RECT_HORIZONTAL_MARGIN - d->leftScrollButton->size().width() / 2, d->view->y() + d->view->rect().height() / 2 - d->leftScrollButton->rect().height() / 2);
     kDebug() << d->leftScrollButton->y() + d->view->rect().height() / 2 - d->leftScrollButton->rect().height() / 2 << d->view->y();
