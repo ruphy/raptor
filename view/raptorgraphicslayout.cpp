@@ -165,8 +165,8 @@ void RaptorGraphicsLayout::Private::layoutItems()
     else if (mode == RaptorGraphicsView::SingleApp) {
         kDebug() << "SINGLE APP";
         RaptorMenuItem *item = items.first();
-        foreach (RaptorMenuItem *item, items) {
-            if (item->rect() != item->rect().normalized()) { //HACK FOR OUR ITEM WHICH IS MOVING OUT
+        foreach (RaptorMenuItem *item, oldVisibleItems) {
+            if (item->rect().left()) { //HACK FOR OUR ITEM WHICH IS MOVING OUT
                 oldVisibleItems.removeAll(item);
             }
         }
