@@ -1,6 +1,7 @@
 /* This file is part of the KDE project
 
    Copyright (C) 2009 Alessandro Diaferia <alediaferia@gmail.com>
+   Copyright (C) 2009 Lukas Appelhans <l.appelhans@gmx.de>
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
@@ -195,56 +196,56 @@ void RaptorGraphicsLayout::Private::layoutItems()
     }
 
     else if (mode == RaptorGraphicsView::TwoApps) {
-	qreal x = 0;
-	for (int i = 0; i < 2; i++) {
+        qreal x = 0;
+        for (int i = 0; i < 2; i++) {
             if (items.count() <= i) {
                 break;
             }
-	    RaptorMenuItem *item = items[i];
-	    item->setRect(QRectF(QPointF(x, topMargin), QSizeF(rect.width() / 2, rect.height())));
-	    x += rect.width() / 2;
+            RaptorMenuItem *item = items[i];
+            item->setRect(QRectF(QPointF(x, topMargin), QSizeF(rect.width() / 2, rect.height())));
+            x += rect.width() / 2;
             visibleItems << item;
-	}
+         }
      }
 
-     else if (mode == RaptorGraphicsView::Search) {
-	  qreal sizesSum = 0;
-	  int i = 0;
-	  qreal y = topMargin;
+    else if (mode == RaptorGraphicsView::Search) {
+        qreal sizesSum = 0;
+        int i = 0;
+        qreal y = topMargin;
 
-	  for (; i < 2; i++) { // we place the first two items half sized and in column
-	      RaptorMenuItem *item = items[i];
-	      item->setRect(QRectF(QPointF(0, y), QSizeF(rect.height(), rect.height() / 2)));
-	      y += rect.height() / 2;
-              visibleItems << item;
-	  }
-	  sizesSum += rect.height();
+        for (; i < 2; i++) { // we place the first two items half sized and in column
+            RaptorMenuItem *item = items[i];
+            item->setRect(QRectF(QPointF(0, y), QSizeF(rect.height(), rect.height() / 2)));
+            y += rect.height() / 2;
+            visibleItems << item;
+        }
+        sizesSum += rect.height();
 
-	  for (; i < items.count(); i++) { // now we take care of left items
-	      if (sizesSum > rect.width() - (rect.height())) {
-		  sizesSum = rect.width() - (rect.height());
-		  break;
-	      }
+        for (; i < items.count(); i++) { // now we take care of left items
+            if (sizesSum > rect.width() - (rect.height())) {
+                 sizesSum = rect.width() - (rect.height());
+                 break;
+            }
 
-	      if ( items.count() - i == 2 ) {
-		  break;
-	      }
+            if ( items.count() - i == 2 ) {
+                break;
+            }
 
-	      RaptorMenuItem *item = items[i]; 
-	      item->setRect(QRectF(QPointF(sizesSum, topMargin), QSizeF(rect.height(), rect.height())));
-	      visibleItems << item;
+            RaptorMenuItem *item = items[i]; 
+            item->setRect(QRectF(QPointF(sizesSum, topMargin), QSizeF(rect.height(), rect.height())));
+            visibleItems << item;
 
-	      sizesSum += rect.height();
-	  }
+            sizesSum += rect.height();
+        }
 
-	  int max = i + 2;
-	  y = topMargin;
-	  for (; i < max; i++) { // here we handle the last two items
-	      RaptorMenuItem *item = items[i];
-	      item->setRect(QRectF(QPointF(sizesSum, y), QSizeF(rect.height(), rect.height() / 2)));
-	      y += rect.height() / 2;
-              visibleItems << item;
-	  }
+        int max = i + 2;
+        y = topMargin;
+        for (; i < max; i++) { // here we handle the last two items
+            RaptorMenuItem *item = items[i];
+            item->setRect(QRectF(QPointF(sizesSum, y), QSizeF(rect.height(), rect.height() / 2)));
+            y += rect.height() / 2;
+            visibleItems << item;
+        }
     }
 
 }
