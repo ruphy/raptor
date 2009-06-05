@@ -66,7 +66,7 @@ void RaptorGraphicsLayout::setMenuItems(const QList<RaptorMenuItem*> &items)
 
 QList<RaptorMenuItem*> RaptorGraphicsLayout::visibleItems() const
 {
-    if (d->scrollTimeLine->state() == QTimeLine::NotRunning) {
+    if (d->scrollTimeLine->state() == QTimeLine::NotRunning || !d->temporaryVisibleItem) {
         return d->visibleItems;
     } else {
         return QList<RaptorMenuItem*>() << d->visibleItems << d->temporaryVisibleItem;
@@ -187,10 +187,10 @@ void RaptorGraphicsLayout::Private::layoutItems()
         visibleItems << item;
 
 
-         if (scrollTimeLine->state() == QTimeLine::Running) {
-             scrollTimeLine->stop();
-         }
-         scrollTimeLine->start();
+        if (scrollTimeLine->state() == QTimeLine::Running) {
+            scrollTimeLine->stop();
+        }
+        scrollTimeLine->start();
     }
 
     else if (mode == RaptorGraphicsView::TwoApps) {
@@ -200,10 +200,26 @@ void RaptorGraphicsLayout::Private::layoutItems()
                 break;
             }
             RaptorMenuItem *item = items[i];
-            item->setRect(QRectF(QPointF(x, topMargin), QSizeF(rect.width() / 2, rect.height())));
+            if (oldVisibleItems.isEmpty()) {
+                item->setRect(QRectF(QPointF(x, topMargin), QSizeF(rect.width() / 2, rect.height())));
+            } else if (oldVisibleItems.first() == items.last()) {
+                temporaryVisibleItem = oldVisibleItems.first();
+                temporaryVisibleItem->moveTo(QRectF(QPointF(-rect.width() / 2, topMargin), QSizeF(rect.width() / 2, rect.height())));
+                item->setRect(QRectF(QPointF(x + rect.width() / 2, topMargin), QSizeF(rect.width() / 2, rect.height())));
+                item->moveTo(QRectF(QPointF(x, topMargin), QSizeF(rect.width() / 2, rect.height())));
+            } else {
+                temporaryVisibleItem = oldVisibleItems.last();
+                temporaryVisibleItem->moveTo(QRectF(QPointF(rect.width() + rect.width() / 2, topMargin), QSizeF(rect.width() / 2, rect.height())));
+                item->setRect(QRectF(QPointF(x - rect.width() / 2, topMargin), QSizeF(rect.width() / 2, rect.height())));
+                item->moveTo(QRectF(QPointF(x, topMargin), QSizeF(rect.width() / 2, rect.height())));
+            }
             x += rect.width() / 2;
             visibleItems << item;
-         }
+        }
+        if (scrollTimeLine->state() == QTimeLine::Running) {
+            scrollTimeLine->stop();
+        }
+        scrollTimeLine->start();
      }
 
     else if (mode == RaptorGraphicsView::Search) {
