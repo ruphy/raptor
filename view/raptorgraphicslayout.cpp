@@ -138,10 +138,6 @@ void RaptorGraphicsLayout::Private::layoutItems()
         qreal sizesSum = 0;
         const qreal size = rect.height();
         foreach (RaptorMenuItem *item, items) {
-            if (item->rect() != item->rect().normalized()) { //HACK FOR OUR TIME WHICH IS MOVING OUT
-                oldVisibleItems.removeAll(item);
-            }
-
             if (sizesSum - size > rect.width()) {
                 item->setRect(QRectF(QPointF(sizesSum +  size, topMargin), QSizeF(size, size)));
                 item->moveTo(QRectF(QPointF(sizesSum, topMargin), QSizeF(size, size)));
@@ -162,7 +158,7 @@ void RaptorGraphicsLayout::Private::layoutItems()
         }
         if (!visibleItems.contains(items.last()) && !items.last()->rect().left()) {
             items.last()->moveTo(QRectF(QPointF(-1 * size, topMargin), QSizeF(size, size)));
-            visibleItems << items.last();
+            temporaryVisibleItem = items.last();
         }
 
          if (scrollTimeLine->state() == QTimeLine::Running) {
@@ -174,11 +170,6 @@ void RaptorGraphicsLayout::Private::layoutItems()
     else if (mode == RaptorGraphicsView::SingleApp) {
         kDebug() << "SINGLE APP";
         RaptorMenuItem *item = items.first();
-        //foreach (RaptorMenuItem *item, oldVisibleItems) {
-        //    if (item->rect().left()) { //HACK FOR OUR ITEM WHICH IS MOVING OUT
-        //        oldVisibleItems.removeAll(item);
-        //    }
-        //}
         if (!oldVisibleItems.isEmpty()) {
             if (oldVisibleItems.first() == items.last()) {
                 oldVisibleItems.first()->moveTo(QRectF(QPointF(-rect.width(), 0), rect.size()));

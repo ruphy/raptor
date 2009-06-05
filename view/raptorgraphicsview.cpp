@@ -389,15 +389,15 @@ void RaptorGraphicsView::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 RaptorGraphicsView::ViewMode RaptorGraphicsView::viewModeFromItemCount()
 {
     /*switch (d->items.count()) {
-        case 1:*/
+        case 1:
             return RaptorGraphicsView::SingleApp;
-        /*case 2:
+        case 2:
             return RaptorGraphicsView::TwoApps;
         case 3:
         case 4:
-        case 5:
+        case 5:*/
             return RaptorGraphicsView::Normal;
-        default:
+        /*default:
             return RaptorGraphicsView::Search;
     }*/
 }
