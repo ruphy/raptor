@@ -23,7 +23,7 @@ const int DURATION = 250;
 class RaptorGraphicsLayout::Private
 {
 public:
-    Private(RaptorGraphicsLayout *q) : q(q), view(0), topMargin(0), leftMargin(0), rightMargin(0), bottomMargin(0)
+    Private(RaptorGraphicsLayout *q) : q(q), view(0), temporaryVisibleItem(0), topMargin(0), leftMargin(0), rightMargin(0), bottomMargin(0)
     {
         scrollTimeLine = new QTimeLine(DURATION, q);
         scrollTimeLine->setFrameRange(0, 20);
@@ -35,6 +35,7 @@ public:
     RaptorGraphicsView *view;
     QList<RaptorMenuItem*> items;
     QList<RaptorMenuItem*> visibleItems;
+    RaptorMenuItem *temporaryVisibleItem;
     QTimeLine * scrollTimeLine;
 
     qreal topMargin;
@@ -65,7 +66,11 @@ void RaptorGraphicsLayout::setMenuItems(const QList<RaptorMenuItem*> &items)
 
 QList<RaptorMenuItem*> RaptorGraphicsLayout::visibleItems() const
 {
-    return d->visibleItems;
+    if (d->scrollTimeLine->state() == QTimeLine::NotRunning) {
+        return d->visibleItems;
+    } else {
+        return QList<RaptorMenuItem*>() << d->visibleItems << d->temporaryVisibleItem;
+    }
 }
 
 void RaptorGraphicsLayout::setContentMargins(qreal left, qreal top, qreal right, qreal bottom)
@@ -100,6 +105,9 @@ void RaptorGraphicsLayout::setScrollingFrame()
 {
     foreach (RaptorMenuItem * item, d->visibleItems) {
         item->setAnimationValue(d->scrollTimeLine->currentValue());
+    }
+    if (d->temporaryVisibleItem) {
+        d->temporaryVisibleItem->setAnimationValue(d->scrollTimeLine->currentValue());
     }
     /*foreach (RaptorMenuItem * item, d->needsAnimation) {
         item->setAnimationValue(d->scrollTimeLine->currentValue());
@@ -166,23 +174,22 @@ void RaptorGraphicsLayout::Private::layoutItems()
     else if (mode == RaptorGraphicsView::SingleApp) {
         kDebug() << "SINGLE APP";
         RaptorMenuItem *item = items.first();
-        foreach (RaptorMenuItem *item, oldVisibleItems) {
-            if (item->rect().left()) { //HACK FOR OUR ITEM WHICH IS MOVING OUT
-                oldVisibleItems.removeAll(item);
-            }
-        }
-        if (oldVisibleItems.count() == 1) {
+        //foreach (RaptorMenuItem *item, oldVisibleItems) {
+        //    if (item->rect().left()) { //HACK FOR OUR ITEM WHICH IS MOVING OUT
+        //        oldVisibleItems.removeAll(item);
+        //    }
+        //}
+        if (!oldVisibleItems.isEmpty()) {
             if (oldVisibleItems.first() == items.last()) {
                 oldVisibleItems.first()->moveTo(QRectF(QPointF(-rect.width(), 0), rect.size()));
-                visibleItems << oldVisibleItems.first();
                 item->setRect(QRectF(QPointF(rect.width(), 0), rect.size()));
                 item->moveTo(QRectF(QPointF(0, 0), rect.size()));
             } else {
                 oldVisibleItems.first()->moveTo(QRectF(QPointF(rect.width(), 0), rect.size()));
-                visibleItems << oldVisibleItems.first();
                 item->setRect(QRectF(QPointF(-rect.width(), 0), rect.size()));
                 item->moveTo(QRectF(QPointF(0, 0), rect.size()));
             }
+            temporaryVisibleItem = oldVisibleItems.first();
         } else {
             item->setRect(QRectF(QPointF(0, 0), rect.size()));//Don't use rect for single-app, we don't need a margin here
         }
