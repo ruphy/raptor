@@ -93,8 +93,10 @@ void RaptorMenuItem::moveTo(const QRectF &rect)
         setRect(rect);
         return;
     }
-    kDebug() << "Mmh" << rect;
+    kDebug() << "Move" << d->index.data(Qt::DisplayRole) << "to" << rect;
 
+    d->rect.setSize(rect.size());//TODO: Animate size changes
+    d->option->rect.setSize(rect.size().toSize());
     d->initialRect = d->rect;
     d->finalRect = rect;
 }

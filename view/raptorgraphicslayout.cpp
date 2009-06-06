@@ -160,11 +160,6 @@ void RaptorGraphicsLayout::Private::layoutItems()
             items.last()->moveTo(QRectF(QPointF(-1 * size, topMargin), QSizeF(size, size)));
             temporaryVisibleItem = items.last();
         }
-
-         if (scrollTimeLine->state() == QTimeLine::Running) {
-             scrollTimeLine->stop();
-         }
-         scrollTimeLine->start();
     }
 
     else if (mode == RaptorGraphicsView::SingleApp) {
@@ -185,12 +180,6 @@ void RaptorGraphicsLayout::Private::layoutItems()
             item->setRect(QRectF(QPointF(0, 0), rect.size()));//Don't use rect for single-app, we don't need a margin here
         }
         visibleItems << item;
-
-
-        if (scrollTimeLine->state() == QTimeLine::Running) {
-            scrollTimeLine->stop();
-        }
-        scrollTimeLine->start();
     }
 
     else if (mode == RaptorGraphicsView::TwoApps) {
@@ -216,10 +205,6 @@ void RaptorGraphicsLayout::Private::layoutItems()
             x += rect.width() / 2;
             visibleItems << item;
         }
-        if (scrollTimeLine->state() == QTimeLine::Running) {
-            scrollTimeLine->stop();
-        }
-        scrollTimeLine->start();
      }
 
     else if (mode == RaptorGraphicsView::Search) {
@@ -229,7 +214,11 @@ void RaptorGraphicsLayout::Private::layoutItems()
 
         for (; i < 2; i++) { // we place the first two items half sized and in column
             RaptorMenuItem *item = items[i];
-            item->setRect(QRectF(QPointF(0, y), QSizeF(rect.height(), rect.height() / 2)));
+            if (oldVisibleItems.isEmpty()) {
+                item->setRect(QRectF(QPointF(0, y), QSizeF(rect.height(), rect.height() / 2)));
+            } else {
+                item->moveTo(QRectF(QPointF(0, y), QSizeF(rect.height(), rect.height() / 2)));
+            }
             y += rect.height() / 2;
             visibleItems << item;
         }
@@ -245,8 +234,12 @@ void RaptorGraphicsLayout::Private::layoutItems()
                 break;
             }
 
-            RaptorMenuItem *item = items[i]; 
-            item->setRect(QRectF(QPointF(sizesSum, topMargin), QSizeF(rect.height(), rect.height())));
+            RaptorMenuItem *item = items[i];
+            if (oldVisibleItems.isEmpty()) {
+                item->setRect(QRectF(QPointF(sizesSum, topMargin), QSizeF(rect.height(), rect.height())));
+            } else {
+                item->moveTo(QRectF(QPointF(sizesSum, topMargin), QSizeF(rect.height(), rect.height())));
+            }
             visibleItems << item;
 
             sizesSum += rect.height();
@@ -256,10 +249,19 @@ void RaptorGraphicsLayout::Private::layoutItems()
         y = topMargin;
         for (; i < max; i++) { // here we handle the last two items
             RaptorMenuItem *item = items[i];
-            item->setRect(QRectF(QPointF(sizesSum, y), QSizeF(rect.height(), rect.height() / 2)));
+            if (oldVisibleItems.isEmpty()) {
+                item->setRect(QRectF(QPointF(sizesSum, y), QSizeF(rect.height(), rect.height() / 2)));
+            } else {
+                item->moveTo(QRectF(QPointF(sizesSum, y), QSizeF(rect.height(), rect.height() / 2)));
+            }
             y += rect.height() / 2;
             visibleItems << item;
         }
     }
+    
+    if (scrollTimeLine->state() == QTimeLine::Running) {
+        scrollTimeLine->stop();
+    }
+    scrollTimeLine->start();
 
 }
