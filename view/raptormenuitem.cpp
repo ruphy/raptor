@@ -95,8 +95,8 @@ void RaptorMenuItem::moveTo(const QRectF &rect)
     }
     kDebug() << "Move" << d->index.data(Qt::DisplayRole) << "to" << rect;
 
-    d->rect.setSize(rect.size());//TODO: Animate size changes
-    d->option->rect.setSize(rect.size().toSize());
+    //d->rect.setSize(rect.size());//TODO: Animate size changes
+    //d->option->rect.setSize(rect.size().toSize());
     d->initialRect = d->rect;
     d->finalRect = rect;
 }
@@ -138,6 +138,7 @@ void RaptorMenuItem::Private::calculateRect()
     qreal yTranslation = (finalRect.y() - initialRect.y()) * value;
     kDebug() << index.data().toString() << "X-Translation is:" << xTranslation << "Animation value is:" << value << "Initial Rect:" << initialRect;
     rect = initialRect.translated(xTranslation, yTranslation);
+    rect.setSize(QSizeF(initialRect.width() + (finalRect.width() - initialRect.width()) * value, initialRect.height() + (finalRect.height() - initialRect.height()) * value));
     option->rect = rect.toRect();
 }
 
