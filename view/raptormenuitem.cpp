@@ -135,8 +135,9 @@ void RaptorMenuItem::Private::calculateRect()
     }
 
     qreal xTranslation = (finalRect.x() - initialRect.x()) * value;
-    kDebug() << index.data().toString() << initialRect.x() << initialRect.x() + xTranslation << finalRect.x();
-    rect = initialRect.translated(xTranslation, 0);
+    qreal yTranslation = (finalRect.y() - initialRect.y()) * value;
+    kDebug() << index.data().toString() << "X-Translation is:" << xTranslation << "Animation value is:" << value << "Initial Rect:" << initialRect;
+    rect = initialRect.translated(xTranslation, yTranslation);
     option->rect = rect.toRect();
 }
 

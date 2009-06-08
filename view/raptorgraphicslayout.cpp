@@ -211,19 +211,32 @@ void RaptorGraphicsLayout::Private::layoutItems()
         qreal sizesSum = 0;
         int i = 0;
         qreal y = topMargin;
-
-        for (; i < 2; i++) { // we place the first two items half sized and in column
-            RaptorMenuItem *item = items[i];
-            if (oldVisibleItems.isEmpty()) {
-                item->setRect(QRectF(QPointF(0, y), QSizeF(rect.height(), rect.height() / 2)));
-            } else {
-                item->moveTo(QRectF(QPointF(0, y), QSizeF(rect.height(), rect.height() / 2)));
-            }
-            y += rect.height() / 2;
-            visibleItems << item;
+        
+        if (oldVisibleItems.contains(items.first())) {
+            kDebug() << "BLUUUUUUUUUUUUUUB" << oldVisibleItems.last()->modelIndex().data(Qt::DisplayRole);
+            temporaryVisibleItem = oldVisibleItems.first();
+            temporaryVisibleItem->moveTo(QRectF(QPointF(-rect.height(), y), QSizeF(rect.height(), rect.height() / 2)));//FIXME: Not working, don't ask me why...
+            items.first()->moveTo(QRectF(QPointF(0, y), QSizeF(rect.height(), rect.height() / 2)));
+        } else if (oldVisibleItems.isEmpty()) {
+            items.first()->setRect(QRectF(QPointF(0, y), QSizeF(rect.height(), rect.height() / 2)));
+        } else {
+            kDebug() << "BLAAAAAAAAAAAAAAAA" << items.first()->modelIndex().data(Qt::DisplayRole);
+            items.first()->setRect(QRectF(QPointF(-(rect.height() / 2), y), QSizeF(rect.height(), rect.height() / 2)));
+            items.first()->moveTo(QRectF(QPointF(0, y), QSizeF(rect.height(), rect.height() / 2)));
         }
+        y += rect.height() / 2;
+        visibleItems << items.first();
+        
+        if (oldVisibleItems.isEmpty()) {
+            items[1]->setRect(QRectF(QPointF(0, y), QSizeF(rect.height(), rect.height() / 2)));
+        } else {
+            items[1]->moveTo(QRectF(QPointF(0, y), QSizeF(rect.height(), rect.height() / 2)));
+        }
+        visibleItems << items[1];
+        
         sizesSum += rect.height();
 
+        i = 2;
         for (; i < items.count(); i++) { // now we take care of left items
             if (sizesSum > rect.width() - (rect.height())) {
                  sizesSum = rect.width() - (rect.height());
@@ -247,16 +260,39 @@ void RaptorGraphicsLayout::Private::layoutItems()
 
         int max = i + 2;
         y = topMargin;
-        for (; i < max; i++) { // here we handle the last two items
+        /*for (; i < max; i++) { // here we handle the last two items
             RaptorMenuItem *item = items[i];
             if (oldVisibleItems.isEmpty()) {
                 item->setRect(QRectF(QPointF(sizesSum, y), QSizeF(rect.height(), rect.height() / 2)));
+            } else if (!oldVisibleItems.contains(items[i]) && i == max) {
+                kDebug() << "YAHEY!";
+                item->setRect(QRectF(QPointF(sizesSum + rect.height(), y), QSizeF(rect.height(), rect.height() / 2)));
+                item->moveTo(QRectF(QPointF(sizesSum, y), QSizeF(rect.height(), rect.height() / 2)));
             } else {
                 item->moveTo(QRectF(QPointF(sizesSum, y), QSizeF(rect.height(), rect.height() / 2)));
             }
             y += rect.height() / 2;
             visibleItems << item;
+        }*/
+        if (oldVisibleItems.isEmpty()) {
+            items[i]->setRect(QRectF(QPointF(sizesSum, y), QSizeF(rect.height(), rect.height() / 2)));
+        } else {
+            items[i]->moveTo(QRectF(QPointF(sizesSum, y), QSizeF(rect.height(), rect.height() / 2)));
         }
+        y += rect.height() / 2;
+        visibleItems << items[i];
+        i++;
+        if (oldVisibleItems.isEmpty()) {
+            items[i]->setRect(QRectF(QPointF(sizesSum, y), QSizeF(rect.height(), rect.height() / 2)));
+        } else if (oldVisibleItems.contains(items[i])) {
+            temporaryVisibleItem = oldVisibleItems.last();
+            temporaryVisibleItem->moveTo(QRectF(QPointF(sizesSum + rect.height(), y), QSizeF(rect.height(), rect.height() / 2)));
+            items[i]->moveTo(QRectF(QPointF(sizesSum, y), QSizeF(rect.height(), rect.height() / 2)));
+        } else {
+            items[i]->setRect(QRectF(QPointF(sizesSum + rect.height(), y), QSizeF(rect.height(), rect.height() / 2)));
+            items[i]->moveTo(QRectF(QPointF(sizesSum, y), QSizeF(rect.height(), rect.height() / 2)));
+        }
+        visibleItems << items[i];
     }
     
     if (scrollTimeLine->state() == QTimeLine::Running) {
