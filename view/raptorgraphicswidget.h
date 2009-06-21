@@ -13,6 +13,7 @@
 #define RAPTORGRAPHICSWIDGET_H
 
 #include <QGraphicsWidget>
+#include <QModelIndex>
 #include <plasma/querymatch.h>
 
 class KUrl;
@@ -35,7 +36,7 @@ class RaptorGraphicsWidget : public QGraphicsWidget
         void addOrRemoveFavorite(const QString &);
 
         void updateColors();
-        void launchApplication(const KUrl &);
+        void launchApplication(const QModelIndex &);
         void refineModel();
         void matchesChanged(const QList<Plasma::QueryMatch>&);
 

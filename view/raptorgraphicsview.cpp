@@ -102,12 +102,13 @@ void RaptorGraphicsView::setRootIndex(const QModelIndex &index)
         return;
     }
     if (!index.data(Qt::UserRole + 2).isNull()) {
-        emit applicationClicked(KUrl(index.data(Qt::UserRole + 2).toString())); //Qt::UserRole + 2 is Kickoff::UrlRole
+        emit applicationClicked(index); //Qt::UserRole + 2 is Kickoff::UrlRole
         return;
     }
     d->rootIndex = index;
 
     getItems();
+    setViewMode(viewModeFromItemCount());
     d->layout->setMenuItems(d->items);
     d->layout->invalidate();
     update();
@@ -172,9 +173,6 @@ void RaptorGraphicsView::setModel(QAbstractItemModel *model)
 void RaptorGraphicsView::setViewMode(ViewMode viewMode)
 {
     d->delegate->setViewMode((RaptorItemDelegate::ViewMode)viewMode);
-
-    d->layout->invalidate();
-    update();
 }
 
 RaptorGraphicsView::ViewMode RaptorGraphicsView::viewMode()
@@ -249,6 +247,7 @@ void RaptorGraphicsView::getItems()
     qDeleteAll(d->items);
     d->currentHoveredItem = 0;
     d->items.clear();
+
     if (d->model->canFetchMore(d->rootIndex)) {
         d->model->fetchMore(d->rootIndex);
     }
@@ -388,16 +387,18 @@ void RaptorGraphicsView::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 RaptorGraphicsView::ViewMode RaptorGraphicsView::viewModeFromItemCount()
 {
-    /*switch (d->items.count()) {
+    //return RaptorGraphicsView::TwoApps;
+    /*
+    switch (d->items.count()) {
         case 1:
             return RaptorGraphicsView::SingleApp;
         case 2:
             return RaptorGraphicsView::TwoApps;
         case 3:
         case 4:
-        case 5:
+        case 5:*/
             return RaptorGraphicsView::Normal;
-        default:*/
+        /*default:
             return RaptorGraphicsView::Search;
-    /*}*/
+    }*/
 }

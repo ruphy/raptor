@@ -63,7 +63,7 @@ protected slots:
 
 signals:
     void enteredItem(const QModelIndex &);
-    void applicationClicked(const KUrl &);
+    void applicationClicked(const QModelIndex &);
     void favoriteClicked(const QString &);
 
 protected:

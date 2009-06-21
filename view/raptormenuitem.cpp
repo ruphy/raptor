@@ -11,6 +11,7 @@
 #include "raptormenuitem.h"
 #include "raptoritemdelegate.h"
 #include "raptorgraphicsview.h"
+#include "engine/nepomuk/nepomukmodel.h"
 
 #include <QStyleOptionViewItem>
 #include <QPainter>
@@ -29,8 +30,8 @@ class RaptorMenuItem::Private
 public:
     Private(const QModelIndex &index, RaptorGraphicsView *p, RaptorMenuItem *q) : q(q), index(index), option(new QStyleOptionViewItem), view(p), value(0)
     {
-        lastUsed = i18n("20 Minutes");//FIXME: Replace with proper last used info :)
-        lastUsedWidth = Plasma::Theme::defaultTheme()->fontMetrics().width(lastUsed);
+        //lastUsed = i18n("20 Minutes");//FIXME: Replace with proper last used info :)
+        //lastUsedWidth = Plasma::Theme::defaultTheme()->fontMetrics().width(lastUsed);
     }
     ~Private()
     {
@@ -177,11 +178,11 @@ void RaptorMenuItem::update()
 
 QString RaptorMenuItem::lastUsed() const
 {
-    //TODO: Check whether the lastused text changed in the modelindex later and recalculate the size then...
-    return d->lastUsed;
+    //FIXME: Caching?
+    return d->index.data(Raptor::NepomukModel::LastLaunchedRole).toDateTime().toString();
 }
 
 int RaptorMenuItem::lastUsedWidth()
 {
-    return d->lastUsedWidth;
+    return Plasma::Theme::defaultTheme()->fontMetrics().width(d->index.data(Raptor::NepomukModel::LastLaunchedRole).toDateTime().toString());
 }

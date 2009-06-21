@@ -18,6 +18,7 @@
 #include "engine/kickoff/applicationmodel.h"
 #include "engine/kickoff/searchmodel.h"
 #include "engine/kickoff/favoritesmodel.h"
+#include "engine/nepomuk/nepomukmodel.h"
 #include "view/raptorgraphicsview.h"
 
 #include "view/breadcrumb.h"
@@ -37,6 +38,7 @@
 #include <KConfig>
 #include <KDebug>
 #include <KIcon>
+#include <KNotification>
 
 // Plasma
 #include <Plasma/Theme>
@@ -45,6 +47,11 @@
 #include <Plasma/Applet>
 #include <Plasma/FrameSvg>
 #include <plasma/runnermanager.h>
+
+//Nepomuk
+#include <Nepomuk/ResourceManager>
+#include "application.h"
+#include "applicationlaunch.h"
 
 const int CONTENTS_RECT_HORIZONTAL_MARGIN = 32;
 const int CONTENTS_RECT_VERTICAL_MARGIN = 10;
@@ -72,7 +79,8 @@ public:
     RaptorGraphicsWidget *q;
     RaptorGraphicsView *view;
 
-    Kickoff::ApplicationModel *model;
+    //Kickoff::ApplicationModel *model;
+    QAbstractItemModel * model;
     Kickoff::SearchModel * searchModel;
     Kickoff::FavoritesModel * favoritesModel;
 
@@ -94,8 +102,16 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
 {
     setAcceptHoverEvents(true);
 
-    d->model = new Kickoff::ApplicationModel(this);
-    d->model->init();
+//     d->model = new Kickoff::ApplicationModel(this);
+//     d->model->init();
+    if (!Nepomuk::ResourceManager::instance()->init()) {
+        kDebug() << "fucking nepomuk never dies";
+        d->model = new Raptor::NepomukModel(this);
+    } else {
+        KNotification::event(i18n("Nepomuk is not running. Falling back to useless mode!!!"));
+        d->model = new Kickoff::ApplicationModel(this);
+        qobject_cast<Kickoff::ApplicationModel*>(d->model)->init();
+    }
     d->searchModel = new Kickoff::SearchModel();
     d->favoritesModel = new Kickoff::FavoritesModel(this);
 
@@ -184,7 +200,7 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
 // 
 
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(updateColors()));
-    connect(d->view, SIGNAL(applicationClicked(const KUrl &)), this, SLOT(launchApplication(const KUrl &)));
+    connect(d->view, SIGNAL(applicationClicked(const QModelIndex &)), this, SLOT(launchApplication(const QModelIndex &)));
     connect(d->searchLine, SIGNAL(textEdited(const QString&)), this, SLOT(refineModel()));
     connect(d->manager, SIGNAL(matchesChanged(const QList<Plasma::QueryMatch>&)), this,
             SLOT(matchesChanged(const QList<Plasma::QueryMatch>&)));
@@ -214,16 +230,23 @@ void RaptorGraphicsWidget::setFavoritesModel()
     if (d->view->model() == d->favoritesModel) {
         //d->view->setRootIndex(QModelIndex());
         refineModel();
-    }
-    else {
+    } else {
         d->view->setModel(d->favoritesModel);
         d->view->setRootIndex(d->favoritesModel->index(0, 0, QModelIndex()));
     }
 }
 
-void RaptorGraphicsWidget::launchApplication(const KUrl &url)
+void RaptorGraphicsWidget::launchApplication(const QModelIndex &index)
 {
-    KDesktopFile desktopFile(url.pathOrUrl());
+    if (qobject_cast<Raptor::NepomukModel*>(d->model)) {
+        Nepomuk::Application app(index.data(Raptor::NepomukModel::NepomukUriRole).toString());//FIXME: Need to change the role maybe...
+	app.setLaunchCount(app.launchCount() + 1);
+	Nepomuk::ApplicationLaunch launch(QDateTime::currentDateTime().toString());
+	launch.setLaunchDate(QDateTime::currentDateTime());
+	launch.setLaunchedApplication(app);
+	app.setLastLaunch(launch);
+    }
+    KDesktopFile desktopFile(KUrl(index.data(Raptor::NepomukModel::UrlRole).toUrl()).pathOrUrl());
     KService service(&desktopFile);
     KRun::run(service, KUrl::List(), 0);
 }
