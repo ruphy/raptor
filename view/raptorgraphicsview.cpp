@@ -106,7 +106,6 @@ void RaptorGraphicsView::setRootIndex(const QModelIndex &index)
         return;
     }
     d->rootIndex = index;
-
     getItems();
     setViewMode(viewModeFromItemCount());
     d->layout->setMenuItems(d->items);

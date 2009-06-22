@@ -244,6 +244,7 @@ void RaptorGraphicsWidget::launchApplication(const QModelIndex &index)
 	Nepomuk::ApplicationLaunch launch(QDateTime::currentDateTime().toString());
 	launch.setLaunchDate(QDateTime::currentDateTime());
 	launch.setLaunchedApplication(app);
+        app.lastLaunch().remove(); //Remove the old last launch from nepomuk
 	app.setLastLaunch(launch);
     }
     KDesktopFile desktopFile(KUrl(index.data(Raptor::NepomukModel::UrlRole).toUrl()).pathOrUrl());
