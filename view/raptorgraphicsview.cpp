@@ -107,13 +107,9 @@ void RaptorGraphicsView::setRootIndex(const QModelIndex &index)
     }
     d->rootIndex = index;
     getItems();
-    kDebug() << "finished getitems";
     setViewMode(viewModeFromItemCount());
-    kDebug() << "finished setting the view mode";
-    d->layout->setMenuItems(d->items);
-    kDebug() << "finished setting menu items";
+    d->layout->setMenuItems(d->items, true);
     d->layout->invalidate();
-    kDebug() << "finished invalidating the layout";
     update();
     emit enteredItem(d->rootIndex);
 }
@@ -168,7 +164,7 @@ void RaptorGraphicsView::setModel(QAbstractItemModel *model)
 
     getItems();
 
-    d->layout->setMenuItems(d->items);
+    d->layout->setMenuItems(d->items, true);
     d->layout->invalidate();
     update();
 }
@@ -391,7 +387,7 @@ void RaptorGraphicsView::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 RaptorGraphicsView::ViewMode RaptorGraphicsView::viewModeFromItemCount()
 {
     //return RaptorGraphicsView::TwoApps;
-    /*
+    
     switch (d->items.count()) {
         case 1:
             return RaptorGraphicsView::SingleApp;
@@ -399,9 +395,9 @@ RaptorGraphicsView::ViewMode RaptorGraphicsView::viewModeFromItemCount()
             return RaptorGraphicsView::TwoApps;
         case 3:
         case 4:
-        case 5:*/
+        case 5:
             return RaptorGraphicsView::Normal;
-        /*default:
+        default:
             return RaptorGraphicsView::Search;
-    }*/
+    }
 }

@@ -58,10 +58,13 @@ RaptorGraphicsLayout::~RaptorGraphicsLayout()
     delete d;
 }
 
-void RaptorGraphicsLayout::setMenuItems(const QList<RaptorMenuItem*> &items)
+void RaptorGraphicsLayout::setMenuItems(const QList<RaptorMenuItem*> &items, bool clearOld)
 {
     d->items.clear();
     d->items << items;
+    if (clearOld) {
+        d->visibleItems.clear();
+    }
 }
 
 QList<RaptorMenuItem*> RaptorGraphicsLayout::visibleItems() const
@@ -159,10 +162,12 @@ void RaptorGraphicsLayout::Private::layoutItems()
 
             visibleItems << item;
         }
-//        if (!visibleItems.contains(items.last()) && !items.last()->rect().left()) {
-//            items.last()->moveTo(QRectF(QPointF(-1 * size, topMargin), QSizeF(size, size)));
-//            temporaryVisibleItem = items.last();
-//        }
+        if (!visibleItems.contains(items.last()) && !items.last()->rect().left()) {
+            items.last()->moveTo(QRectF(QPointF(-1 * size, topMargin), QSizeF(size, size)));
+            temporaryVisibleItem = items.last();
+        } else {
+            temporaryVisibleItem = 0;
+        }
     }
 
     else if (mode == RaptorGraphicsView::SingleApp) {
@@ -181,6 +186,7 @@ void RaptorGraphicsLayout::Private::layoutItems()
             temporaryVisibleItem = oldVisibleItems.first();
         } else {
             item->setRect(QRectF(QPointF(0, 0), rect.size()));//Don't use rect for single-app, we don't need a margin here
+            temporaryVisibleItem = 0;
         }
         visibleItems << item;
     }
@@ -194,6 +200,7 @@ void RaptorGraphicsLayout::Private::layoutItems()
             RaptorMenuItem *item = items[i];
             if (oldVisibleItems.isEmpty()) {
                 item->setRect(QRectF(QPointF(x, topMargin), QSizeF(rect.width() / 2, rect.height())));
+                temporaryVisibleItem = 0;
             } else if (oldVisibleItems.first() == items.last()) {
                 temporaryVisibleItem = oldVisibleItems.first();
                 temporaryVisibleItem->moveTo(QRectF(QPointF(-rect.width() / 2, topMargin), QSizeF(rect.width() / 2, rect.height())));
@@ -214,14 +221,14 @@ void RaptorGraphicsLayout::Private::layoutItems()
         qreal sizesSum = 0;
         int i = 0;
         qreal y = topMargin;
-        
-        if (oldVisibleItems.contains(items.first())) {
+        if (oldVisibleItems.isEmpty()) {
+            temporaryVisibleItem = 0;
+            items.first()->setRect(QRectF(QPointF(0, y), QSizeF(rect.height(), rect.height() / 2)));
+        } else if (oldVisibleItems.contains(items.first())) {
             kDebug() << "BLUUUUUUUUUUUUUUB" << oldVisibleItems.last()->modelIndex().data(Qt::DisplayRole);
             temporaryVisibleItem = oldVisibleItems.first();
             temporaryVisibleItem->moveTo(QRectF(QPointF(-rect.height(), y), QSizeF(rect.height(), rect.height() / 2)));//FIXME: Not working, don't ask me why...
             items.first()->moveTo(QRectF(QPointF(0, y), QSizeF(rect.height(), rect.height() / 2)));
-        } else if (oldVisibleItems.isEmpty()) {
-            items.first()->setRect(QRectF(QPointF(0, y), QSizeF(rect.height(), rect.height() / 2)));
         } else {
             kDebug() << "BLAAAAAAAAAAAAAAAA" << items.first()->modelIndex().data(Qt::DisplayRole);
             items.first()->setRect(QRectF(QPointF(-(rect.height() / 2), y), QSizeF(rect.height(), rect.height() / 2)));
@@ -286,6 +293,7 @@ void RaptorGraphicsLayout::Private::layoutItems()
         visibleItems << items[i];
         i++;
         if (oldVisibleItems.isEmpty()) {
+            temporaryVisibleItem = 0;
             items[i]->setRect(QRectF(QPointF(sizesSum, y), QSizeF(rect.height(), rect.height() / 2)));
         } else if (oldVisibleItems.contains(items[i])) {
             temporaryVisibleItem = oldVisibleItems.last();

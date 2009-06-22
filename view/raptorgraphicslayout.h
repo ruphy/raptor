@@ -23,7 +23,7 @@ public:
     RaptorGraphicsLayout(RaptorGraphicsView *parent);
     ~RaptorGraphicsLayout();
 
-    void setMenuItems(const QList<RaptorMenuItem*> &items);
+    void setMenuItems(const QList<RaptorMenuItem*> &items, bool clearOld = false);
     QList<RaptorMenuItem*> visibleItems() const;
 
     void setContentMargins(qreal left, qreal top, qreal right, qreal bottom);
