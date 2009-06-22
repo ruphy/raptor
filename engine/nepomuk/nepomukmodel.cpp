@@ -134,7 +134,7 @@ NepomukModel::NepomukModel(QObject *parent)
     KService::List services = KServiceTypeTrader::self()->query("Application");
     QList<Nepomuk::Application> apps = Nepomuk::Application::allApplications();
     if (apps.isEmpty()) {
-        KNotification::event(i18n("Building database..."));
+        KNotification::event(KNotification::Warning, i18n("Building database..."));
     }
     
     foreach (Nepomuk::Application app, apps) {

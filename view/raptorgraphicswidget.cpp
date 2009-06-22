@@ -108,7 +108,7 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
         kDebug() << "fucking nepomuk never dies";
         d->model = new Raptor::NepomukModel(this);
     } else {
-        KNotification::event(i18n("Nepomuk is not running. Falling back to useless mode!!!"));
+        KNotification::event(KNotification::Error, i18n("Nepomuk is not running. Falling back to useless mode!!!"));
         d->model = new Kickoff::ApplicationModel(this);
         qobject_cast<Kickoff::ApplicationModel*>(d->model)->init();
     }
