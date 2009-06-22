@@ -65,6 +65,7 @@ RaptorMenuItem::RaptorMenuItem(const QModelIndex &index, RaptorGraphicsView *par
 
 RaptorMenuItem::~RaptorMenuItem()
 {
+    kDebug() << "dying" << this;
     delete d;
 }
 

@@ -104,14 +104,17 @@ void RaptorGraphicsLayout::invalidate()
 void RaptorGraphicsLayout::setScrollingFrame()
 {
     foreach (RaptorMenuItem * item, d->visibleItems) {
+        kDebug() << "visible item" << item << "setting animation value";
         item->setAnimationValue(d->scrollTimeLine->currentValue());
     }
     if (d->temporaryVisibleItem) {
+        kDebug() << "changing animation value of temporary visible item";
         d->temporaryVisibleItem->setAnimationValue(d->scrollTimeLine->currentValue());
     }
     /*foreach (RaptorMenuItem * item, d->needsAnimation) {
         item->setAnimationValue(d->scrollTimeLine->currentValue());
     }*/
+    kDebug() << "updating";
     d->view->update();
 }
 
@@ -156,10 +159,10 @@ void RaptorGraphicsLayout::Private::layoutItems()
 
             visibleItems << item;
         }
-        if (!visibleItems.contains(items.last()) && !items.last()->rect().left()) {
-            items.last()->moveTo(QRectF(QPointF(-1 * size, topMargin), QSizeF(size, size)));
-            temporaryVisibleItem = items.last();
-        }
+//        if (!visibleItems.contains(items.last()) && !items.last()->rect().left()) {
+//            items.last()->moveTo(QRectF(QPointF(-1 * size, topMargin), QSizeF(size, size)));
+//            temporaryVisibleItem = items.last();
+//        }
     }
 
     else if (mode == RaptorGraphicsView::SingleApp) {
