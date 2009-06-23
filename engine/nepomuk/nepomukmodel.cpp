@@ -16,6 +16,16 @@
 #include <KSycocaEntry>
 
 namespace Raptor {
+static QHash<QString, QString> tomFromService(KService * service)
+{
+    /*QStringList cats = service->categories();
+    QHash<QString, QString> tom;
+    if (cats.contains("Audio") && cats.contains("Midi")) {
+        tom.insert("Media", "Create");
+    }
+    if (cats.contains("Audio") && cats.contains(""))*/
+}
+
 class MenuItem
 {
 public:

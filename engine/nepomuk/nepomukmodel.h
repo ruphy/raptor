@@ -5,7 +5,15 @@
 
 #include "category.h"
 
+class KService;
 namespace Raptor {
+/**
+ * This method returns the associated Category and Task
+ * as from the TOM spec you can find along with raptor.
+ * The first QString is the Category and the second one is
+ * the Task.
+ */
+static QHash<QString, QString> tomFromService(KService * service);
 class NepomukModel : public QAbstractItemModel
 {
 Q_OBJECT
