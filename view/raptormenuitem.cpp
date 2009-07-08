@@ -11,6 +11,7 @@
 #include "raptormenuitem.h"
 #include "raptoritemdelegate.h"
 #include "raptorgraphicsview.h"
+#include "engine/nepomuk/nepomukmodel.h"
 
 #include <QStyleOptionViewItem>
 #include <QPainter>
@@ -23,15 +24,14 @@
 #include <Plasma/Theme>
 
 const int DURATION = 150;
-const int FRAMES = 20;
 
 class RaptorMenuItem::Private
 {
 public:
-    Private(const QModelIndex &index, RaptorGraphicsView *p, RaptorMenuItem *q) : q(q), index(index), option(new QStyleOptionViewItem), view(p)
+    Private(const QModelIndex &index, RaptorGraphicsView *p, RaptorMenuItem *q) : q(q), index(index), option(new QStyleOptionViewItem), view(p), value(0)
     {
-        lastUsed = i18n("20 Minutes");//FIXME: Replace with proper last used info :)
-        lastUsedWidth = Plasma::Theme::defaultTheme()->fontMetrics().width(lastUsed);
+        //lastUsed = i18n("20 Minutes");//FIXME: Replace with proper last used info :)
+        //lastUsedWidth = Plasma::Theme::defaultTheme()->fontMetrics().width(lastUsed);
     }
     ~Private()
     {
@@ -40,14 +40,20 @@ public:
 
     RaptorMenuItem *q;
     QModelIndex index;
+
     QRectF rect;
+    QRectF initialRect;
+    QRectF finalRect;
+
     QStyleOptionViewItem *option;
     QTimeLine *timeLine;
     RaptorGraphicsView *view;
     QString lastUsed;
     int lastUsedWidth;
+    qreal value;
 
     void calculateDecorationSize();
+    void calculateRect();
 };
 
 RaptorMenuItem::RaptorMenuItem(const QModelIndex &index, RaptorGraphicsView *parent) : QObject(parent) , d(new Private(index, parent, this))
@@ -59,6 +65,7 @@ RaptorMenuItem::RaptorMenuItem(const QModelIndex &index, RaptorGraphicsView *par
 
 RaptorMenuItem::~RaptorMenuItem()
 {
+    kDebug() << "dying" << this;
     delete d;
 }
 
@@ -69,10 +76,41 @@ QRectF RaptorMenuItem::rect() const
 
 void RaptorMenuItem::setRect(const QRectF &rect)
 {
+    if (d->rect == rect) {
+        return;
+    }
+
     d->rect = rect;
     d->option->rect = rect.toRect();
-
     d->calculateDecorationSize();
+}
+
+void RaptorMenuItem::moveTo(const QRectF &rect)
+{
+    if (d->rect == rect) {
+        return;
+    }
+
+    if (d->rect.isNull()) {
+        setRect(rect);
+        return;
+    }
+    kDebug() << "Move" << d->index.data(Qt::DisplayRole) << "to" << rect;
+
+    //d->rect.setSize(rect.size());//TODO: Animate size changes
+    //d->option->rect.setSize(rect.size().toSize());
+    d->initialRect = d->rect;
+    d->finalRect = rect;
+}
+
+void RaptorMenuItem::setAnimationValue(qreal value)
+{
+    if (d->finalRect == d->initialRect) {
+        return;
+    }
+    //kDebug() << value;
+    d->value = value;
+    d->calculateRect();
 }
 
 void RaptorMenuItem::moveBy(float dx, float dy)
@@ -88,6 +126,22 @@ QModelIndex RaptorMenuItem::modelIndex() const
 QStyleOptionViewItem* RaptorMenuItem::option()
 {
     return d->option;
+}
+
+void RaptorMenuItem::Private::calculateRect()
+{
+    if (value == 1) {
+        rect = finalRect;
+        option->rect = rect.toRect();
+        return;
+    }
+
+    qreal xTranslation = (finalRect.x() - initialRect.x()) * value;
+    qreal yTranslation = (finalRect.y() - initialRect.y()) * value;
+    kDebug() << index.data().toString() << "X-Translation is:" << xTranslation << "Animation value is:" << value << "Initial Rect:" << initialRect;
+    rect = initialRect.translated(xTranslation, yTranslation);
+    rect.setSize(QSizeF(initialRect.width() + (finalRect.width() - initialRect.width()) * value, initialRect.height() + (finalRect.height() - initialRect.height()) * value));
+    option->rect = rect.toRect();
 }
 
 void RaptorMenuItem::Private::calculateDecorationSize()
@@ -125,11 +179,11 @@ void RaptorMenuItem::update()
 
 QString RaptorMenuItem::lastUsed() const
 {
-    //TODO: Check whether the lastused text changed in the modelindex later and recalculate the size then...
-    return d->lastUsed;
+    //FIXME: Caching?
+    return d->index.data(Raptor::NepomukModel::LastLaunchedRole).toDateTime().toString();
 }
 
 int RaptorMenuItem::lastUsedWidth()
 {
-    return d->lastUsedWidth;
+    return Plasma::Theme::defaultTheme()->fontMetrics().width(d->index.data(Raptor::NepomukModel::LastLaunchedRole).toDateTime().toString());
 }

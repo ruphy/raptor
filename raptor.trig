@@ -1,0 +1,123 @@
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix napp:    <http://nepomuk.kde.org/ontologies/2008/10/06/napp#> .
+@prefix nrl:     <http://www.semanticdesktop.org/ontologies/2007/08/15/nrl#> .
+@prefix nao:     <http://www.semanticdesktop.org/ontologies/2007/08/15/nao#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+
+<http://nepomuk.kde.org/ontologies/2008/10/06/napp> {
+
+napp:Application
+    a rdfs:Class ;
+    rdfs:comment "A desktop application." ;
+    rdfs:label "application" ;
+    rdfs:subClassOf rdfs:Resource .
+
+napp:Category
+    a rdfs:Class ;
+    rdfs:comment "An application category." ;
+    rdfs:label "category" ;
+    rdfs:subClassOf rdfs:Resource .
+
+napp:Task
+    a rdfs:Class ;
+    rdfs:comment "A task." ;
+    rdfs:label "task" ;
+    rdfs:subClassOf rdfs:Resource .
+    
+napp:ApplicationLaunch
+    a rdfs:Class ;
+    rdfs:comment "Represents a launch of an application." ;
+    rdfs:label "application launch" ;
+    rdfs:subClassOf rdfs:Resource .
+
+napp:task
+    a rdf:Property ;
+    rdfs:comment "Set tasks to category." ;
+    rdfs:domain napp:Category ;
+    rdfs:label "task" ;
+    rdfs:range napp:Task .
+
+napp:application
+    a rdf:Property ;
+    rdfs:comment "Set applications to task." ;
+    rdfs:domain napp:Task ;
+    rdfs:label "application" ;
+    rdfs:range napp:Application .
+    
+napp:isInstalled
+    a rdf:Property ;
+    rdfs:comment "Whether the application is installed." ;
+    rdfs:domain napp:Application ;
+    rdfs:label "is installed" ;
+    rdfs:range xsd:boolean ;
+    nrl:maxCardinality "1" .
+
+napp:serviceName
+    a rdf:Property ;
+    rdfs:comment "Service Name of the application." ;
+    rdfs:domain napp:Application ;
+    rdfs:label "service name" ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf nao:identifier ;
+    nrl:maxCardinality "1" .
+
+napp:desktopFilePath
+    a rdf:Property ;
+    rdfs:comment "The path of the application's desktop file." ;
+    rdfs:domain napp:Application ;
+    rdfs:label "desktop file path" ;
+    rdfs:range xsd:string ;
+    nrl:maxCardinality "1" .
+
+napp:launchedApplication
+    a rdf:Property ;
+    rdfs:comment "The application that has been launched." ;
+    rdfs:domain napp:ApplicationLaunch ;
+    rdfs:label "lauched application" ;
+    rdfs:range napp:Application ;
+    nrl:maxCardinality "1" .
+
+napp:lastLaunch
+    a rdf:Property ;
+    rdfs:comment "When the application was last launched." ;
+    rdfs:domain napp:Application ;
+    rdfs:label "last launched" ;
+    rdfs:range napp:ApplicationLaunch ;
+    nrl:maxCardinality "1" .
+
+napp:launchDate
+    a rdf:Property ;
+    rdfs:comment "When the application was launched." ;
+    rdfs:domain napp:ApplicationLaunch ;
+    rdfs:label "launch date" ;
+    rdfs:range xsd:dateTime ;
+    nrl:maxCardinality "1" .
+
+napp:launchCount
+    a rdf:Property ;
+    rdfs:comment "How often the application was launched." ;
+    rdfs:domain napp:Application ;
+    rdfs:label "launch count" ;
+    rdfs:range xsd:int ;
+    nrl:maxCardinality "1" .
+}
+
+<http://nepomuk.kde.org/ontologies/2008/10/06/napp/metadata>
+{
+    <http://nepomuk.kde.org/ontologies/2008/10/06/napp>
+          a       nrl:DocumentGraph , nrl:KnowledgeBase ;
+          nao:hasDefaultNamespace "http://nepomuk.kde.org/ontologies/2008/10/06/napp#" ;
+          nao:hasDefaultNamespaceAbbreviation "napp" ;
+          nao:lastModified "2008-09-17T18:46:32.866Z" ;
+          nao:serializationLanguage "TriG" ;
+          nao:status "Testing" ;
+          nrl:updatable "0" ;
+          nao:version "3" .
+
+    <http://nepomuk.kde.org/ontologies/2008/10/06/napp/metadata>
+          a       nrl:GraphMetadata , nrl:DocumentGraph ;
+          nao:serializationLanguage "TriG" ;
+          nrl:coreGraphMetadataFor <http://nepomuk.kde.org/ontologies/2008/10/06/nap> .
+}
