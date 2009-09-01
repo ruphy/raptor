@@ -12,6 +12,7 @@
 
 #include "raptoritemdelegate.h"
 #include "engine/kickoff/favoritesmodel.h"
+#include "engine/nepomuk/nepomukmodel.h"
 
 //Qt
 #include <QPainter>

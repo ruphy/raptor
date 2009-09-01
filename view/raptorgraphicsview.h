@@ -63,15 +63,14 @@ protected slots:
 
 signals:
     void enteredItem(const QModelIndex &);
-    void applicationClicked(const KUrl &);
+    void applicationClicked(const QModelIndex &);
     void favoriteClicked(const QString &);
 
 protected:
     void getItems();
-    void setupItems();
     void scrollItems();
 
-    void resizeEvent(QGraphicsSceneResizeEvent *event);
+//     void resizeEvent(QGraphicsSceneResizeEvent *event);
 
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
     void hoverMoveEvent(QGraphicsSceneHoverEvent *event);

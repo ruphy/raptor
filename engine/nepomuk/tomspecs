@@ -1,0 +1,32 @@
+Categories/Tasks:
+-Media
+  *Listen
+  *Watch
+  *Create
+  *More
+-More
+  *Access
+  *Develop
+  *Play
+  *Read documentation
+  *More
+-Internet
+  *Browse
+  *Mail
+  *Chat
+  *News
+  *Transfer files
+  *Assist remotely/Get assistance
+  *More
+-System
+  *Configure
+  *More
+-Productivity
+  *Write
+  *Calculate
+  *Draw
+  *Present
+  *More
+
+
+Notes: identify the Nepomuk::Task by category-name + task-name, else we get in trouble when having multiple "Other"s etc...

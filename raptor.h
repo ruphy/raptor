@@ -1,6 +1,6 @@
 /* This file is part of the KDE project
 
-   Copyright (C) 2008 Lukas Appelhans <l.appelhans@gmx.de>
+   Copyright (C) 2008 - 2009 Lukas Appelhans <l.appelhans@gmx.de>
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
@@ -13,15 +13,17 @@
 // We need the Plasma Applet headers
 #include <KIcon>
 
-#include <Plasma/PopupApplet>
-#include <Plasma/Svg>
+#include <Plasma/Applet>
+#include <Plasma/IconWidget>
+#include <Plasma/Dialog>
 
 class RaptorGraphicsWidget;
+class RaptorDialog;
 
 class QSizeF;
 
 // Define our plasma Applet
-class Raptor : public Plasma::PopupApplet
+class Raptor : public Plasma::Applet
 {
     Q_OBJECT
     public:
@@ -34,14 +36,15 @@ class Raptor : public Plasma::PopupApplet
 
         QGraphicsWidget *graphicsWidget();
 
-    protected:
-        void setupView();
-
+    private slots:
+        void popup();
 
     private:
-        Plasma::Svg m_svg;
-        KIcon m_icon;
+        Plasma::IconWidget *m_icon;
+        RaptorDialog *m_dialog;
         RaptorGraphicsWidget *m_gwidget;
+
+        void updateDialog();
 };
 
 // This is the command that links your applet to the .desktop file

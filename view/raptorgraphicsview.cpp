@@ -10,6 +10,7 @@
 */
 #include "raptorgraphicsview.h"
 #include "raptoritemdelegate.h"
+#include "raptorgraphicslayout.h"
 
 #include <QAbstractItemModel>
 #include <QModelIndex>
@@ -34,15 +35,15 @@ public:
     }
 
     ~Private()
-    { qDeleteAll(items); items.clear(); shownItems.clear(); }
+    { qDeleteAll(items); items.clear(); }
 
     RaptorGraphicsView *q;
+    RaptorGraphicsLayout *layout;
 
     QAbstractItemModel *model;
     QModelIndex rootIndex;
 
     QList<RaptorMenuItem*> items;
-    QList<RaptorMenuItem*> shownItems;
 
     RaptorItemDelegate * delegate;
 
@@ -60,6 +61,8 @@ RaptorGraphicsView::RaptorGraphicsView(QGraphicsItem *parent) : QGraphicsWidget(
     //setViewMode(RaptorGraphicsView::SingleApp);
     //setViewMode(RaptorGraphicsView::TwoApps);
     //setViewMode(RaptorGraphicsView::Search);
+
+    d->layout = new RaptorGraphicsLayout(this);
     setAcceptHoverEvents(true);
 
     connect (d->delegate, SIGNAL(favoriteAddRequested(const QModelIndex &)), this, SLOT(slotAddFavorite(const QModelIndex &)));
@@ -73,7 +76,8 @@ RaptorGraphicsView::~RaptorGraphicsView()
 void RaptorGraphicsView::reset()
 {
     getItems();
-    setupItems();
+    d->layout->setMenuItems(d->items);
+    d->layout->invalidate();
     update();
 }
 
@@ -89,7 +93,7 @@ QList<RaptorMenuItem*> RaptorGraphicsView::items() const
 
 QList<RaptorMenuItem*> RaptorGraphicsView::shownItems() const
 {
-    return d->shownItems;
+    return d->layout->visibleItems();
 }
 
 void RaptorGraphicsView::setRootIndex(const QModelIndex &index)
@@ -98,41 +102,44 @@ void RaptorGraphicsView::setRootIndex(const QModelIndex &index)
         return;
     }
     if (!index.data(Qt::UserRole + 2).isNull()) {
-        emit applicationClicked(KUrl(index.data(Qt::UserRole + 2).toString())); //Qt::UserRole + 2 is Kickoff::UrlRole
+        emit applicationClicked(index); //Qt::UserRole + 2 is Kickoff::UrlRole
         return;
     }
     d->rootIndex = index;
-
     getItems();
-    setupItems();
+    setViewMode(viewModeFromItemCount());
+    d->layout->setMenuItems(d->items, true);
+    d->layout->invalidate();
     update();
     emit enteredItem(d->rootIndex);
 }
 
 void RaptorGraphicsView::scrollRight()
 {
-    if (d->items == d->shownItems)
+    if (d->items == shownItems())
         return;
 
     RaptorMenuItem *item = d->items.first();
     d->items.removeAll(item);
     d->items.append(item);
 
-    setupItems();
-    update();
+    d->layout->setMenuItems(d->items);
+    d->layout->invalidate();
+    //update();
 }
 
 void RaptorGraphicsView::scrollLeft()
 {
-    if (d->items == d->shownItems)
+    if (d->items == shownItems())
         return;
 
     RaptorMenuItem *item = d->items.last();
     d->items.removeAll(item);
     d->items.prepend(item);
 
-    setupItems();
-    update();
+    d->layout->setMenuItems(d->items);
+    d->layout->invalidate();
+    //update();
 }
 
 QAbstractItemModel* RaptorGraphicsView::model()
@@ -153,17 +160,18 @@ void RaptorGraphicsView::setModel(QAbstractItemModel *model)
     connect(d->model, SIGNAL(modelReset()), SLOT(reset()));
     d->rootIndex = QModelIndex();
 
+    setViewMode(viewModeFromItemCount());
+
     getItems();
-    setupItems();
+
+    d->layout->setMenuItems(d->items, true);
+    d->layout->invalidate();
     update();
 }
 
 void RaptorGraphicsView::setViewMode(ViewMode viewMode)
 {
     d->delegate->setViewMode((RaptorItemDelegate::ViewMode)viewMode);
-
-    setupItems();
-    update();
 }
 
 RaptorGraphicsView::ViewMode RaptorGraphicsView::viewMode()
@@ -177,8 +185,10 @@ void RaptorGraphicsView::addRows(const QModelIndex &parent, int start, int end)
     for (int i = start; i != end; i++) {
         d->items.append(new RaptorMenuItem(parent.child(i, 0)));
     }
-    setupItems();
-    update();
+
+    d->layout->setMenuItems(d->items);
+    d->layout->invalidate();
+    //update();
 }
 
 void RaptorGraphicsView::removeRows(const QModelIndex &parent, int start, int end)
@@ -193,8 +203,10 @@ void RaptorGraphicsView::removeRows(const QModelIndex &parent, int start, int en
     foreach (RaptorMenuItem * item, toRemove) {
         d->items.removeAll(item);
     }
-    setupItems();
-    update();
+
+    d->layout->setMenuItems(d->items);
+    d->layout->invalidate();
+    //update();
 }
 
 void RaptorGraphicsView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -205,13 +217,20 @@ void RaptorGraphicsView::paint(QPainter *painter, const QStyleOptionGraphicsItem
     painter->setClipRect(contentsRect());
 //     painter->fillRect(rect(), Qt::green);
 
-    foreach (RaptorMenuItem *item, d->shownItems) {
+    foreach (RaptorMenuItem *item, d->layout->visibleItems()) {
+        //kDebug() << "Paint" << item->modelIndex().data(Qt::DisplayRole) << "at" << item->option()->rect;
+        //kDebug() << "Paint" << item->modelIndex().data(Qt::DisplayRole) << "to" << item->rect();
         d->delegate->paint(painter, *item->option(), item->modelIndex());
     }
+//     if (d->scrollTimeLine->currentFrame() != 20) {
+//         foreach (RaptorMenuItem *item, d->needsAnimation) {
+//             d->delegate->paint(painter, *item->option(), item->modelIndex());
+//         }
+//     }
 
     //Paint description, FIXME: Change DataRole
-    if ((d->currentHoveredItem || viewMode() == RaptorGraphicsView::SingleApp) && !d->shownItems.isEmpty()) {
-        RaptorMenuItem * item = viewMode() == RaptorGraphicsView::SingleApp ? d->shownItems.first() : d->currentHoveredItem;
+    if ((d->currentHoveredItem || viewMode() == RaptorGraphicsView::SingleApp) && !d->layout->visibleItems().isEmpty()) {
+        RaptorMenuItem * item = viewMode() == RaptorGraphicsView::SingleApp ? d->layout->visibleItems().first() : d->currentHoveredItem;
 
         painter->save();
 
@@ -229,6 +248,7 @@ void RaptorGraphicsView::getItems()
     qDeleteAll(d->items);
     d->currentHoveredItem = 0;
     d->items.clear();
+
     if (d->model->canFetchMore(d->rootIndex)) {
         d->model->fetchMore(d->rootIndex);
     }
@@ -236,103 +256,6 @@ void RaptorGraphicsView::getItems()
         kDebug() << "Get Item" << i << "Name:" << d->model->index(i, 0, d->rootIndex).data(Qt::DisplayRole);
         d->items << new RaptorMenuItem(d->model->index(i, 0, d->rootIndex), this);
     }
-}
-
-void RaptorGraphicsView::setupItems()
-{
-    if (d->items.isEmpty()) {
-        d->shownItems.clear();
-        return;
-    }
-    d->delegate->setViewMode((RaptorItemDelegate::ViewMode)viewModeFromItemCount());
-    // NOTE: for each view mode we should setup items individually
-    // WARNING: we suppose a horizontal view
-    // TODO: remove tabs
-
-    d->shownItems.clear();
-    ViewMode mode = viewMode();
-
-    QRectF rect = contentsRect();
-    rect.setSize(QSizeF(rect.width(), rect.height() - d->topMargin));
-    rect.moveBottom(d->topMargin);
-
-    if (mode == RaptorGraphicsView::Normal) {
-        qreal sizesSum = 0;
-        qreal size = rect.height();
-        int i = 0;
-        foreach (RaptorMenuItem *item, d->items) {
-            item->setRect(QRectF(QPointF(sizesSum, d->topMargin), QSizeF(size, size)));
-            sizesSum += size;
-            if (sizesSum + item->rect().width() < rect.x()) {
-                continue;
-            }
-            if ( sizesSum - item->rect().width() > rect.width() ) {
-                break;
-            }
-            d->shownItems << item;
-            i++;
-        }
-    }
-
-    else if (mode == RaptorGraphicsView::SingleApp) {
-        RaptorMenuItem *item = d->items.first();
-        item->setRect(QRectF(QPointF(0, 0), contentsRect().size()));//Don't use rect for single-app, we don't need a margin here
-        d->shownItems << item;
-    }
-
-    else if (mode == RaptorGraphicsView::TwoApps) {
-	qreal x = 0;
-	for (int i = 0; i < 2; i++) {
-            if (d->items.count() <= i) {
-                break;
-            }
-	    RaptorMenuItem *item = d->items[i];
-	    item->setRect(QRectF(QPointF(x, d->topMargin), QSizeF(rect.width() / 2, rect.height())));
-	    x += rect.width() / 2;
-            d->shownItems << item;
-	}
-     }
-
-     else if (mode == RaptorGraphicsView::Search) {
-	  qreal sizesSum = 0;
-	  int i = 0;
-	  qreal y = d->topMargin;
-
-	  for (; i < 2; i++) { // we place the first two items half sized and in column
-	      RaptorMenuItem *item = d->items[i];
-	      item->setRect(QRectF(QPointF(0, y), QSizeF(rect.height(), rect.height() / 2)));
-	      y += rect.height() / 2;
-              d->shownItems << item;
-	  }
-	  sizesSum += contentsRect().height();
-
-	  for (; i < d->items.count(); i++) { // now we take care of left items
-	      if (sizesSum > rect.width() - (rect.height())) {
-		  sizesSum = rect.width() - (rect.height());
-		  break;
-	      }
-
-	      if ( d->items.count() - i == 2 ) {
-		  break;
-	      }
-
-	      RaptorMenuItem *item = d->items[i]; 
-	      item->setRect(QRectF(QPointF(sizesSum, d->topMargin), QSizeF(rect.height(), rect.height())));
-	      d->shownItems << item;
-
-	      sizesSum += rect.height();
-	  }
-
-	  int max = i + 2;
-	  y = d->topMargin;
-	  for (; i < max; i++) { // here we handle the last two items
-	      RaptorMenuItem *item = d->items[i];
-	      item->setRect(QRectF(QPointF(sizesSum, y), QSizeF(rect.height(), rect.height() / 2)));
-	      y += rect.height() / 2;
-              d->shownItems << item;
-	  }
-    }
-
 }
 
 void RaptorGraphicsView::scrollItems()
@@ -354,7 +277,7 @@ void RaptorGraphicsView::scrollItems()
         return;
     }
 
-    foreach (RaptorMenuItem *item, d->shownItems) {
+    foreach (RaptorMenuItem *item, shownItems()) {
         QRectF rect = item->rect();
         rect.translate(d->scrollOffset, 0);
         item->setRect(rect);
@@ -363,21 +286,12 @@ void RaptorGraphicsView::scrollItems()
     update();
 }
 
-void RaptorGraphicsView::resizeEvent(QGraphicsSceneResizeEvent *event)
-{
-    Q_UNUSED(event)
-    setupItems();
-    update();
-
-    kDebug() << contentsRect();
-}
-
 void RaptorGraphicsView::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     if (viewMode() == RaptorGraphicsView::SingleApp) {
         return;
     }
-    foreach (RaptorMenuItem *item, d->shownItems) {
+    foreach (RaptorMenuItem *item, shownItems()) {
         item->option()->state = QStyle::State_None;
         if (item->rect().contains(event->pos())) {
             item->option()->state = QStyle::State_MouseOver;
@@ -394,7 +308,7 @@ void RaptorGraphicsView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
     if (viewMode() == RaptorGraphicsView::SingleApp) {
         return;
     }
-    foreach (RaptorMenuItem *item, d->shownItems) {
+    foreach (RaptorMenuItem *item, shownItems()) {
         item->option()->state = QStyle::State_None;
         if (item->rect().contains(event->pos())) {
             item->option()->state = QStyle::State_MouseOver;
@@ -457,7 +371,7 @@ void RaptorGraphicsView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void RaptorGraphicsView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     kDebug();
-    foreach (RaptorMenuItem * item, d->shownItems) {
+    foreach (RaptorMenuItem * item, shownItems()) {
 	if (item->rect().contains(event->pos())) {
 
 	    if (d->delegate->editorEvent(event, d->model, *item->option(), item->modelIndex())) { // let's give priority to the editor event
@@ -481,6 +395,8 @@ void RaptorGraphicsView::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 RaptorGraphicsView::ViewMode RaptorGraphicsView::viewModeFromItemCount()
 {
+    //return RaptorGraphicsView::TwoApps;
+    
     switch (d->items.count()) {
         case 1:
             return RaptorGraphicsView::SingleApp;
