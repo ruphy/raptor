@@ -6,7 +6,7 @@ project(raptor)
 find_package(KDE4 REQUIRED)
 include(KDE4Defaults)
 find_package(Nepomuk REQUIRED)
-include(MacroAddOntologyClasses)
+include(NepomukAddOntologyClasses)
 #find_package(Plasma REQUIRED)
 
 #add_subdirectory(widget)
