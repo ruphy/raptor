@@ -160,8 +160,6 @@ void RaptorGraphicsView::setModel(QAbstractItemModel *model)
     connect(d->model, SIGNAL(modelReset()), SLOT(reset()));
     d->rootIndex = QModelIndex();
 
-    setViewMode(viewModeFromItemCount());
-
     getItems();
 
     d->layout->setMenuItems(d->items, true);
@@ -182,9 +180,10 @@ RaptorGraphicsView::ViewMode RaptorGraphicsView::viewMode()
 void RaptorGraphicsView::addRows(const QModelIndex &parent, int start, int end)
 {
     kDebug();
-    for (int i = start; i != end; i++) {
-        d->items.append(new RaptorMenuItem(parent.child(i, 0)));
-    }
+    //for (int i = start; i != end; i++) {
+    //    d->items.append(new RaptorMenuItem(parent.child(i, 0)));
+    //}
+    getItems();
 
     d->layout->setMenuItems(d->items);
     d->layout->invalidate();
@@ -196,13 +195,14 @@ void RaptorGraphicsView::removeRows(const QModelIndex &parent, int start, int en
     Q_UNUSED(parent);
 
     kDebug();
-    QList<RaptorMenuItem*> toRemove;
-    for (int i = start; i != end; i++) {
-        toRemove.append(d->items.at(i));
-    }
-    foreach (RaptorMenuItem * item, toRemove) {
-        d->items.removeAll(item);
-    }
+    //QList<RaptorMenuItem*> toRemove;
+    //for (int i = start; i != end; i++) {
+    //    toRemove.append(d->items.at(i));
+    //}
+    //foreach (RaptorMenuItem * item, toRemove) {
+    //    d->items.removeAll(item);
+    //}
+    getItems();
 
     d->layout->setMenuItems(d->items);
     d->layout->invalidate();
@@ -256,6 +256,7 @@ void RaptorGraphicsView::getItems()
         kDebug() << "Get Item" << i << "Name:" << d->model->index(i, 0, d->rootIndex).data(Qt::DisplayRole);
         d->items << new RaptorMenuItem(d->model->index(i, 0, d->rootIndex), this);
     }
+    setViewMode(viewModeFromItemCount());
 }
 
 void RaptorGraphicsView::scrollItems()
