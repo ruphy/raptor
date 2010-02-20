@@ -26,10 +26,9 @@ class RaptorGraphicsWidget : public QGraphicsWidget
         RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigGroup &appletconfig);
         ~RaptorGraphicsWidget();
 
-        void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
-
-    protected:
-        void resizeEvent(QGraphicsSceneResizeEvent *event);
+    public slots:
+        void scrollLeft();
+        void scrollRight();
 
     protected slots:
         void setFavoritesModel();

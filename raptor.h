@@ -13,17 +13,17 @@
 // We need the Plasma Applet headers
 #include <KIcon>
 
-#include <Plasma/Applet>
+#include <Plasma/PopupApplet>
 #include <Plasma/IconWidget>
 #include <Plasma/Dialog>
 
 class RaptorGraphicsWidget;
-class RaptorDialog;
+class RaptorScrollButton;
 
 class QSizeF;
 
 // Define our plasma Applet
-class Raptor : public Plasma::Applet
+class Raptor : public Plasma::PopupApplet
 {
     Q_OBJECT
     public:
@@ -35,16 +35,17 @@ class Raptor : public Plasma::Applet
         void constraintsEvent(Plasma::Constraints constraints);
 
         QGraphicsWidget *graphicsWidget();
-
-    private slots:
-        void popup();
+        
+    protected:
+        virtual void popupEvent(bool shown);
+	
+    private:
+        void updateScrollButtonPositions();
 
     private:
-        Plasma::IconWidget *m_icon;
-        RaptorDialog *m_dialog;
         RaptorGraphicsWidget *m_gwidget;
-
-        void updateDialog();
+        RaptorScrollButton *m_rightScrollButton;
+        RaptorScrollButton *m_leftScrollButton;
 };
 
 // This is the command that links your applet to the .desktop file

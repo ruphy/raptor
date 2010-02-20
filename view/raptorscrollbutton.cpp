@@ -14,8 +14,8 @@
 #include <QRectF>
 #include <QPainter>
 #include <QTimeLine>
-#include <QStyleOptionGraphicsItem>
-#include <QGraphicsSceneHoverEvent>
+#include <QHoverEvent>
+#include <QPaintEvent>
 
 #include <KDebug>
 
@@ -45,12 +45,12 @@ class RaptorScrollButton::Private
         int frame;
         QRectF rect;
 };
-RaptorScrollButton::RaptorScrollButton(Side side, QGraphicsWidget * parent)
-  : QGraphicsWidget(parent),
+RaptorScrollButton::RaptorScrollButton(Side side, QWidget * parent)
+  : QWidget(parent),
     d(new Private(side, this))
 {
     setAttribute(Qt::WA_NoSystemBackground);
-    setAcceptHoverEvents(true);
+    setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
     setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Expanding);
     update();
     installEventFilter(this);
@@ -61,20 +61,18 @@ RaptorScrollButton::~RaptorScrollButton()
 {
 }
 
-void RaptorScrollButton::paint(QPainter * p, const QStyleOptionGraphicsItem * option, QWidget * widget)
+void RaptorScrollButton::paintEvent(QPaintEvent * event)
 {
-    Q_UNUSED(option);
-    Q_UNUSED(widget);
     qreal buttonSize = size().width();
 
-    //QPainter p(this);
-    QRectF r(option->rect);
+    QPainter p(this);
+    QRectF r(event->rect());
     
 //     qreal buttonRatioWidth = 0.7;
 //     qreal buttonRatioHeight = 0.3;
 
-    p->setRenderHint(QPainter::SmoothPixmapTransform);
-    p->setRenderHint(QPainter::Antialiasing);
+    p.setRenderHint(QPainter::SmoothPixmapTransform);
+    p.setRenderHint(QPainter::Antialiasing);
 
 //     r.setSize(QSizeF(contentsRect().size().width() * buttonRatioWidth + d->frame, 
 //                      contentsRect().size().height() * buttonRatioHeight + d->frame));
@@ -86,10 +84,10 @@ void RaptorScrollButton::paint(QPainter * p, const QStyleOptionGraphicsItem * op
     d->rect = r;
 
     if (d->side == Right) {
-       d->svg->paint(p, r, "rightarrow");
+       d->svg->paint(&p, r, "rightarrow");
     }
     else {
-       d->svg->paint(p, r, "leftarrow");
+       d->svg->paint(&p, r, "leftarrow");
     }
 }
 
@@ -98,23 +96,23 @@ bool RaptorScrollButton::eventFilter(QObject * watched, QEvent * event)
     Q_UNUSED(watched)
     switch(event->type())
     {
-        case QEvent::GraphicsSceneHoverEnter:
-        case QEvent::GraphicsSceneHoverMove:
-            if (d->frame != FRAMES && d->rect.contains(static_cast<QGraphicsSceneHoverEvent*>(event)->pos())) {
+        case QEvent::HoverEnter:
+        case QEvent::HoverMove:
+            if (d->frame != FRAMES && d->rect.contains(static_cast<QHoverEvent*>(event)->pos())) {
                 d->timeLine->stop();
                 d->timeLine->setDirection(QTimeLine::Forward);
                 d->timeLine->start();
                 break;
             }
-        case QEvent::GraphicsSceneHoverLeave:
-            if (d->frame == FRAMES && !d->rect.contains(static_cast<QGraphicsSceneHoverEvent*>(event)->pos())) {
+        case QEvent::HoverLeave:
+            if (d->frame == FRAMES && !d->rect.contains(static_cast<QHoverEvent*>(event)->pos())) {
                 d->timeLine->stop();
                 d->timeLine->setDirection(QTimeLine::Backward);
                 d->timeLine->start();
                 update();
             }
             break;
-        case QEvent::GraphicsSceneMousePress:
+        case QEvent::MouseButtonPress:
             if (d->frame) {
                 emit clicked();
             }
@@ -128,5 +126,5 @@ bool RaptorScrollButton::eventFilter(QObject * watched, QEvent * event)
 void RaptorScrollButton::animatePaint(int frame)
 {
     d->frame = frame;
-    update();
+    repaint();
 }

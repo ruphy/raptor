@@ -63,9 +63,7 @@ public:
     Private(RaptorGraphicsWidget *q) : q(q),
                                        view(0),
                                        model(0),
-                                       searchModel(0),
-                                       rightScrollButton(0),
-                                       leftScrollButton(0)
+                                       searchModel(0)
     {
         frame = new Plasma::FrameSvg(q);
         frame->setImagePath("dialogs/background");
@@ -84,8 +82,6 @@ public:
     Kickoff::SearchModel * searchModel;
     Kickoff::FavoritesModel * favoritesModel;
 
-    RaptorScrollButton *rightScrollButton;
-    RaptorScrollButton *leftScrollButton;
     Breadcrumb * breadCrumb;
 
     Plasma::LineEdit *searchLine;
@@ -119,7 +115,6 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
     d->view->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     d->view->setModel(d->model);
 
-    d->leftScrollButton = new RaptorScrollButton(RaptorScrollButton::Left, this);
 //     d->view = new RaptorItemsView();
 //     RaptorItemDelegate *delegate = new RaptorItemDelegate();
 
@@ -129,8 +124,6 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
     d->favoritesIcon->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
     d->favoritesIcon->setIcon(KIcon("rating"));
     //d->searchLine->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
-    d->rightScrollButton = new RaptorScrollButton(RaptorScrollButton::Right, this);
-
 
     d->appletConfig = appletconfig;
 
@@ -141,18 +134,14 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
     horizontalLayout->addStretch();
     horizontalLayout->addItem(d->favoritesIcon);
     horizontalLayout->addItem(d->searchLine);
+    
+    horizontalLayout->setMaximumHeight(Plasma::Theme::defaultTheme()->fontMetrics().height() + 2 * 2);//Set height to font height + some more spaces
 
     verticalLayout->addItem(horizontalLayout);
     QGraphicsLinearLayout *layout = new QGraphicsLinearLayout();
     layout->setOrientation(Qt::Horizontal);
 
-    connect(d->leftScrollButton, SIGNAL(clicked()), d->view, SLOT(scrollLeft()));
-//     layout->addItem(d->leftScrollButton);
-
     layout->addItem(d->view);
-
-    connect(d->rightScrollButton, SIGNAL(clicked()), d->view, SLOT(scrollRight()));
-//     layout->addItem(d->rightScrollButton);
 
     verticalLayout->addItem(layout);
 
@@ -215,9 +204,6 @@ RaptorGraphicsWidget::RaptorGraphicsWidget(QGraphicsItem *parent, const KConfigG
 //     d->view->focusCentralItem();
 
     setContentsMargins(CONTENTS_RECT_HORIZONTAL_MARGIN, CONTENTS_RECT_VERTICAL_MARGIN, CONTENTS_RECT_HORIZONTAL_MARGIN, CONTENTS_RECT_VERTICAL_MARGIN);
-
-    d->rightScrollButton->resize(32, 32);
-    d->leftScrollButton->resize(32, 32);
 }
 
 RaptorGraphicsWidget::~RaptorGraphicsWidget()
@@ -255,15 +241,6 @@ void RaptorGraphicsWidget::launchApplication(const QModelIndex &index)
 void RaptorGraphicsWidget::updateColors()
 {
     //static_cast<RaptorItemDelegate*>(d->view->itemDelegate())->setTextColor(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
-}
-
-void RaptorGraphicsWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
-{
-    Q_UNUSED(event);
-
-    d->rightScrollButton->setPos(rect().width() - FRAME_RECT_HORIZONTAL_MARGIN - d->rightScrollButton->size().width() / 2, d->view->y() + d->view->rect().height() / 2 - d->rightScrollButton->rect().height() / 2);
-    d->leftScrollButton->setPos(FRAME_RECT_HORIZONTAL_MARGIN - d->leftScrollButton->size().width() / 2, d->view->y() + d->view->rect().height() / 2 - d->leftScrollButton->rect().height() / 2);
-    kDebug() << d->leftScrollButton->y() + d->view->rect().height() / 2 - d->leftScrollButton->rect().height() / 2 << d->view->y();
 }
 
 void RaptorGraphicsWidget::refineModel()
@@ -311,20 +288,12 @@ void RaptorGraphicsWidget::addOrRemoveFavorite(const QString &url)
     }
 }
 
-void RaptorGraphicsWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void RaptorGraphicsWidget::scrollLeft()
 {
-    Q_UNUSED(option)
-    Q_UNUSED(widget)
+    d->view->scrollLeft();
+}
 
-//     painter->fillRect(option->rect, Qt::red);
-
-    QRectF frameRect(option->rect);
-    frameRect.setX(FRAME_RECT_HORIZONTAL_MARGIN);
-    frameRect.setWidth(option->rect.width() - (2*FRAME_RECT_HORIZONTAL_MARGIN) );
-
-//     painter->fillRect(contentsRect(), Qt::green);
-//     painter->drawRect(frameRect);
-
-    d->frame->resizeFrame(frameRect.size());
-    d->frame->paintFrame(painter, frameRect.topLeft());
+void RaptorGraphicsWidget::scrollRight()
+{
+    d->view->scrollRight();
 }
